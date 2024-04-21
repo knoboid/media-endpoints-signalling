@@ -19,7 +19,8 @@
     "url": "https://github.com/webrtc/samples.git"
   },
   "scripts": {
-    "start": "http-server . -c-1",
+    "start": "export NODE_HTTP_SERVER_SSL_PASSPHRASE=passphrase&&http-server -S -C \"/home/mark/.dev-server-cert/server.crt\" -K \"/home/mark/.dev-server-cert/server.key\" . -c-1 -p 5500",
+    "dev": "http-server . -c-1 -p 5500",
     "test": "npm run eslint && npm run stylelint",
     "eslint": "eslint 'test/**.js' 'src/content/**/*.js'",
     "jest": "jest --testTimeout 5000 --maxWorkers=1 'src/content/**/test.js'",
@@ -38,5 +39,9 @@
     "stylelint": "^14.5.3",
     "stylelint-config-recommended": "^7.0.0",
     "travis-multirunner": "^5.0.1"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
   }
 }
