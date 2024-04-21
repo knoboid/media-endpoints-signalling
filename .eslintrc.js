@@ -10,6 +10,7 @@ module.exports = {
     node: true,
     jest: true,
   },
+  quotes: ["double"],
   rules: {
     "max-len": "off",
     "require-jsdoc": "off",
