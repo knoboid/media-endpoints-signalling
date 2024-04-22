@@ -1,3 +1,6 @@
+import Peer from "./peer.js";
+import PeerRegistry from "./peer-registrty.js";
+
 const leftVideo = document.getElementById("leftVideo");
 const rightVideo = document.getElementById("rightVideo");
 
@@ -5,6 +8,10 @@ export function peerConnect(stream) {
   console.log("success");
   leftVideo.srcObject = stream;
   rightVideo.volume = 0.2;
+
+  const peers = new PeerRegistry();
+  peers.addPeer(new Peer("p1"));
+  peers.addPeer(new Peer("p2"));
 
   let pc1;
   let pc2;
@@ -58,6 +65,7 @@ export function peerConnect(stream) {
     }
     const servers = null;
     pc1 = new RTCPeerConnection(servers);
+    peers.setConnection("p1", pc1);
     console.log("Created local peer connection object pc1");
     pc1.onicecandidate = (e) => onIceCandidate(pc1, e);
     pc2 = new RTCPeerConnection(servers);
