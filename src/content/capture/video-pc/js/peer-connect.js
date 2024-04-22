@@ -1,3 +1,6 @@
+const leftVideo = document.getElementById("leftVideo");
+const rightVideo = document.getElementById("rightVideo");
+
 export function peerConnect(stream) {
   console.log("success");
   leftVideo.srcObject = stream;

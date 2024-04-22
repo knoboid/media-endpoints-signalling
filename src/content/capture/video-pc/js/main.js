@@ -7,9 +7,6 @@
  */
 import { peerConnect } from "./peer-connect.js";
 
-const leftVideo = document.getElementById("leftVideo");
-const rightVideo = document.getElementById("rightVideo");
-
 const constraints = {
   audio: true,
   video: true,
