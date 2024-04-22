@@ -1,6 +1,9 @@
 import Peer from "./peer.js";
 import PeerRegistry from "./peer-registrty.js";
 import ConnectionRegistry from "./connection-registry.js";
+import { createCallerConnection } from "./connections/caller-connection.js";
+import { createResponderConnection } from "./connections/responder-connection.js";
+import SignallingChannel from "./signalling/signalling-channel.js";
 
 const leftVideo = document.getElementById("leftVideo");
 const rightVideo = document.getElementById("rightVideo");
@@ -8,10 +11,11 @@ const rightVideo = document.getElementById("rightVideo");
 export function peerConnect(stream) {
   console.log("success");
   leftVideo.srcObject = stream;
-  rightVideo.volume = 0.05;
 
   const p1 = "p1";
   const p2 = "p2";
+
+  const signallingChannel = new SignallingChannel();
 
   const peers = new PeerRegistry();
   peers.addPeer(new Peer(p1));
@@ -19,8 +23,8 @@ export function peerConnect(stream) {
   const connections = new ConnectionRegistry(peers);
   connections.connect(p1, p2);
 
-  let pc1;
-  let pc2;
+  let pc1, caller;
+  let pc2, responder;
   const offerOptions = {
     offerToReceiveAudio: 1,
     offerToReceiveVideo: 1,
@@ -70,16 +74,22 @@ export function peerConnect(stream) {
       console.log(`Using audio device: ${audioTracks[0].label}`);
     }
     const servers = null;
-    pc1 = new RTCPeerConnection(servers);
+
+    caller = createCallerConnection(servers, p1, signallingChannel);
+    console.log(caller);
+    pc1 = caller;
     peers.setConnection(p1, pc1);
+
     console.log("Created local peer connection object pc1");
     pc1.onicecandidate = (e) => onIceCandidate(p1, e);
-    pc2 = new RTCPeerConnection(servers);
+
+    responder = createResponderConnection(servers, p2, signallingChannel);
+    pc2 = responder;
+
     peers.setConnection(p2, pc2);
     console.log("Created remote peer connection object pc2");
     pc2.onicecandidate = (e) => onIceCandidate(p2, e);
-    pc1.oniceconnectionstatechange = (e) => onIceStateChange(pc1, e);
-    pc2.oniceconnectionstatechange = (e) => onIceStateChange(pc2, e);
+
     pc2.ontrack = gotRemoteStream;
 
     stream.getTracks().forEach((track) => pc1.addTrack(track, stream));
@@ -176,13 +186,6 @@ export function peerConnect(stream) {
     console.log(
       `${getName(pc)} failed to add ICE Candidate: ${error.toString()}`
     );
-  }
-
-  function onIceStateChange(pc, event) {
-    if (pc) {
-      console.log(`${getName(pc)} ICE state: ${pc.iceConnectionState}`);
-      console.log("ICE state change event: ", event);
-    }
   }
 
   function getName(pc) {
