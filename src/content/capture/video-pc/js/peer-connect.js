@@ -1,5 +1,6 @@
 import Peer from "./peer.js";
 import PeerRegistry from "./peer-registrty.js";
+import ConnectionRegistry from "./connection-registry.js";
 
 const leftVideo = document.getElementById("leftVideo");
 const rightVideo = document.getElementById("rightVideo");
@@ -7,11 +8,16 @@ const rightVideo = document.getElementById("rightVideo");
 export function peerConnect(stream) {
   console.log("success");
   leftVideo.srcObject = stream;
-  rightVideo.volume = 0.2;
+  rightVideo.volume = 0.05;
+
+  const p1 = "p1";
+  const p2 = "p2";
 
   const peers = new PeerRegistry();
-  peers.addPeer(new Peer("p1"));
-  peers.addPeer(new Peer("p2"));
+  peers.addPeer(new Peer(p1));
+  peers.addPeer(new Peer(p2));
+  const connections = new ConnectionRegistry(peers);
+  connections.connect(p1, p2);
 
   let pc1;
   let pc2;
@@ -65,12 +71,13 @@ export function peerConnect(stream) {
     }
     const servers = null;
     pc1 = new RTCPeerConnection(servers);
-    peers.setConnection("p1", pc1);
+    peers.setConnection(p1, pc1);
     console.log("Created local peer connection object pc1");
-    pc1.onicecandidate = (e) => onIceCandidate(pc1, e);
+    pc1.onicecandidate = (e) => onIceCandidate(p1, e);
     pc2 = new RTCPeerConnection(servers);
+    peers.setConnection(p2, pc2);
     console.log("Created remote peer connection object pc2");
-    pc2.onicecandidate = (e) => onIceCandidate(pc2, e);
+    pc2.onicecandidate = (e) => onIceCandidate(p2, e);
     pc1.oniceconnectionstatechange = (e) => onIceStateChange(pc1, e);
     pc2.oniceconnectionstatechange = (e) => onIceStateChange(pc2, e);
     pc2.ontrack = gotRemoteStream;
@@ -149,13 +156,15 @@ export function peerConnect(stream) {
   }
 
   function onIceCandidate(pc, event) {
-    getOtherPc(pc)
-      .addIceCandidate(event.candidate)
-      .then(
-        () => onAddIceCandidateSuccess(pc),
-        (err) => onAddIceCandidateError(pc, err)
-      );
-    console.log(`${getName(pc)} ICE candidate: 
+    const peerConnection = JSON.parse(JSON.stringify(peers.getConnection(pc)));
+    const otherPeerConnection = connections
+      .getOtherPeer(pc)
+      .getPeerConnection();
+    otherPeerConnection.addIceCandidate(event.candidate).then(
+      () => onAddIceCandidateSuccess(peerConnection),
+      (err) => onAddIceCandidateError(peerConnection, err)
+    );
+    console.log(`${getName(peerConnection)} ICE candidate: 
   ${event.candidate ? event.candidate.candidate : "(null)"}`);
   }
 
@@ -178,9 +187,5 @@ export function peerConnect(stream) {
 
   function getName(pc) {
     return pc === pc1 ? "pc1" : "pc2";
-  }
-
-  function getOtherPc(pc) {
-    return pc === pc1 ? pc2 : pc1;
   }
 }
