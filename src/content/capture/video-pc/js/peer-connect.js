@@ -12,26 +12,6 @@ export function peerConnect(stream) {
 
   let startTime;
 
-  // function maybeCreateStream() {
-  //   if (stream) {
-  //     return;
-  //   }
-  //   if (leftVideo.captureStream) {
-  //     stream = leftVideo.captureStream();
-  //     console.log("Captured stream from leftVideo with captureStream", stream);
-  //     call();
-  //   } else if (leftVideo.mozCaptureStream) {
-  //     stream = leftVideo.mozCaptureStream();
-  //     console.log(
-  //       "Captured stream from leftVideo with mozCaptureStream()",
-  //       stream
-  //     );
-  //     call();
-  //   } else {
-  //     console.log("captureStream() not supported");
-  //   }
-  // }
-
   // Video tag capture must be set up after video tracks are enumerated.
   leftVideo.oncanplay = call;
   if (leftVideo.readyState >= 3) {
