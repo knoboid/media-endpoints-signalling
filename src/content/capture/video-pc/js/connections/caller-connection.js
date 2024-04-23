@@ -1,4 +1,9 @@
-export function createCallerConnection(servers, name, signallingChannel) {
+export function createCallerConnection(
+  servers,
+  name,
+  stream,
+  signallingChannel
+) {
   const cc = new RTCPeerConnection(servers);
 
   cc.oniceconnectionstatechange = (e) => onIceStateChange(cc, e);
@@ -10,6 +15,8 @@ export function createCallerConnection(servers, name, signallingChannel) {
       console.log("ICE state change event: ", event);
     }
   }
+
+  stream.getTracks().forEach((track) => cc.addTrack(track, stream));
 
   function onIceCandidate(event) {
     signallingChannel.caller(

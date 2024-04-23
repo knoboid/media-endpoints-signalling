@@ -75,7 +75,7 @@ export function peerConnect(stream) {
     }
     const servers = null;
 
-    caller = createCallerConnection(servers, p1, signallingChannel);
+    caller = createCallerConnection(servers, p1, stream, signallingChannel);
     pc1 = caller;
     peers.setConnection(p1, pc1);
     console.log("Created local peer connection object pc1");
@@ -84,9 +84,6 @@ export function peerConnect(stream) {
     pc2 = responder;
     peers.setConnection(p2, pc2);
     console.log("Created remote peer connection object pc2");
-
-    stream.getTracks().forEach((track) => pc1.addTrack(track, stream));
-    console.log("Added local stream to pc1");
 
     console.log("pc1 createOffer start");
     pc1.createOffer(
