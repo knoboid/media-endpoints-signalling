@@ -81,14 +81,12 @@ export function peerConnect(stream) {
     peers.setConnection(p1, pc1);
 
     console.log("Created local peer connection object pc1");
-    pc1.onicecandidate = (e) => onIceCandidate(p1, e);
 
     responder = createResponderConnection(servers, p2, signallingChannel);
     pc2 = responder;
 
     peers.setConnection(p2, pc2);
     console.log("Created remote peer connection object pc2");
-    pc2.onicecandidate = (e) => onIceCandidate(p2, e);
 
     pc2.ontrack = gotRemoteStream;
 
@@ -108,8 +106,7 @@ export function peerConnect(stream) {
   }
 
   function onCreateOfferSuccess(desc) {
-    console.log(`Offer from pc1
-  ${desc.sdp}`);
+    console.log(`Offer from pc1 ${desc.sdp}`);
     console.log("pc1 setLocalDescription start");
     pc1.setLocalDescription(
       desc,
@@ -149,8 +146,7 @@ export function peerConnect(stream) {
   }
 
   function onCreateAnswerSuccess(desc) {
-    console.log(`Answer from pc2:
-  ${desc.sdp}`);
+    console.log(`Answer from pc2: ${desc.sdp}`);
     console.log("pc2 setLocalDescription start");
     pc2.setLocalDescription(
       desc,
@@ -162,29 +158,6 @@ export function peerConnect(stream) {
       desc,
       () => onSetRemoteSuccess(pc1),
       onSetSessionDescriptionError
-    );
-  }
-
-  function onIceCandidate(pc, event) {
-    const peerConnection = JSON.parse(JSON.stringify(peers.getConnection(pc)));
-    const otherPeerConnection = connections
-      .getOtherPeer(pc)
-      .getPeerConnection();
-    otherPeerConnection.addIceCandidate(event.candidate).then(
-      () => onAddIceCandidateSuccess(peerConnection),
-      (err) => onAddIceCandidateError(peerConnection, err)
-    );
-    console.log(`${getName(peerConnection)} ICE candidate: 
-  ${event.candidate ? event.candidate.candidate : "(null)"}`);
-  }
-
-  function onAddIceCandidateSuccess(pc) {
-    console.log(`${getName(pc)} addIceCandidate success`);
-  }
-
-  function onAddIceCandidateError(pc, error) {
-    console.log(
-      `${getName(pc)} failed to add ICE Candidate: ${error.toString()}`
     );
   }
 
