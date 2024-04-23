@@ -5,16 +5,12 @@ class SignallingChannel extends EventTarget {
     super();
   }
 
-  // Called by the caller
-  callerIceCandidate(candidate) {
-    this.dispatchEvent(new PayloadEvent("fromCallerIceCandidate", candidate));
+  caller(data) {
+    this.dispatchEvent(new PayloadEvent("fromCaller", data));
   }
 
-  // Called by the response
-  responderIceCandidate(candidate) {
-    this.dispatchEvent(
-      new PayloadEvent("fromResponderIceCandidate", candidate)
-    );
+  responder(data) {
+    this.dispatchEvent(new PayloadEvent("fromResponder", data));
   }
 }
 

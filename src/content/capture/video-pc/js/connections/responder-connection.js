@@ -12,17 +12,26 @@ export function createResponderConnection(servers, name, signallingChannel) {
   }
 
   function onIceCandidate(event) {
-    signallingChannel.responderIceCandidate(JSON.stringify(event.candidate));
+    signallingChannel.responder(
+      JSON.stringify({ type: "onIceCandidate", payload: event.candidate })
+    );
   }
 
-  signallingChannel.addEventListener("fromCallerIceCandidate", (event) => {
-    const candidate = JSON.parse(event.payload);
-    cc.addIceCandidate(candidate).then(
-      () => onAddIceCandidateSuccess(cc),
-      (err) => onAddIceCandidateError(cc, err)
-    );
-    console.log(`${name} ICE candidate: 
-    ${candidate ? candidate.candidate : "(null)"}`);
+  signallingChannel.addEventListener("fromCaller", (event) => {
+    const { type, payload } = JSON.parse(event.data);
+    switch (type) {
+      case "onIceCandidate":
+        const candidate = payload;
+        cc.addIceCandidate(candidate).then(
+          () => onAddIceCandidateSuccess(cc),
+          (err) => onAddIceCandidateError(cc, err)
+        );
+        console.log(`${name} ICE candidate: 
+        ${candidate ? candidate.candidate : "(null)"}`);
+        break;
+      default:
+        break;
+    }
   });
 
   function onAddIceCandidateSuccess(pc) {
