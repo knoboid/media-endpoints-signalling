@@ -12,16 +12,17 @@ export function createResponderConnection(servers, name, signallingChannel) {
   }
 
   function onIceCandidate(event) {
-    signallingChannel.responderIceCandidate(event.candidate);
+    signallingChannel.responderIceCandidate(JSON.stringify(event.candidate));
   }
 
   signallingChannel.addEventListener("fromCallerIceCandidate", (event) => {
-    cc.addIceCandidate(event.payload).then(
+    const candidate = JSON.parse(event.payload);
+    cc.addIceCandidate(candidate).then(
       () => onAddIceCandidateSuccess(cc),
       (err) => onAddIceCandidateError(cc, err)
     );
     console.log(`${name} ICE candidate: 
-    ${event.payload ? event.payload.candidate : "(null)"}`);
+    ${candidate ? candidate.candidate : "(null)"}`);
   });
 
   function onAddIceCandidateSuccess(pc) {
