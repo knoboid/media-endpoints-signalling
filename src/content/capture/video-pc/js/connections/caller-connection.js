@@ -2,7 +2,8 @@ export function createCallerConnection(
   servers,
   name,
   stream,
-  signallingChannel
+  signallingChannel,
+  offerOptions
 ) {
   const cc = new RTCPeerConnection(servers);
 
@@ -18,10 +19,39 @@ export function createCallerConnection(
 
   stream.getTracks().forEach((track) => cc.addTrack(track, stream));
 
-  function onIceCandidate(event) {
-    signallingChannel.caller(
-      JSON.stringify({ type: "onIceCandidate", payload: event.candidate })
+  console.log("caller createOffer start");
+  cc.createOffer(
+    onCreateOfferSuccess,
+    onCreateSessionDescriptionError,
+    offerOptions
+  );
+
+  function onCreateOfferSuccess(desc) {
+    console.log(`Offer from caller ${desc.sdp}`);
+    console.log("caller setLocalDescription start");
+    cc.setLocalDescription(
+      desc,
+      () => onSetLocalSuccess(),
+      onSetSessionDescriptionError
     );
+    console.log("signal onCallerDescription");
+    signal("onCallerDescription", desc);
+  }
+
+  function onSetSessionDescriptionError(error) {
+    console.log(`Failed to set session description: ${error.toString()}`);
+  }
+
+  function onCreateSessionDescriptionError(error) {
+    console.log(`Failed to create session description: ${error.toString()}`);
+  }
+
+  function onIceCandidate(event) {
+    signal("onIceCandidate", event.candidate);
+  }
+
+  function signal(type, payload) {
+    signallingChannel.caller(JSON.stringify({ type, payload }));
   }
 
   signallingChannel.addEventListener("fromResponder", (event) => {
@@ -30,11 +60,19 @@ export function createCallerConnection(
       case "onIceCandidate":
         const candidate = payload;
         cc.addIceCandidate(candidate).then(
-          () => onAddIceCandidateSuccess(cc),
-          (err) => onAddIceCandidateError(cc, err)
+          () => onAddIceCandidateSuccess(),
+          (err) => onAddIceCandidateError(err)
         );
         console.log(`${name} ICE candidate: 
         ${candidate ? candidate.candidate : "(null)"}`);
+        break;
+      case "onRespondererDescription":
+        const desc = payload;
+        cc.setRemoteDescription(
+          desc,
+          () => onSetRemoteSuccess(),
+          onSetSessionDescriptionError
+        );
         break;
 
       default:
@@ -42,11 +80,19 @@ export function createCallerConnection(
     }
   });
 
-  function onAddIceCandidateSuccess(pc) {
+  function onSetLocalSuccess() {
+    console.log(`${name} setLocalDescription complete`);
+  }
+
+  function onSetRemoteSuccess() {
+    console.log(`${name} setRemoteDescription complete`);
+  }
+
+  function onAddIceCandidateSuccess() {
     console.log(`${name} addIceCandidate success`);
   }
 
-  function onAddIceCandidateError(pc, error) {
+  function onAddIceCandidateError(error) {
     console.log(`${name} failed to add ICE Candidate: ${error.toString()}`);
   }
 
