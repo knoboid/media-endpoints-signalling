@@ -1,4 +1,4 @@
-import PayloadEvent from "../payload-event.js";
+import PayloadEvent from "../../payload-event.js";
 
 class CallerSignaller extends EventTarget {
   constructor(signallingChannel) {

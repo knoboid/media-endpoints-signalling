@@ -3,9 +3,11 @@ import PeerRegistry from "./peer-registrty.js";
 import ConnectionRegistry from "./connection-registry.js";
 import { createCallerConnection } from "./connections/caller-connection.js";
 import { createResponderConnection } from "./connections/responder-connection.js";
-import SignallingChannel from "./signalling/signalling-channel.js";
-import CallerSignaller from "./signalling/caller-signaller.js";
-import ResponderSignaller from "./signalling/responder-signaller.js";
+import SignallingChannel from "./signalling/same-page/signalling-channel.js";
+import CallerSignaller from "./signalling/same-page/caller-signaller.js";
+import ResponderSignaller from "./signalling/same-page/responder-signaller.js";
+
+const wss = "wss://localhost:5501";
 
 const leftVideo = document.getElementById("leftVideo");
 const rightVideo = document.getElementById("rightVideo");
