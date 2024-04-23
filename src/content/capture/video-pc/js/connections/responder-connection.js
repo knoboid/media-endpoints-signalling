@@ -1,7 +1,17 @@
+import {
+  onSetLocalSuccess,
+  onSetRemoteSuccess,
+  onAddIceCandidateSuccess,
+  onAddIceCandidateError,
+  onSetSessionDescriptionError,
+  onCreateSessionDescriptionError,
+  onIceStateChange,
+} from "./callbacks.js";
+
 export function createResponderConnection(servers, name, signallingChannel) {
   const cc = new RTCPeerConnection(servers);
 
-  cc.oniceconnectionstatechange = (e) => onIceStateChange(cc, e);
+  cc.oniceconnectionstatechange = (e) => onIceStateChange(cc, name, e);
   cc.onicecandidate = (e) => onIceCandidate(e);
   cc.ontrack = (e) => {
     if (rightVideo.srcObject !== e.streams[0]) {
@@ -9,13 +19,6 @@ export function createResponderConnection(servers, name, signallingChannel) {
       console.log("responder received caller stream", event);
     }
   };
-
-  function onIceStateChange(pc, event) {
-    if (pc) {
-      console.log(`${name} ICE state: ${pc.iceConnectionState}`);
-      console.log("ICE state change event: ", event);
-    }
-  }
 
   function onIceCandidate(event) {
     signallingChannel.responder(
@@ -29,8 +32,8 @@ export function createResponderConnection(servers, name, signallingChannel) {
       case "onIceCandidate":
         const candidate = payload;
         cc.addIceCandidate(candidate).then(
-          () => onAddIceCandidateSuccess(),
-          (err) => onAddIceCandidateError(err)
+          () => onAddIceCandidateSuccess(name),
+          (err) => onAddIceCandidateError(name, err)
         );
         console.log(`${name} ICE candidate: 
         ${candidate ? candidate.candidate : "(null)"}`);
@@ -40,7 +43,7 @@ export function createResponderConnection(servers, name, signallingChannel) {
         const desc = payload;
         cc.setRemoteDescription(
           desc,
-          () => onSetRemoteSuccess(),
+          () => onSetRemoteSuccess(name),
           onSetSessionDescriptionError
         );
         cc.createAnswer(onCreateAnswerSuccess, onCreateSessionDescriptionError);
@@ -51,40 +54,16 @@ export function createResponderConnection(servers, name, signallingChannel) {
     }
   });
 
-  function onSetSessionDescriptionError(error) {
-    console.log(`Failed to set session description: ${error.toString()}`);
-  }
-
   function onCreateAnswerSuccess(desc) {
     console.log(`Answer from responder: ${desc.sdp}`);
     console.log("responder setLocalDescription start");
     cc.setLocalDescription(
       desc,
-      () => onSetLocalSuccess(),
+      () => onSetLocalSuccess(name),
       onSetSessionDescriptionError
     );
     console.log("signalling onRespondererDescription");
     signal("onRespondererDescription", desc);
-  }
-
-  function onSetLocalSuccess() {
-    console.log(`${name} setLocalDescription complete`);
-  }
-
-  function onSetRemoteSuccess() {
-    console.log(`${name} setRemoteDescription complete`);
-  }
-
-  function onCreateSessionDescriptionError(error) {
-    console.log(`Failed to create session description: ${error.toString()}`);
-  }
-
-  function onAddIceCandidateSuccess() {
-    console.log(`${name} addIceCandidate success`);
-  }
-
-  function onAddIceCandidateError(error) {
-    console.log(`${name} failed to add ICE Candidate: ${error.toString()}`);
   }
 
   function signal(type, payload) {
