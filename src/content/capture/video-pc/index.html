@@ -29,11 +29,11 @@
       sizes="192x192"
       href="../../../images/webrtc-icon-192x192.png"
     />
-    <link
+    <!-- <link
       href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700"
       rel="stylesheet"
       type="text/css"
-    />
+    /> -->
     <link rel="stylesheet" href="../../../css/main.css" />
     <link rel="stylesheet" href="css/main.css" />
   </head>
@@ -56,6 +56,10 @@
 
       <video id="rightVideo" playsinline autoplay controls muted></video>
 
+      <div>
+        <button id="call-button">Call</button>
+        <input id="call-number" type="number" value="0" />
+      </div>
       <p>
         This demo requires Firefox 47, Chrome 53 with
         <strong>Experimental Web Platform features</strong> enabled from
@@ -92,7 +96,7 @@
       >
     </div>
 
-    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+    <!-- <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script> -->
     <script type="module" src="js/main.js" async></script>
 
     <script src="../../../js/lib/ga.js"></script>
