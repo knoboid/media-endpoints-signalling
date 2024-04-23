@@ -76,19 +76,14 @@ export function peerConnect(stream) {
     const servers = null;
 
     caller = createCallerConnection(servers, p1, signallingChannel);
-    console.log(caller);
     pc1 = caller;
     peers.setConnection(p1, pc1);
-
     console.log("Created local peer connection object pc1");
 
     responder = createResponderConnection(servers, p2, signallingChannel);
     pc2 = responder;
-
     peers.setConnection(p2, pc2);
     console.log("Created remote peer connection object pc2");
-
-    pc2.ontrack = gotRemoteStream;
 
     stream.getTracks().forEach((track) => pc1.addTrack(track, stream));
     console.log("Added local stream to pc1");
@@ -136,13 +131,6 @@ export function peerConnect(stream) {
 
   function onSetSessionDescriptionError(error) {
     console.log(`Failed to set session description: ${error.toString()}`);
-  }
-
-  function gotRemoteStream(event) {
-    if (rightVideo.srcObject !== event.streams[0]) {
-      rightVideo.srcObject = event.streams[0];
-      console.log("pc2 received remote stream", event);
-    }
   }
 
   function onCreateAnswerSuccess(desc) {

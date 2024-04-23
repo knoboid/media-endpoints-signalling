@@ -3,6 +3,12 @@ export function createResponderConnection(servers, name, signallingChannel) {
 
   cc.oniceconnectionstatechange = (e) => onIceStateChange(cc, e);
   cc.onicecandidate = (e) => onIceCandidate(e);
+  cc.ontrack = (e) => {
+    if (rightVideo.srcObject !== e.streams[0]) {
+      rightVideo.srcObject = e.streams[0];
+      console.log("pc2 received remote stream", event);
+    }
+  };
 
   function onIceStateChange(pc, event) {
     if (pc) {
