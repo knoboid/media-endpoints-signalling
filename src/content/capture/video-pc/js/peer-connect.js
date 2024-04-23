@@ -4,6 +4,8 @@ import ConnectionRegistry from "./connection-registry.js";
 import { createCallerConnection } from "./connections/caller-connection.js";
 import { createResponderConnection } from "./connections/responder-connection.js";
 import SignallingChannel from "./signalling/signalling-channel.js";
+import CallerSignaller from "./signalling/caller-signaller.js";
+import ResponderSignaller from "./signalling/responder-signaller.js";
 
 const leftVideo = document.getElementById("leftVideo");
 const rightVideo = document.getElementById("rightVideo");
@@ -16,6 +18,8 @@ export function peerConnect(stream) {
   const p2 = "p2";
 
   const signallingChannel = new SignallingChannel();
+  const callerSignaller = new CallerSignaller(signallingChannel);
+  const responderSignaller = new ResponderSignaller(signallingChannel);
 
   const peers = new PeerRegistry();
   peers.addPeer(new Peer(p1));
@@ -75,12 +79,12 @@ export function peerConnect(stream) {
     }
     const servers = null;
 
-    caller = createCallerConnection(servers, p1, stream, signallingChannel);
+    caller = createCallerConnection(servers, p1, stream, callerSignaller);
     pc1 = caller;
     peers.setConnection(p1, pc1);
     console.log("Created local peer connection object pc1");
 
-    responder = createResponderConnection(servers, p2, signallingChannel);
+    responder = createResponderConnection(servers, p2, responderSignaller);
     pc2 = responder;
     peers.setConnection(p2, pc2);
     console.log("Created remote peer connection object pc2");
