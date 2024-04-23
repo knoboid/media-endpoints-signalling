@@ -8,7 +8,14 @@ import {
   onIceStateChange,
 } from "./callbacks.js";
 
-export function createResponderConnection(servers, name, signallingChannel) {
+import { log } from "./util.js";
+
+export function createResponderConnection(
+  servers,
+  name,
+  signallingChannel,
+  debug = false
+) {
   const cc = new RTCPeerConnection(servers);
 
   cc.oniceconnectionstatechange = (e) => onIceStateChange(cc, name, e);
@@ -16,7 +23,7 @@ export function createResponderConnection(servers, name, signallingChannel) {
   cc.ontrack = (e) => {
     if (rightVideo.srcObject !== e.streams[0]) {
       rightVideo.srcObject = e.streams[0];
-      console.log("responder received caller stream", event);
+      log("responder received caller stream", event);
     }
   };
 
@@ -35,7 +42,7 @@ export function createResponderConnection(servers, name, signallingChannel) {
           () => onAddIceCandidateSuccess(name),
           (err) => onAddIceCandidateError(name, err)
         );
-        console.log(`${name} ICE candidate: 
+        log(`${name} ICE candidate: 
         ${candidate ? candidate.candidate : "(null)"}`);
         break;
 
@@ -55,14 +62,14 @@ export function createResponderConnection(servers, name, signallingChannel) {
   });
 
   function onCreateAnswerSuccess(desc) {
-    console.log(`Answer from responder: ${desc.sdp}`);
-    console.log("responder setLocalDescription start");
+    log(`Answer from responder: ${desc.sdp}`);
+    log("responder setLocalDescription start");
     cc.setLocalDescription(
       desc,
       () => onSetLocalSuccess(name),
       onSetSessionDescriptionError
     );
-    console.log("signalling onRespondererDescription");
+    log("signalling onRespondererDescription");
     signal("onRespondererDescription", desc);
   }
 

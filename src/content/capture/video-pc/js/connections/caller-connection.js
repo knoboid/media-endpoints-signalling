@@ -8,6 +8,8 @@ import {
   onIceStateChange,
 } from "./callbacks.js";
 
+import { log } from "./util.js";
+
 export function createCallerConnection(
   servers,
   name,
@@ -22,7 +24,7 @@ export function createCallerConnection(
 
   stream.getTracks().forEach((track) => cc.addTrack(track, stream));
 
-  console.log("caller createOffer start");
+  log("caller createOffer start");
   cc.createOffer(
     onCreateOfferSuccess,
     onCreateSessionDescriptionError,
@@ -30,14 +32,14 @@ export function createCallerConnection(
   );
 
   function onCreateOfferSuccess(desc) {
-    console.log(`Offer from caller ${desc.sdp}`);
-    console.log("caller setLocalDescription start");
+    log(`Offer from caller ${desc.sdp}`);
+    log("caller setLocalDescription start");
     cc.setLocalDescription(
       desc,
       () => onSetLocalSuccess(name),
       onSetSessionDescriptionError
     );
-    console.log("signal onCallerDescription");
+    log("signal onCallerDescription");
     signal("onCallerDescription", desc);
   }
 
@@ -58,7 +60,7 @@ export function createCallerConnection(
           () => onAddIceCandidateSuccess(name),
           (err) => onAddIceCandidateError(name, err)
         );
-        console.log(`${name} ICE candidate: 
+        log(`${name} ICE candidate: 
         ${candidate ? candidate.candidate : "(null)"}`);
         break;
       case "onRespondererDescription":
