@@ -3,7 +3,15 @@ class Clients {
     this.clients = {};
   }
 
-  addCLient(id, client, status) {
+  getClient(id) {
+    return this.clients[id].client;
+  }
+
+  getStatus(id) {
+    return this.clients[id].status;
+  }
+
+  addClient(id, client, status) {
     this.clients[id] = { client, status };
   }
 
@@ -20,6 +28,18 @@ class Clients {
 
   remove(id) {
     delete this.clients[id];
+  }
+
+  setStatus(id, status) {
+    const client = (this.clients[id].status = status);
+  }
+
+  setOtherParty(id, otherPartyID) {
+    this.clients[id].otherPartyID = otherPartyID;
+  }
+
+  getOtherParty(id) {
+    return this.clients[id].otherPartyID ? this.clients[id].otherPartyID : null;
   }
 }
 

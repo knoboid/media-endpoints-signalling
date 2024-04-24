@@ -12,7 +12,8 @@ import NWResponderSignaller from "./signalling/network/responder-signaller.js";
 import RespondersList from "./ui/responders-list.js";
 
 // const wss = "wss://localhost:5501";
-const wss = "wss://192.168.43.35:5501";
+// const wss = "wss://192.168.43.35:5501";
+const wss = "wss://192.168.0.72:5501";
 
 let callerID, responderID;
 
@@ -78,6 +79,25 @@ export function peerConnect(stream) {
   respondersComponent.addEventListener("call", (e) => {
     console.log("call pressed");
     console.log(e.data);
+    nWCallerSignaller.send({
+      type: "initiateCall",
+      payload: { responderID: e.data },
+    });
+  });
+
+  nWResponderSignaller.addEventListener("initiateResponse", () => {
+    console.log("wrwre");
+    recieve();
+  });
+
+  nWCallerSignaller.addEventListener("initiateCallSuccess", (event) => {
+    console.log("event.data");
+    console.log(event.data);
+    call();
+    // const otherResponders = event.data.filter(
+    //   (responder) => Number(responder.id) !== responderID
+    // );
+    // respondersComponent.render(otherResponders);
   });
 
   let pc1, caller;
@@ -90,12 +110,12 @@ export function peerConnect(stream) {
   let startTime;
 
   // Video tag capture must be set up after video tracks are enumerated.
-  leftVideo.oncanplay = call;
+  // leftVideo.oncanplay = call;
   if (leftVideo.readyState >= 3) {
     // HAVE_FUTURE_DATA
     // Video is already ready to play, call maybeCreateStream in case oncanplay
     // fired before we registered the event handler.
-    call();
+    // call();
   }
 
   leftVideo.play();
@@ -132,12 +152,23 @@ export function peerConnect(stream) {
     }
     const servers = null;
 
-    caller = createCallerConnection(servers, p1, stream, callerSignaller);
+    // caller = createCallerConnection(servers, p1, stream, callerSignaller);
+    caller = createCallerConnection(servers, p1, stream, nWCallerSignaller);
     pc1 = caller;
     peers.setConnection(p1, pc1);
     console.log("Created local peer connection object pc1");
 
-    responder = createResponderConnection(servers, p2, responderSignaller);
+    // responder = createResponderConnection(servers, p2, responderSignaller);
+    // responder = createResponderConnection(servers, p2, nWResponderSignaller);
+    // pc2 = responder;
+    // peers.setConnection(p2, pc2);
+    // console.log("Created remote peer connection object pc2");
+  }
+
+  function recieve() {
+    const servers = null;
+
+    responder = createResponderConnection(servers, p2, nWResponderSignaller);
     pc2 = responder;
     peers.setConnection(p2, pc2);
     console.log("Created remote peer connection object pc2");

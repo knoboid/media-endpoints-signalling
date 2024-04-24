@@ -38,17 +38,16 @@ wsServer.on("connection", (client, req) => {
           throw new Error(`Expect id of ${clientId}, instead got ${id}`);
         if (clientType === "caller") {
           console.log(`Registering caller ${clientId}`);
-          callers.addCLient(clientId, client, "available");
+          callers.addClient(clientId, client, "available");
         } else if (clientType === "responder") {
           console.log(`Registering responder ${clientId}`);
-          responders.addCLient(clientId, client, "available");
+          responders.addClient(clientId, client, "available");
           broadcastRespondersUpdate(responders.getList());
         }
         break;
 
       default:
         const { type, payload } = object;
-        console.log(type);
         switch (type) {
           case "info":
             client.send(
@@ -62,10 +61,66 @@ wsServer.on("connection", (client, req) => {
                 payload: { responders: responders.getList() },
               })
             );
+            break;
+          case "initiateCall":
+            /* first contact from a caller wishing to make a call */
+            const { responderID } = payload;
+            console.log(
+              `Preparing to initiate call  between ${clientId} and ${responderID}`
+            );
+            const isResponderAvailable =
+              responders.getStatus(responderID) === "available";
+            const isCallerAvailable =
+              callers.getStatus(clientId) === "available";
+            if (isResponderAvailable && isCallerAvailable) {
+              console.log("Responder is available");
+              client.send(
+                JSON.stringify({
+                  type: "initiateCallSuccess",
+                  payload: { responderID },
+                })
+              );
+              const responder = responders.getClient(responderID);
+              responder.send(
+                JSON.stringify({
+                  type: "initiateResponse",
+                  payload: { callerID: clientId },
+                })
+              );
+              responders.setStatus(responderID, "initCall");
+              callers.setStatus(clientId, "initCall");
+              responders.setOtherParty(responderID, clientId);
+              console.log(`Setting other party: ${clientId} ${responderID}`);
+              callers.setOtherParty(clientId, responderID);
+            } else {
+              console.log("Responder is NOT available");
+              client.send(
+                JSON.stringify({
+                  type: "initiateCallFailure",
+                  payload: { responderID },
+                })
+              );
+            }
+            break;
 
+          case "fromCaller":
+            console.log("Handling fromCaller");
+            const responderId = callers.getOtherParty(clientId);
+            console.log(responderId);
+            const responder = responders.getClient(responderId);
+            responder.send(JSON.stringify({ type, payload }));
+            break;
+
+          case "fromResponder":
+            console.log("Handling fromResponder");
+            const callerID = responders.getOtherParty(clientId);
+            console.log(callerID);
+            const caller = callers.getClient(callerID);
+            caller.send(JSON.stringify({ type, payload }));
             break;
 
           default:
+            console.log(`UNHANDLED WS TYPE ${type}`);
             break;
         }
         break;

@@ -6,6 +6,7 @@ class CallerSignaller extends EventTarget {
     super();
     this.socket = new WebSocket(url);
     let messageCounter = 0;
+    let responderID;
 
     this.socket.onopen = (e) => {
       console.log("SOCKET OPENED");
@@ -24,7 +25,6 @@ class CallerSignaller extends EventTarget {
 
         default:
           const messageObject = JSON.parse(message.data);
-          console.log("Got messasge");
           const { type, payload } = messageObject;
           switch (type) {
             case "info":
@@ -37,26 +37,45 @@ class CallerSignaller extends EventTarget {
                 new PayloadEvent("onUpdateResponders", responders)
               );
               break;
+            case "initiateCallSuccess":
+              responderID = payload.responderID;
+              this.dispatchEvent(
+                new PayloadEvent("initiateCallSuccess", { responderID })
+              );
+              break;
+            case "initiateCallFailure":
+              // const { responderID } = payload;
+              console.log("initiateCallFailure");
+              // console.log(responderID);
+              // console.log(payload.responders);
+              this.dispatchEvent(
+                new PayloadEvent("initiateCallFailure", { responderID })
+              );
+              break;
+
+            case "fromResponder":
+              console.log("got fromResponder");
+              this.dispatchEvent(new PayloadEvent("fromResponder", payload));
+              break;
 
             default:
+              console.log(
+                `caller signaller got unhandled message type ${type}`
+              );
               break;
           }
           break;
       }
       messageCounter++;
     };
-    // this.signallingChannel = signallingChannel;
-    // this.signallingChannel.addEventListener("fromResponder", (event) =>
-    //   this.dispatchEvent(new PayloadEvent("fromResponder", event.data))
-    // );
   }
 
   send(request) {
     this.socket.send(JSON.stringify(request));
   }
 
-  caller(data) {
-    // this.signallingChannel.caller(data);
+  caller(message) {
+    this.send({ type: "fromCaller", payload: message });
   }
 }
 

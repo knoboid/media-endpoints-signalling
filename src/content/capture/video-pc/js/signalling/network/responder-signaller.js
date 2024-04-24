@@ -24,32 +24,44 @@ class ResponderSignaller extends EventTarget {
 
         default:
           const messageObject = JSON.parse(message.data);
-          console.log("Got messasge");
           const { type, payload } = messageObject;
           switch (type) {
             case "info":
               console.log(payload);
               break;
 
+            case "initiateResponse":
+              /* Some else has initiated a call */
+              console.log("initiateResponse");
+              console.log(payload);
+              this.dispatchEvent(new PayloadEvent("initiateResponse", payload));
+              break;
+
+            case "fromCaller":
+              /* Some else has initiated a call */
+              console.log("got fromCaller");
+              console.log(payload);
+              this.dispatchEvent(new PayloadEvent("fromCaller", payload));
+              break;
+
             default:
+              console.log(
+                `responder signaller got unhandled message type ${type}`
+              );
               break;
           }
           break;
       }
       messageCounter++;
     };
-    // this.signallingChannel = signallingChannel;
-    // this.signallingChannel.addEventListener("fromCaller", (event) =>
-    //   this.dispatchEvent(new PayloadEvent("fromCaller", event.data))
-    // );
   }
 
   send(request) {
     this.socket.send(JSON.stringify(request));
   }
 
-  responder(data) {
-    this.signallingChannel.responder(data);
+  responder(message) {
+    this.send({ type: "fromResponder", payload: message });
   }
 }
 
