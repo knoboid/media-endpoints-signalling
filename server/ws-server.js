@@ -7,6 +7,17 @@ const responders = new Clients();
 
 const wsServer = new ws.Server({ noServer: true });
 
+function broadcastRespondersUpdate(respondersList) {
+  callers.getClients().forEach((client) => {
+    client.send(
+      JSON.stringify({
+        type: "updateResponders",
+        payload: { responders: respondersList },
+      })
+    );
+  });
+}
+
 wsServer.on("connection", (client, req) => {
   const initialRequest = req;
   const clientId = clientCounter;
@@ -29,6 +40,7 @@ wsServer.on("connection", (client, req) => {
         } else if (clientType === "responder") {
           console.log(`Registering responder ${clientId}`);
           responders.addCLient(clientId, client, "available");
+          broadcastRespondersUpdate(responders.getList());
         }
         break;
 
@@ -44,7 +56,7 @@ wsServer.on("connection", (client, req) => {
           case "getResponders":
             client.send(
               JSON.stringify({
-                type,
+                type: "updateResponders",
                 payload: { responders: responders.getList() },
               })
             );

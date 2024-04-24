@@ -29,13 +29,12 @@ class CallerSignaller extends EventTarget {
             case "info":
               console.log(payload);
               break;
-            case "getResponders":
+            case "updateResponders":
               const { responders } = payload;
               console.log(payload.responders);
               this.dispatchEvent(
                 new PayloadEvent("onUpdateResponders", responders)
               );
-
               break;
 
             default:

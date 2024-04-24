@@ -9,10 +9,7 @@ import ResponderSignaller from "./signalling/same-page/responder-signaller.js";
 import NWCallerSignaller from "./signalling/network/caller-signaller.js";
 import NWResponderSignaller from "./signalling/network/responder-signaller.js";
 
-import { callers, responders } from "./ui/fixtures.js";
 import RespondersList from "./ui/responders-list.js";
-
-let _responders = responders;
 
 // const wss = "wss://localhost:5501";
 const wss = "wss://192.168.43.35:5501";
@@ -23,7 +20,6 @@ const rightVideo = document.getElementById("rightVideo");
 const callButton = document.querySelector("#call-button");
 const callNumber = document.querySelector("#call-number");
 
-const refreshButton = document.querySelector("#refresh");
 const callersList = document.querySelector("#callers");
 const respondersList = document.querySelector("#responders");
 
@@ -35,17 +31,14 @@ callButton.onclick = () => {
   nWCallerSignaller.send({ type: "info" });
 };
 
-refreshButton.onclick = () => {
-  respondersComponent.render(_responders);
-  nWCallerSignaller.send({ type: "getResponders" });
-};
-
 const signallingChannel = new SignallingChannel();
 const callerSignaller = new CallerSignaller(signallingChannel);
 const responderSignaller = new ResponderSignaller(signallingChannel);
 
 const nWCallerSignaller = new NWCallerSignaller(wss);
 const nWResponderSignaller = new NWResponderSignaller(wss);
+
+respondersComponent.render([]);
 
 nWCallerSignaller.addEventListener("onUpdateResponders", (event) => {
   respondersComponent.render(event.data);

@@ -13,6 +13,10 @@ class Clients {
       return { id, status: client.status };
     });
   }
+
+  getClients() {
+    return Object.values(this.clients).map((obj) => obj.client);
+  }
 }
 
 module.exports = Clients;
