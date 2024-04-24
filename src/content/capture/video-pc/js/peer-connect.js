@@ -57,6 +57,11 @@ export function peerConnect(stream) {
   const connections = new ConnectionRegistry(peers);
   connections.connect(p1, p2);
 
+  respondersComponent.addEventListener("call", (e) => {
+    console.log("call pressed");
+    console.log(e.data);
+  });
+
   let pc1, caller;
   let pc2, responder;
   const offerOptions = {
