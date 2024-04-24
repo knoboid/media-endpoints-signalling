@@ -22,6 +22,7 @@ wsServer.on("connection", (client, req) => {
   const initialRequest = req;
   const clientId = clientCounter;
   let messageCounter = 0;
+  let clientType;
 
   client.send(clientId);
 
@@ -30,7 +31,8 @@ wsServer.on("connection", (client, req) => {
     const object = JSON.parse(message.toString());
     switch (messageCounter) {
       case 0:
-        const { id, clientType } = object;
+        const { id } = object;
+        clientType = object.clientType;
         if (isNaN(id)) throw new TypeError("Expected a number");
         if (id !== clientId)
           throw new Error(`Expect id of ${clientId}, instead got ${id}`);
@@ -69,6 +71,15 @@ wsServer.on("connection", (client, req) => {
         break;
     }
     messageCounter++;
+  });
+
+  client.on("close", () => {
+    console.log(`Closing connection to ${clientType} with id: ${clientId}`);
+    if (clientType === "caller") {
+      callers.remove(clientId);
+    } else if (clientType === "responder") {
+      responders.remove(clientId);
+    }
   });
 
   clientCounter++;

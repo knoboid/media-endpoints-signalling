@@ -17,6 +17,10 @@ class Clients {
   getClients() {
     return Object.values(this.clients).map((obj) => obj.client);
   }
+
+  remove(id) {
+    delete this.clients[id];
+  }
 }
 
 module.exports = Clients;
