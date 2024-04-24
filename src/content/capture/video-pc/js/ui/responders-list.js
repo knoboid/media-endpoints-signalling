@@ -16,9 +16,13 @@ class RespondersList extends EventTarget {
       const row = document.createElement("div");
       appendContentTo(row, "span", responder.id + delimiter);
       appendContentTo(row, "span", responder.status + delimiter);
-      const button = appendContentTo(row, "button", "call");
-      button.onclick = (e) => {
+      const callButton = appendContentTo(row, "button", "Call");
+      callButton.onclick = (e) => {
         this.dispatchEvent(new PayloadEvent("call", responder.id));
+      };
+      const hangupButton = appendContentTo(row, "button", "Hangup");
+      hangupButton.onclick = (e) => {
+        this.dispatchEvent(new PayloadEvent("hangup", responder.id));
       };
       this.element.appendChild(row);
     });

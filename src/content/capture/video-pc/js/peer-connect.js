@@ -20,9 +20,6 @@ let callerID, responderID;
 const leftVideo = document.getElementById("leftVideo");
 const rightVideo = document.getElementById("rightVideo");
 
-const callButton = document.querySelector("#call-button");
-const callNumber = document.querySelector("#call-number");
-
 const callersList = document.querySelector("#callers");
 const respondersList = document.querySelector("#responders");
 
@@ -30,12 +27,6 @@ const respondersList = document.querySelector("#responders");
 const responderIDElement = document.querySelector("#responder-id");
 
 const respondersComponent = new RespondersList(respondersList);
-
-callButton.onclick = () => {
-  console.log("clicked");
-  console.log(callNumber.value);
-  nWCallerSignaller.send({ type: "info" });
-};
 
 const signallingChannel = new SignallingChannel();
 const callerSignaller = new CallerSignaller(signallingChannel);
@@ -83,6 +74,15 @@ export function peerConnect(stream) {
       type: "initiateCall",
       payload: { responderID: e.data },
     });
+  });
+
+  respondersComponent.addEventListener("hangup", (e) => {
+    console.log("hangup pressed");
+    // console.log(e.data);
+    // nWCallerSignaller.send({
+    //   type: "initiateCall",
+    //   payload: { responderID: e.data },
+    // });
   });
 
   nWResponderSignaller.addEventListener("initiateResponse", () => {
