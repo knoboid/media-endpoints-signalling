@@ -1,25 +1,37 @@
-import PayloadEvent from "../payload-event.js";
-import { wss } from "../connections/util.js";
-
-// const socket = new WebSocket("wss://192.168.43.35:5501");
-const socket = new WebSocket("wss://localhost:5501");
-
-socket.onopen = function (e) {
-  console.log("SOCKET OPENED");
-  socket.send("My name is John");
-};
+// import PayloadEvent from "../../payload-event.js";
 
 class CallerSignaller extends EventTarget {
-  constructor(signallingChannel) {
+  constructor(url) {
     super();
-    this.signallingChannel = signallingChannel;
-    this.signallingChannel.addEventListener("fromResponder", (event) =>
-      this.dispatchEvent(new PayloadEvent("fromResponder", event.data))
-    );
+    this.socket = new WebSocket(url);
+    const counter = 0;
+
+    this.socket.onopen = (e) => {
+      console.log("SOCKET OPENED");
+    };
+
+    this.socket.onmessage = (message) => {
+      switch (counter) {
+        case 0:
+          const id = Number(message.data);
+          if (isNaN(id)) throw new TypeError("Expect a number");
+          console.log(`Setting id to ${id}`);
+          this.id = id;
+          this.socket.send(id);
+          break;
+
+        default:
+          break;
+      }
+    };
+    // this.signallingChannel = signallingChannel;
+    // this.signallingChannel.addEventListener("fromResponder", (event) =>
+    //   this.dispatchEvent(new PayloadEvent("fromResponder", event.data))
+    // );
   }
 
   caller(data) {
-    this.signallingChannel.caller(data);
+    // this.signallingChannel.caller(data);
   }
 }
 
