@@ -7,9 +7,12 @@ import SignallingChannel from "./signalling/same-page/signalling-channel.js";
 import CallerSignaller from "./signalling/same-page/caller-signaller.js";
 import ResponderSignaller from "./signalling/same-page/responder-signaller.js";
 import NWCallerSignaller from "./signalling/network/caller-signaller.js";
+import NWResponderSignaller from "./signalling/network/responder-signaller.js";
 
 import { callers, responders } from "./ui/fixtures.js";
 import RespondersList from "./ui/responders-list.js";
+
+let _responders = responders;
 
 // const wss = "wss://localhost:5501";
 const wss = "wss://192.168.43.35:5501";
@@ -33,7 +36,8 @@ callButton.onclick = () => {
 };
 
 refreshButton.onclick = () => {
-  respondersComponent.render(responders);
+  respondersComponent.render(_responders);
+  nWCallerSignaller.send({ type: "getResponders" });
 };
 
 const signallingChannel = new SignallingChannel();
@@ -41,6 +45,11 @@ const callerSignaller = new CallerSignaller(signallingChannel);
 const responderSignaller = new ResponderSignaller(signallingChannel);
 
 const nWCallerSignaller = new NWCallerSignaller(wss);
+const nWResponderSignaller = new NWResponderSignaller(wss);
+
+nWCallerSignaller.addEventListener("onUpdateResponders", (event) => {
+  respondersComponent.render(event.data);
+});
 
 export function peerConnect(stream) {
   console.log("success");

@@ -1,4 +1,4 @@
-// import PayloadEvent from "../../payload-event.js";
+import PayloadEvent from "../../payload-event.js";
 const clientType = "caller";
 
 class CallerSignaller extends EventTarget {
@@ -28,6 +28,14 @@ class CallerSignaller extends EventTarget {
           switch (type) {
             case "info":
               console.log(payload);
+              break;
+            case "getResponders":
+              const { responders } = payload;
+              console.log(payload.responders);
+              this.dispatchEvent(
+                new PayloadEvent("onUpdateResponders", responders)
+              );
+
               break;
 
             default:

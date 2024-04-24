@@ -3,14 +3,14 @@ class Clients {
     this.clients = {};
   }
 
-  addCLient(id, client, state) {
-    this.clients[id] = { client, state };
+  addCLient(id, client, status) {
+    this.clients[id] = { client, status };
   }
 
   getList() {
     return Object.keys(this.clients).map((id) => {
       const client = this.clients[id];
-      return { id, state: client.state };
+      return { id, status: client.status };
     });
   }
 }

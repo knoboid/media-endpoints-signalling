@@ -12,11 +12,10 @@ wsServer.on("connection", (client, req) => {
   const clientId = clientCounter;
   let messageCounter = 0;
 
-  console.log(`Got connection: ${clientId}`);
   client.send(clientId);
 
   client.on("message", (message) => {
-    console.log(`Got message  '${messageCounter}' for client '${clientId}'`);
+    // console.log(`Got message  '${messageCounter}' for client '${clientId}'`);
     const object = JSON.parse(message.toString());
     switch (messageCounter) {
       case 0:
@@ -24,11 +23,12 @@ wsServer.on("connection", (client, req) => {
         if (isNaN(id)) throw new TypeError("Expected a number");
         if (id !== clientId)
           throw new Error(`Expect id of ${clientId}, instead got ${id}`);
-        console.log(clientType);
         if (clientType === "caller") {
-          callers.addCLient(clientId, client, clientType, "available");
+          console.log(`Registering caller ${clientId}`);
+          callers.addCLient(clientId, client, "available");
         } else if (clientType === "responder") {
-          responders.addCLient(clientId, client, clientType, "available");
+          console.log(`Registering responder ${clientId}`);
+          responders.addCLient(clientId, client, "available");
         }
         break;
 
@@ -40,6 +40,15 @@ wsServer.on("connection", (client, req) => {
             client.send(
               JSON.stringify({ type, payload: { client, initialRequest } })
             );
+            break;
+          case "getResponders":
+            client.send(
+              JSON.stringify({
+                type,
+                payload: { responders: responders.getList() },
+              })
+            );
+
             break;
 
           default:
