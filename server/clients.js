@@ -12,7 +12,7 @@ class Clients {
   }
 
   addClient(id, client, status) {
-    this.clients[id] = { client, status };
+    this.clients[id] = { client, status, otherPartyID: null };
   }
 
   getList() {
@@ -38,8 +38,12 @@ class Clients {
     this.clients[id].otherPartyID = otherPartyID;
   }
 
+  removeOtherParty(id) {
+    this.clients[id].otherPartyID = null;
+  }
+
   getOtherParty(id) {
-    return this.clients[id].otherPartyID ? this.clients[id].otherPartyID : null;
+    return this.clients[id].otherPartyID;
   }
 }
 

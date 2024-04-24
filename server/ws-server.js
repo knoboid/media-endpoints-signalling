@@ -89,9 +89,8 @@ wsServer.on("connection", (client, req) => {
               );
               responders.setStatus(responderID, "initCall");
               callers.setStatus(clientId, "initCall");
-              responders.setOtherParty(responderID, clientId);
-              console.log(`Setting other party: ${clientId} ${responderID}`);
               callers.setOtherParty(clientId, responderID);
+              responders.setOtherParty(responderID, clientId);
             } else {
               console.log("Responder is NOT available");
               client.send(
