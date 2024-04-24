@@ -14,6 +14,8 @@ import RespondersList from "./ui/responders-list.js";
 // const wss = "wss://localhost:5501";
 const wss = "wss://192.168.43.35:5501";
 
+let callerID, responderID;
+
 const leftVideo = document.getElementById("leftVideo");
 const rightVideo = document.getElementById("rightVideo");
 
@@ -22,6 +24,9 @@ const callNumber = document.querySelector("#call-number");
 
 const callersList = document.querySelector("#callers");
 const respondersList = document.querySelector("#responders");
+
+// const callerIDElement = document.querySelector("#caller-id");
+const responderIDElement = document.querySelector("#responder-id");
 
 const respondersComponent = new RespondersList(respondersList);
 
@@ -38,10 +43,23 @@ const responderSignaller = new ResponderSignaller(signallingChannel);
 const nWCallerSignaller = new NWCallerSignaller(wss);
 const nWResponderSignaller = new NWResponderSignaller(wss);
 
+nWCallerSignaller.addEventListener("onGotCallerID", (e) => {
+  callerID = e.data;
+  // callerIDElement.innerHTML = callerID;
+});
+
+nWResponderSignaller.addEventListener("onGotResponderID", (e) => {
+  responderID = e.data;
+  responderIDElement.innerHTML = responderID;
+});
+
 respondersComponent.render([]);
 
 nWCallerSignaller.addEventListener("onUpdateResponders", (event) => {
-  respondersComponent.render(event.data);
+  const otherResponders = event.data.filter(
+    (responder) => Number(responder.id) !== responderID
+  );
+  respondersComponent.render(otherResponders);
 });
 
 export function peerConnect(stream) {

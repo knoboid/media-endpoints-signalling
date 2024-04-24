@@ -19,6 +19,7 @@ class CallerSignaller extends EventTarget {
           console.log(`Setting id to ${id}`);
           this.id = id;
           this.socket.send(JSON.stringify({ id, clientType }));
+          this.dispatchEvent(new PayloadEvent("onGotCallerID", id));
           break;
 
         default:
