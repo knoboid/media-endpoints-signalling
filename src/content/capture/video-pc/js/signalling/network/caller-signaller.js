@@ -1,4 +1,5 @@
 // import PayloadEvent from "../../payload-event.js";
+const clientType = "caller";
 
 class CallerSignaller extends EventTarget {
   constructor(url) {
@@ -17,7 +18,7 @@ class CallerSignaller extends EventTarget {
           if (isNaN(id)) throw new TypeError("Expect a number");
           console.log(`Setting id to ${id}`);
           this.id = id;
-          this.socket.send(id);
+          this.socket.send(JSON.stringify({ id, clientType }));
           break;
 
         default:
