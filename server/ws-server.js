@@ -6,7 +6,8 @@ const clients = new Clients();
 
 const wsServer = new ws.Server({ noServer: true });
 
-wsServer.on("connection", (client) => {
+wsServer.on("connection", (client, req) => {
+  const initialRequest = req;
   const clientId = clientCounter;
   let messageCounter = 0;
 
@@ -26,8 +27,22 @@ wsServer.on("connection", (client) => {
         clients.addCLient(clientId, client);
 
       default:
+        const object = JSON.parse(message.toString());
+        const { type, payload } = object;
+        console.log(type);
+        switch (type) {
+          case "info":
+            client.send(
+              JSON.stringify({ type, payload: { client, initialRequest } })
+            );
+            break;
+
+          default:
+            break;
+        }
         break;
     }
+    messageCounter++;
   });
 
   clientCounter++;

@@ -11,7 +11,8 @@ import NWCallerSignaller from "./signalling/network/caller-signaller.js";
 import { callers, responders } from "./ui/fixtures.js";
 import RespondersList from "./ui/responders-list.js";
 
-const wss = "wss://localhost:5501";
+// const wss = "wss://localhost:5501";
+const wss = "wss://192.168.43.35:5501";
 
 const leftVideo = document.getElementById("leftVideo");
 const rightVideo = document.getElementById("rightVideo");
@@ -28,11 +29,18 @@ const respondersComponent = new RespondersList(respondersList);
 callButton.onclick = () => {
   console.log("clicked");
   console.log(callNumber.value);
+  nWCallerSignaller.send({ type: "info" });
 };
 
 refreshButton.onclick = () => {
   respondersComponent.render(responders);
 };
+
+const signallingChannel = new SignallingChannel();
+const callerSignaller = new CallerSignaller(signallingChannel);
+const responderSignaller = new ResponderSignaller(signallingChannel);
+
+const nWCallerSignaller = new NWCallerSignaller(wss);
 
 export function peerConnect(stream) {
   console.log("success");
@@ -40,12 +48,6 @@ export function peerConnect(stream) {
 
   const p1 = "p1";
   const p2 = "p2";
-
-  const signallingChannel = new SignallingChannel();
-  const callerSignaller = new CallerSignaller(signallingChannel);
-  const responderSignaller = new ResponderSignaller(signallingChannel);
-
-  const nWCallerSignaller = new NWCallerSignaller(wss);
 
   const peers = new PeerRegistry();
   peers.addPeer(new Peer(p1));
