@@ -58,6 +58,10 @@ class CallerSignaller extends EventTarget {
               this.dispatchEvent(new PayloadEvent("fromResponder", payload));
               break;
 
+            case "terminated":
+              this.dispatchEvent(new PayloadEvent("terminated"));
+              break;
+
             default:
               console.log(
                 `caller signaller got unhandled message type ${type}`

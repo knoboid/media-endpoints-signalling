@@ -18,16 +18,11 @@ class RespondersList extends EventTarget {
       appendContentTo(row, "span", responder.status + delimiter);
       const callButton = appendContentTo(row, "button", "Call");
       const hangupButton = appendContentTo(row, "button", "Hangup");
-      hangupButton.disabled = true;
       callButton.onclick = (e) => {
         this.dispatchEvent(new PayloadEvent("call", responder.id));
-        hangupButton.disabled = false;
-        callButton.disabled = true;
       };
       hangupButton.onclick = (e) => {
         this.dispatchEvent(new PayloadEvent("hangup", responder.id));
-        hangupButton.disabled = true;
-        callButton.disabled = false;
       };
       this.element.appendChild(row);
     });

@@ -124,12 +124,18 @@ wsServer.on("connection", (client, req) => {
               const responderId = callers.getOtherParty(clientId);
               callers.setStatus(clientId, "available");
               callers.removeOtherParty(clientId);
-              console.log(`Other party is ${responderId}`);
               responders.setStatus(responderId, "available");
               responders.removeOtherParty(responderId);
               const responder = responders.getClient(responderId);
               responder.send(JSON.stringify({ type }));
             } else if (clientType === "responder") {
+              const callerId = responders.getOtherParty(clientId);
+              responders.setStatus(clientId, "available");
+              responders.removeOtherParty(clientId);
+              callers.setStatus(callerId, "available");
+              callers.removeOtherParty(callerId);
+              const caller = callers.getClient(callerId);
+              caller.send(JSON.stringify({ type }));
             }
 
             break;

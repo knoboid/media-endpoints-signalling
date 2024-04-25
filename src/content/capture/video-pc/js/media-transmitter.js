@@ -55,6 +55,10 @@ export function setupTransmitter(stream) {
     call();
   });
 
+  nWCallerSignaller.addEventListener("terminated", (event) => {
+    pc.close();
+  });
+
   const offerOptions = {
     offerToReceiveAudio: 1,
     offerToReceiveVideo: 1,

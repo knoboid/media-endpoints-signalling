@@ -11,6 +11,7 @@ let responderID;
 const rightVideo = document.getElementById("rightVideo");
 const callersList = document.querySelector("#callers");
 const responderIDElement = document.querySelector("#responder-id");
+const recieverHangup = document.querySelector("#reciever-hangup");
 const nWResponderSignaller = new NWResponderSignaller(wss);
 
 nWResponderSignaller.addEventListener("onGotResponderID", (e) => {
@@ -21,6 +22,14 @@ nWResponderSignaller.addEventListener("onGotResponderID", (e) => {
 export function setupReciever() {
   const p2 = "p2";
   let pc;
+
+  recieverHangup.onclick = () => {
+    console.log("R HANG");
+    pc.close();
+    nWResponderSignaller.send({
+      type: "terminated",
+    });
+  };
 
   nWResponderSignaller.addEventListener("initiateResponse", () => {
     recieve();
