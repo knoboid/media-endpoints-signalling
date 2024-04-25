@@ -28,11 +28,10 @@ class CallerSignaller extends EventTarget {
           const { type, payload } = messageObject;
           switch (type) {
             case "info":
-              console.log(payload);
+              this.dispatchEvent(new PayloadEvent("info", payload));
               break;
             case "updateResponders":
               const { responders } = payload;
-              console.log(payload.responders);
               this.dispatchEvent(
                 new PayloadEvent("onUpdateResponders", responders)
               );
@@ -44,17 +43,12 @@ class CallerSignaller extends EventTarget {
               );
               break;
             case "initiateCallFailure":
-              // const { responderID } = payload;
-              console.log("initiateCallFailure");
-              // console.log(responderID);
-              // console.log(payload.responders);
               this.dispatchEvent(
                 new PayloadEvent("initiateCallFailure", { responderID })
               );
               break;
 
             case "fromResponder":
-              console.log("got fromResponder");
               this.dispatchEvent(new PayloadEvent("fromResponder", payload));
               break;
 
