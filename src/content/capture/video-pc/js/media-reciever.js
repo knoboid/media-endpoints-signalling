@@ -20,9 +20,15 @@ nWResponderSignaller.addEventListener("onGotResponderID", (e) => {
 
 export function setupReciever() {
   const p2 = "p2";
+  let pc;
 
   nWResponderSignaller.addEventListener("initiateResponse", () => {
     recieve();
+  });
+
+  nWResponderSignaller.addEventListener("terminated", () => {
+    console.log("Reciever terminating");
+    pc.close();
   });
 
   const offerOptions = {
@@ -38,6 +44,6 @@ export function setupReciever() {
 
   function recieve() {
     const servers = null;
-    createResponderConnection(servers, p2, nWResponderSignaller);
+    pc = createResponderConnection(servers, p2, nWResponderSignaller);
   }
 }

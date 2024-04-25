@@ -29,7 +29,8 @@ nWCallerSignaller.addEventListener("onUpdateResponders", (event) => {
 
 export function setupTransmitter(stream) {
   leftVideo.srcObject = stream;
-  const p1 = "p1";
+  const name = "p1";
+  let pc;
 
   respondersComponent.addEventListener("call", (e) => {
     console.log("call pressed");
@@ -42,6 +43,10 @@ export function setupTransmitter(stream) {
 
   respondersComponent.addEventListener("hangup", (e) => {
     console.log("hangup pressed");
+    pc.close();
+    nWCallerSignaller.send({
+      type: "terminated",
+    });
   });
 
   nWCallerSignaller.addEventListener("initiateCallSuccess", (event) => {
@@ -60,6 +65,6 @@ export function setupTransmitter(stream) {
   function call() {
     console.log("Starting call");
     const servers = null;
-    createCallerConnection(servers, p1, stream, nWCallerSignaller);
+    pc = createCallerConnection(servers, name, stream, nWCallerSignaller);
   }
 }

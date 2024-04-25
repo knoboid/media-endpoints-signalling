@@ -118,6 +118,22 @@ wsServer.on("connection", (client, req) => {
             caller.send(JSON.stringify({ type, payload }));
             break;
 
+          case "terminated":
+            console.log("Handling terminated");
+            if (clientType === "caller") {
+              const responderId = callers.getOtherParty(clientId);
+              callers.setStatus(clientId, "available");
+              callers.removeOtherParty(clientId);
+              console.log(`Other party is ${responderId}`);
+              responders.setStatus(responderId, "available");
+              responders.removeOtherParty(responderId);
+              const responder = responders.getClient(responderId);
+              responder.send(JSON.stringify({ type }));
+            } else if (clientType === "responder") {
+            }
+
+            break;
+
           default:
             console.log(`UNHANDLED WS TYPE ${type}`);
             break;

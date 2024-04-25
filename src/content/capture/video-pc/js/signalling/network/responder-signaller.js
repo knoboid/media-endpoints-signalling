@@ -38,10 +38,14 @@ class ResponderSignaller extends EventTarget {
               break;
 
             case "fromCaller":
-              /* Some else has initiated a call */
               console.log("got fromCaller");
               console.log(payload);
               this.dispatchEvent(new PayloadEvent("fromCaller", payload));
+              break;
+
+            case "terminated":
+              console.log("got terminated");
+              this.dispatchEvent(new PayloadEvent("terminated"));
               break;
 
             default:
