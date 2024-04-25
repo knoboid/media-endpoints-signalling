@@ -1,6 +1,3 @@
-import Peer from "./peer.js";
-import PeerRegistry from "./peer-registrty.js";
-import ConnectionRegistry from "./connection-registry.js";
 import { createCallerConnection } from "./connections/caller-connection.js";
 import { createResponderConnection } from "./connections/responder-connection.js";
 import NWCallerSignaller from "./signalling/network/caller-signaller.js";
@@ -50,12 +47,6 @@ export function peerConnect(stream) {
 
   const p1 = "p1";
   const p2 = "p2";
-
-  const peers = new PeerRegistry();
-  peers.addPeer(new Peer(p1));
-  peers.addPeer(new Peer(p2));
-  const connections = new ConnectionRegistry(peers);
-  connections.connect(p1, p2);
 
   respondersComponent.addEventListener("call", (e) => {
     console.log("call pressed");
@@ -108,15 +99,15 @@ export function peerConnect(stream) {
 
   function call() {
     console.log("Starting call");
-    startTime = window.performance.now();
-    const videoTracks = stream.getVideoTracks();
-    const audioTracks = stream.getAudioTracks();
-    if (videoTracks.length > 0) {
-      console.log(`Using video device: ${videoTracks[0].label}`);
-    }
-    if (audioTracks.length > 0) {
-      console.log(`Using audio device: ${audioTracks[0].label}`);
-    }
+    // startTime = window.performance.now();
+    // const videoTracks = stream.getVideoTracks();
+    // const audioTracks = stream.getAudioTracks();
+    // if (videoTracks.length > 0) {
+    //   console.log(`Using video device: ${videoTracks[0].label}`);
+    // }
+    // if (audioTracks.length > 0) {
+    //   console.log(`Using audio device: ${audioTracks[0].label}`);
+    // }
     const servers = null;
 
     caller = createCallerConnection(servers, p1, stream, nWCallerSignaller);

@@ -5,7 +5,8 @@
  *  that can be found in the LICENSE file in the root of the source
  *  tree.
  */
-import { peerConnect } from "./peer-connect.js";
+import { setupTransmitter } from "./media-transmitter.js";
+import { setupReciever } from "./media-reciever.js";
 
 const constraints = {
   audio: true,
@@ -16,7 +17,9 @@ function handleError(error) {
   throw new Error(error);
 }
 
-navigator.mediaDevices
-  .getUserMedia(constraints)
-  .then(peerConnect)
-  .catch(handleError);
+function setup(stream) {
+  setupTransmitter(stream);
+  setupReciever();
+}
+
+navigator.mediaDevices.getUserMedia(constraints).then(setup).catch(handleError);
