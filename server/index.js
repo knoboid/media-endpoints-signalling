@@ -6,7 +6,9 @@ const express = require("express");
 
 const app = express();
 
-const appPath = "../src/content/datachannel/basic";
+const appPath = ".";
+
+app.use(express.static(appPath));
 
 const httpsServer = https.createServer(credentials, app);
 
