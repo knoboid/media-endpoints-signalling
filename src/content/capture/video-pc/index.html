@@ -15,7 +15,6 @@
       content="width=device-width, user-scalable=yes, initial-scale=1, maximum-scale=1"
     />
     <meta itemprop="description" content="Client-side WebRTC code samples" />
-    <meta itemprop="image" content="../../../images/webrtc-icon-192x192.png" />
     <meta itemprop="name" content="WebRTC code samples" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta id="theme-color" name="theme-color" content="#ffffff" />
@@ -24,11 +23,6 @@
 
     <title>Video to peer connection</title>
 
-    <link
-      rel="icon"
-      sizes="192x192"
-      href="../../../images/webrtc-icon-192x192.png"
-    />
     <!-- <link
       href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700"
       rel="stylesheet"
@@ -40,12 +34,7 @@
 
   <body>
     <div id="container">
-      <h1>
-        <a href="//webrtc.github.io/samples/" title="WebRTC samples homepage"
-          >WebRTC samples</a
-        >
-        <span>Stream from a video to a peer connection</span>
-      </h1>
+      <h1>ID: <span id="responder-id"></span></h1>
 
       <video id="leftVideo" playsinline controls muted>
         <!-- NB CORS: https://bugzilla.mozilla.org/show_bug.cgi?id=1177793 -->
@@ -54,11 +43,7 @@
         <p>This browser does not support the video element.</p>
       </video>
 
-      <video id="rightVideo" playsinline autoplay controls muted></video>
-      <p>
-        <span id="caller-id"></span> ID:
-        <span id="responder-id"></span>
-      </p>
+      <video id="rightVideo" playsinline autoplay controls></video>
 
       <div id="callers"></div>
       <h3>Registered Responders</h3>
