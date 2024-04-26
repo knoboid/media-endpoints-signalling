@@ -87,10 +87,11 @@ wsServer.on("connection", (client, req) => {
                   payload: { callerID: clientId },
                 })
               );
-              responders.setStatus(responderID, "initCall");
-              callers.setStatus(clientId, "initCall");
+              responders.setStatus(responderID, "busy");
+              callers.setStatus(clientId, "busy");
               callers.setOtherParty(clientId, responderID);
               responders.setOtherParty(responderID, clientId);
+              broadcastRespondersUpdate(responders.getList());
             } else {
               console.log("Responder is NOT available");
               client.send(
@@ -127,7 +128,7 @@ wsServer.on("connection", (client, req) => {
               responders.setStatus(responderId, "available");
               responders.removeOtherParty(responderId);
               const responder = responders.getClient(responderId);
-              responder.send(JSON.stringify({ type }));
+              responder.send(JSON.stringify({ type: "terminated" }));
             } else if (clientType === "responder") {
               const callerId = responders.getOtherParty(clientId);
               responders.setStatus(clientId, "available");
@@ -135,9 +136,9 @@ wsServer.on("connection", (client, req) => {
               callers.setStatus(callerId, "available");
               callers.removeOtherParty(callerId);
               const caller = callers.getClient(callerId);
-              caller.send(JSON.stringify({ type }));
+              caller.send(JSON.stringify({ type: "terminated" }));
             }
-
+            broadcastRespondersUpdate(responders.getList());
             break;
 
           default:
@@ -151,11 +152,33 @@ wsServer.on("connection", (client, req) => {
 
   client.on("close", () => {
     console.log(`Closing connection to ${clientType} with id: ${clientId}`);
+    // TODO tidy up with any other parties
     if (clientType === "caller") {
+      const responderId = callers.getOtherParty(clientId);
+      if (responderId !== null) {
+        callers.setStatus(clientId, "available");
+        callers.removeOtherParty(clientId);
+        responders.setStatus(responderId, "available");
+        responders.removeOtherParty(responderId);
+        const responder = responders.getClient(responderId);
+        responder.send(JSON.stringify({ type: "terminated" }));
+      }
+
       callers.remove(clientId);
     } else if (clientType === "responder") {
+      const callerId = responders.getOtherParty(clientId);
+      if (callerId !== null) {
+        responders.setStatus(clientId, "available");
+        responders.removeOtherParty(clientId);
+        callers.setStatus(callerId, "available");
+        callers.removeOtherParty(callerId);
+        const caller = callers.getClient(callerId);
+        caller.send(JSON.stringify({ type: "terminated" }));
+      }
+
       responders.remove(clientId);
     }
+    broadcastRespondersUpdate(responders.getList());
   });
 
   clientCounter++;
