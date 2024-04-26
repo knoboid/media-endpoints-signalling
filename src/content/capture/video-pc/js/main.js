@@ -14,12 +14,24 @@ const constraints = {
 };
 
 function handleError(error) {
-  throw new Error(error);
+  // const wss = "wss://localhost:5501";
+  const wss = "wss://192.168.43.35:5501";
+  // const wss = "wss://192.168.0.72:5501";
+  const servers = null;
+
+  setupReciever(servers, wss);
+
+  // throw new Error(error);
 }
 
 function setup(stream) {
-  setupTransmitter(stream);
-  setupReciever();
+  // const wss = "wss://localhost:5501";
+  const wss = "wss://192.168.43.35:5501";
+  // const wss = "wss://192.168.0.72:5501";
+  const servers = null;
+
+  setupTransmitter(servers, wss, stream);
+  setupReciever(servers, wss);
 }
 
 navigator.mediaDevices.getUserMedia(constraints).then(setup).catch(handleError);
