@@ -7,12 +7,12 @@ const responders = new Clients();
 
 const wsServer = new ws.Server({ noServer: true });
 
-function broadcastRespondersUpdate(respondersList) {
+function broadcastResponders() {
   callers.getClients().forEach((client) => {
     client.send(
       JSON.stringify({
         type: "updateResponders",
-        payload: { responders: respondersList },
+        payload: { responders: responders.getList() },
       })
     );
   });
@@ -42,7 +42,7 @@ wsServer.on("connection", (client, req) => {
         } else if (clientType === "responder") {
           console.log(`Registering responder ${clientId}`);
           responders.addClient(clientId, client, "available");
-          broadcastRespondersUpdate(responders.getList());
+          broadcastResponders();
         }
         break;
 
@@ -91,7 +91,7 @@ wsServer.on("connection", (client, req) => {
               callers.setStatus(clientId, "busy");
               callers.setOtherParty(clientId, responderID);
               responders.setOtherParty(responderID, clientId);
-              broadcastRespondersUpdate(responders.getList());
+              broadcastResponders();
             } else {
               console.log("Responder is NOT available");
               client.send(
@@ -138,7 +138,7 @@ wsServer.on("connection", (client, req) => {
               const caller = callers.getClient(callerId);
               caller.send(JSON.stringify({ type: "terminated" }));
             }
-            broadcastRespondersUpdate(responders.getList());
+            broadcastResponders();
             break;
 
           default:
@@ -178,7 +178,7 @@ wsServer.on("connection", (client, req) => {
 
       responders.remove(clientId);
     }
-    broadcastRespondersUpdate(responders.getList());
+    broadcastResponders();
   });
 
   clientCounter++;
