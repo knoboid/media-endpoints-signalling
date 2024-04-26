@@ -3,6 +3,10 @@ class Clients {
     this.clients = {};
   }
 
+  contains(id) {
+    return this.clients[id] ? true : false;
+  }
+
   getClient(id) {
     return this.clients[id].client;
   }
@@ -34,16 +38,21 @@ class Clients {
     const client = (this.clients[id].status = status);
   }
 
-  setOtherParty(id, otherPartyID) {
-    this.clients[id].otherPartyID = otherPartyID;
+  isAvailable(id) {
+    console.log(id, this.getStatus(id));
+    return this.getStatus(id) === "available";
   }
 
-  removeOtherParty(id) {
-    this.clients[id].otherPartyID = null;
+  isBusy(id) {
+    return this.getStatus(id) === "busy";
   }
 
-  getOtherParty(id) {
-    return this.clients[id].otherPartyID;
+  setAvailable(id) {
+    this.setStatus("available");
+  }
+
+  setBusy(id) {
+    this.setStatus("busy");
   }
 }
 

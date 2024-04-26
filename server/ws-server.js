@@ -1,9 +1,11 @@
 const ws = require("ws");
 const Clients = require("./clients");
+const Connections = require("./connections");
 let clientCounter = 0;
 
 const callers = new Clients();
 const responders = new Clients();
+const connections = new Connections(callers, responders);
 
 const wsServer = new ws.Server({ noServer: true });
 
@@ -68,11 +70,7 @@ wsServer.on("connection", (client, req) => {
             console.log(
               `Preparing to initiate call  between ${clientId} and ${responderID}`
             );
-            const isResponderAvailable =
-              responders.getStatus(responderID) === "available";
-            const isCallerAvailable =
-              callers.getStatus(clientId) === "available";
-            if (isResponderAvailable && isCallerAvailable) {
+            if (connections.attempt(clientId, responderID)) {
               console.log("Responder is available");
               client.send(
                 JSON.stringify({
@@ -87,10 +85,6 @@ wsServer.on("connection", (client, req) => {
                   payload: { callerID: clientId },
                 })
               );
-              responders.setStatus(responderID, "busy");
-              callers.setStatus(clientId, "busy");
-              callers.setOtherParty(clientId, responderID);
-              responders.setOtherParty(responderID, clientId);
               broadcastResponders();
             } else {
               console.log("Responder is NOT available");
@@ -105,37 +99,24 @@ wsServer.on("connection", (client, req) => {
 
           case "fromCaller":
             console.log("Handling fromCaller");
-            const responderId = callers.getOtherParty(clientId);
-            console.log(responderId);
-            const responder = responders.getClient(responderId);
+            const responder = connections.getOtherPartysSocket(clientId);
             responder.send(JSON.stringify({ type, payload }));
             break;
 
           case "fromResponder":
             console.log("Handling fromResponder");
-            const callerID = responders.getOtherParty(clientId);
-            console.log(callerID);
-            const caller = callers.getClient(callerID);
+            const caller = connections.getOtherPartysSocket(clientId);
             caller.send(JSON.stringify({ type, payload }));
             break;
 
           case "terminated":
             console.log("Handling terminated");
+            const parties = connections.terminate(clientId);
             if (clientType === "caller") {
-              const responderId = callers.getOtherParty(clientId);
-              callers.setStatus(clientId, "available");
-              callers.removeOtherParty(clientId);
-              responders.setStatus(responderId, "available");
-              responders.removeOtherParty(responderId);
-              const responder = responders.getClient(responderId);
+              const responder = responders.getClient(parties.responderID);
               responder.send(JSON.stringify({ type: "terminated" }));
             } else if (clientType === "responder") {
-              const callerId = responders.getOtherParty(clientId);
-              responders.setStatus(clientId, "available");
-              responders.removeOtherParty(clientId);
-              callers.setStatus(callerId, "available");
-              callers.removeOtherParty(callerId);
-              const caller = callers.getClient(callerId);
+              const caller = callers.getClient(parties.callerID);
               caller.send(JSON.stringify({ type: "terminated" }));
             }
             broadcastResponders();
@@ -153,31 +134,22 @@ wsServer.on("connection", (client, req) => {
   client.on("close", () => {
     console.log(`Closing connection to ${clientType} with id: ${clientId}`);
     // TODO tidy up with any other parties
+    const parties = connections.terminateIfBusy(clientId);
+
     if (clientType === "caller") {
-      const responderId = callers.getOtherParty(clientId);
-      if (responderId !== null) {
-        callers.setStatus(clientId, "available");
-        callers.removeOtherParty(clientId);
-        responders.setStatus(responderId, "available");
-        responders.removeOtherParty(responderId);
-        const responder = responders.getClient(responderId);
+      if (parties) {
+        const responder = responders.getClient(parties.responderID);
         responder.send(JSON.stringify({ type: "terminated" }));
       }
-
       callers.remove(clientId);
     } else if (clientType === "responder") {
-      const callerId = responders.getOtherParty(clientId);
-      if (callerId !== null) {
-        responders.setStatus(clientId, "available");
-        responders.removeOtherParty(clientId);
-        callers.setStatus(callerId, "available");
-        callers.removeOtherParty(callerId);
-        const caller = callers.getClient(callerId);
+      if (parties) {
+        const caller = callers.getClient(parties.callerID);
         caller.send(JSON.stringify({ type: "terminated" }));
       }
-
       responders.remove(clientId);
     }
+
     broadcastResponders();
   });
 
