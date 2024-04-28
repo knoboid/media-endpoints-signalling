@@ -13,23 +13,17 @@ const constraints = {
   video: true,
 };
 
+// const wss = "wss://localhost:5501";
+// const wss = "wss://192.168.43.35:5501";
+const wss = "wss://192.168.0.72:5502";
+// const wss = "wss://192.168.0.72:5501";
+const servers = null;
+
 function handleError(error) {
-  // const wss = "wss://localhost:5501";
-  const wss = "wss://192.168.43.35:5501";
-  // const wss = "wss://192.168.0.72:5501";
-  const servers = null;
-
   setupReciever(servers, wss);
-
-  // throw new Error(error);
 }
 
 function setup(stream) {
-  // const wss = "wss://localhost:5501";
-  const wss = "wss://192.168.43.35:5501";
-  // const wss = "wss://192.168.0.72:5501";
-  const servers = null;
-
   setupTransmitter(servers, wss, stream);
   setupReciever(servers, wss);
 }
