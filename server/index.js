@@ -6,13 +6,13 @@ const express = require("express");
 
 const app = express();
 
-const appPath = ".";
+const appPath = "./src/content/capture/video-pc";
 
 app.use(express.static(appPath));
 
 const httpsServer = https.createServer(credentials, app);
 
-httpsServer.listen(5501);
+httpsServer.listen(5502);
 
 httpsServer.on("upgrade", (request, socket, head) => {
   wsServer.handleUpgrade(request, socket, head, (socket) => {
