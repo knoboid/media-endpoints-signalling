@@ -19,15 +19,8 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta id="theme-color" name="theme-color" content="#ffffff" />
 
-    <base target="_blank" />
-
     <title>Video to peer connection</title>
 
-    <!-- <link
-      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700"
-      rel="stylesheet"
-      type="text/css"
-    /> -->
     <link rel="stylesheet" href="../../../css/main.css" />
     <link rel="stylesheet" href="css/main.css" />
   </head>
@@ -42,9 +35,6 @@
       </h1>
 
       <video id="leftVideo" playsinline controls muted>
-        <!-- NB CORS: https://bugzilla.mozilla.org/show_bug.cgi?id=1177793 -->
-        <!-- <source src="../../../video/chrome.webm" type="video/webm"/>
-        <source src="../../../video/chrome.mp4" type="video/mp4"/> -->
         <p>This browser does not support the video element.</p>
       </video>
 
@@ -53,9 +43,9 @@
       <div id="callers"></div>
       <h3>Registered Responders</h3>
       <div id="responders"></div>
+      <a href="switchboard.html">Switchboard</a>
     </div>
 
-    <!-- <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script> -->
     <script type="module" src="js/main.js" async></script>
   </body>
 </html>
