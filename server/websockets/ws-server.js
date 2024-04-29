@@ -62,8 +62,6 @@ wsServer.on("connection", (client, req) => {
             wsAdmin({ client, type, payload });
             break;
           case "responder":
-            console.log("responder case");
-            console.log(type);
             wsResponder({ type, payload, clientId, users });
             break;
           case "caller":
