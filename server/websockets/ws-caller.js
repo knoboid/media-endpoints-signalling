@@ -1,4 +1,4 @@
-function wsCaller({ type, payload, clientId, broadcastResponders, users }) {
+function wsCaller({ type, payload, clientId, users }) {
   let responder;
   const callers = users.getCallers();
   const responders = users.getResponders();
@@ -35,7 +35,7 @@ function wsCaller({ type, payload, clientId, broadcastResponders, users }) {
             payload: { callerID: clientId },
           })
         );
-        broadcastResponders();
+        users.broadcastResponders(callers);
       } else {
         console.log("Responder is NOT available");
         client.send(
@@ -58,7 +58,7 @@ function wsCaller({ type, payload, clientId, broadcastResponders, users }) {
       const parties = connections.terminate(clientId);
       responder = responders.getClient(parties.responderID);
       responder.send(JSON.stringify({ type: "terminated" }));
-      broadcastResponders();
+      users.broadcastResponders(callers);
       break;
 
     default:

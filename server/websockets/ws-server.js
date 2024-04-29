@@ -18,17 +18,6 @@ const clientTypes = {};
 
 const wsServer = new ws.Server({ noServer: true });
 
-function broadcastResponders() {
-  callers.getClients().forEach((client) => {
-    client.send(
-      JSON.stringify({
-        type: "updateResponders",
-        payload: { responders: responders.getList() },
-      })
-    );
-  });
-}
-
 wsServer.on("connection", (client, req) => {
   const initialRequest = req;
   const clientId = clientCounter;
@@ -54,7 +43,7 @@ wsServer.on("connection", (client, req) => {
         } else if (clientType === "responder") {
           console.log(`Registering responder ${clientId}`);
           responders.addClient(clientId, client, "available");
-          broadcastResponders();
+          users.broadcastResponders(callers);
         } else if (clientType === "admin") {
           console.log("got admin");
           client.send(
@@ -75,31 +64,15 @@ wsServer.on("connection", (client, req) => {
           case "responder":
             console.log("responder case");
             console.log(type);
-            wsResponder({
-              type,
-              payload,
-              clientId,
-              broadcastResponders,
-              users,
-            });
+            wsResponder({ type, payload, clientId, users });
             break;
           case "caller":
-            wsCaller({
-              client,
-              type,
-              payload,
-              connections,
-              clientId,
-              broadcastResponders,
-              responders,
-              users,
-            });
+            wsCaller({ type, payload, clientId, users });
             break;
           default:
             console.log(`UNHANDLE Client Type: ${clientType}`);
             break;
         }
-
         break;
     }
     messageCounter++;
@@ -107,7 +80,6 @@ wsServer.on("connection", (client, req) => {
 
   client.on("close", () => {
     console.log(`Closing connection to ${clientType} with id: ${clientId}`);
-    // TODO tidy up with any other parties
     const parties = connections.terminateIfBusy(clientId);
 
     if (clientType === "caller") {
@@ -123,8 +95,7 @@ wsServer.on("connection", (client, req) => {
       }
       responders.remove(clientId);
     }
-
-    broadcastResponders();
+    users.broadcastResponders(callers);
   });
 
   clientCounter++;

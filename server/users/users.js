@@ -16,6 +16,17 @@ class Users {
   getResponders() {
     return this.responders;
   }
+
+  broadcastResponders(recieverGroup) {
+    recieverGroup.getClients().forEach((client) => {
+      client.send(
+        JSON.stringify({
+          type: "updateResponders",
+          payload: { responders: this.responders.getList() },
+        })
+      );
+    });
+  }
 }
 
 module.exports = Users;

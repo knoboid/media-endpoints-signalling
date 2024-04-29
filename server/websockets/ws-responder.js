@@ -1,4 +1,4 @@
-function wsResponder({ type, payload, clientId, broadcastResponders, users }) {
+function wsResponder({ type, payload, clientId, users }) {
   let caller;
   const callers = users.getCallers();
   const connections = users.getConnections();
@@ -14,7 +14,7 @@ function wsResponder({ type, payload, clientId, broadcastResponders, users }) {
       const parties = connections.terminate(clientId);
       caller = callers.getClient(parties.callerID);
       caller.send(JSON.stringify({ type: "terminated" }));
-      broadcastResponders();
+      users.broadcastResponders(callers);
       break;
 
     default:
