@@ -1,12 +1,8 @@
 import { createResponderConnection } from "./connections/responder-connection.js";
 import NWResponderSignaller from "./signalling/network/responder-signaller.js";
+import { setRecieverID, recieverUIEvents } from "./ui/ui.js";
 
 console.log("Importing media-reciever");
-
-let responderID;
-const rightVideo = document.getElementById("rightVideo");
-const responderIDElement = document.querySelector("#responder-id");
-const recieverHangup = document.querySelector("#reciever-hangup");
 
 export function setupReciever(servers, wss) {
   const p2 = "p2";
@@ -15,17 +11,16 @@ export function setupReciever(servers, wss) {
   const nWResponderSignaller = new NWResponderSignaller(wss);
 
   nWResponderSignaller.addEventListener("onGotResponderID", (e) => {
-    responderID = e.data;
-    responderIDElement.innerHTML = responderID;
+    const recieverID = e.data;
+    setRecieverID(recieverID);
   });
 
-  recieverHangup.onclick = () => {
-    console.log("R HANG");
+  recieverUIEvents.addEventListener("reciever-hangup", () => {
     pc.close();
     nWResponderSignaller.send({
       type: "terminated",
     });
-  };
+  });
 
   nWResponderSignaller.addEventListener("initiateResponse", () => {
     recieve();
@@ -39,12 +34,6 @@ export function setupReciever(servers, wss) {
   const offerOptions = {
     offerToReceiveAudio: 1,
     offerToReceiveVideo: 1,
-  };
-
-  rightVideo.onloadedmetadata = () => {
-    console.log(
-      `Remote video videoWidth: ${rightVideo.videoWidth}px,  videoHeight: ${rightVideo.videoHeight}px`
-    );
   };
 
   function recieve() {
