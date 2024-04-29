@@ -1,20 +1,8 @@
-function wsResponder({
-  client,
-  type,
-  payload,
-  connections,
-  clientId,
-  broadcastResponders,
-  callers,
-}) {
+function wsResponder({ type, payload, clientId, broadcastResponders, users }) {
   let caller;
+  const callers = users.getCallers();
+  const connections = users.getConnections();
   switch (type) {
-    case "info":
-      client.send(
-        JSON.stringify({ type, payload: { client, initialRequest } })
-      );
-      break;
-
     case "fromResponder":
       console.log("Handling fromResponder");
       caller = connections.getOtherPartysSocket(clientId);

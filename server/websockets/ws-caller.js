@@ -1,19 +1,11 @@
-function wsCaller({
-  client,
-  type,
-  payload,
-  connections,
-  clientId,
-  broadcastResponders,
-  responders,
-}) {
+function wsCaller({ type, payload, clientId, broadcastResponders, users }) {
   let responder;
+  const callers = users.getCallers();
+  const responders = users.getResponders();
+  const connections = users.getConnections();
+  const client = callers.getClient(clientId);
+
   switch (type) {
-    case "info":
-      client.send(
-        JSON.stringify({ type, payload: { client, initialRequest } })
-      );
-      break;
     case "getResponders":
       client.send(
         JSON.stringify({
@@ -64,18 +56,12 @@ function wsCaller({
     case "terminated":
       console.log("Handling terminated");
       const parties = connections.terminate(clientId);
-      // if (clientType === "caller") {
       responder = responders.getClient(parties.responderID);
       responder.send(JSON.stringify({ type: "terminated" }));
-      // } else if (clientType === "responder") {
-      //   const caller = callers.getClient(parties.callerID);
-      //   caller.send(JSON.stringify({ type: "terminated" }));
-      // }
       broadcastResponders();
       break;
 
     default:
-      console.log("In caller");
       console.log(`UNHANDLED WS TYPE ${type}`);
       break;
   }

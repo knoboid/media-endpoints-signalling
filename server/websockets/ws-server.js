@@ -4,12 +4,15 @@ const Connections = require("../switchboard/connections");
 const wsAdmin = require("./ws-admin");
 const wsResponder = require("./ws-responder");
 const wsCaller = require("./ws-caller");
+const Users = require("../users/users");
 
 let clientCounter = 0;
 
 const callers = new Clients();
 const responders = new Clients();
 const connections = new Connections(callers, responders);
+
+const users = new Users(connections, callers, responders);
 
 const clientTypes = {};
 
@@ -73,13 +76,11 @@ wsServer.on("connection", (client, req) => {
             console.log("responder case");
             console.log(type);
             wsResponder({
-              client,
               type,
               payload,
-              connections,
               clientId,
               broadcastResponders,
-              callers,
+              users,
             });
             break;
           case "caller":
@@ -91,6 +92,7 @@ wsServer.on("connection", (client, req) => {
               clientId,
               broadcastResponders,
               responders,
+              users,
             });
             break;
           default:
