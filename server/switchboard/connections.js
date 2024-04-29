@@ -50,6 +50,10 @@ class Connections {
     return false;
   }
 
+  isConnected(clientID) {
+    return typeof this.clients[clientID] === "object";
+  }
+
   getOtherPartysSocket(clientID) {
     const clientRecord = this.clients[clientID];
     if (clientRecord.type === "caller") {

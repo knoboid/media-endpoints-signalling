@@ -11,10 +11,12 @@ function wsResponder({ type, payload, clientId, users }) {
 
     case "terminated":
       console.log("Handling terminated");
-      const parties = connections.terminate(clientId);
-      caller = callers.getClient(parties.callerID);
-      caller.send(JSON.stringify({ type: "terminated" }));
-      users.broadcastResponders(callers);
+      if (connections.isConnected(clientId)) {
+        const parties = connections.terminate(clientId);
+        caller = callers.getClient(parties.callerID);
+        caller.send(JSON.stringify({ type: "terminated" }));
+        users.broadcastResponders(callers);
+      }
       break;
 
     default:
