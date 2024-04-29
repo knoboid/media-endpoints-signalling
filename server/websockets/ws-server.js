@@ -1,6 +1,6 @@
 const ws = require("ws");
-const Clients = require("./clients");
-const Connections = require("./connections");
+const Clients = require("../switchboard/clients");
+const Connections = require("../switchboard/connections");
 const wsAdmin = require("./ws-admin");
 
 let clientCounter = 0;

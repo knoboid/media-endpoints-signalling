@@ -1,4 +1,4 @@
-const getEnv = require("./util").getEnv;
+const getEnv = require("../util").getEnv;
 
 let authenticated = false;
 
