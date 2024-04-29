@@ -1,6 +1,6 @@
 const https = require("https");
 const credentials = require("./https-credentials").credentials;
-var wsServer = require("./ws-server").wsServer;
+var wsServer = require("./websockets/ws-server").wsServer;
 
 const express = require("express");
 
