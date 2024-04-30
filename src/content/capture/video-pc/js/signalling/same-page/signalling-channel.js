@@ -9,8 +9,8 @@ class SignallingChannel extends EventTarget {
     this.dispatchEvent(new PayloadEvent("fromCaller", data));
   }
 
-  responder(data) {
-    this.dispatchEvent(new PayloadEvent("fromResponder", data));
+  reciever(data) {
+    this.dispatchEvent(new PayloadEvent("fromReciever", data));
   }
 }
 

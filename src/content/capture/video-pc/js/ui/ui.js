@@ -1,10 +1,10 @@
 // reciever
 const rightVideo = document.getElementById("rightVideo");
-const responderIDElement = document.querySelector("#responder-id");
+const recieverIDElement = document.querySelector("#reciever-id");
 const recieverHangupButton = document.querySelector("#reciever-hangup");
 
-export function setRecieverID(responderID) {
-  responderIDElement.innerHTML = responderID;
+export function setRecieverID(recieverID) {
+  recieverIDElement.innerHTML = recieverID;
 }
 
 rightVideo.onloadedmetadata = () => {

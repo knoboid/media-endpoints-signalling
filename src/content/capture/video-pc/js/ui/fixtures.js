@@ -9,7 +9,7 @@ export const callers = [
   },
 ];
 
-export const responders = [
+export const recievers = [
   {
     id: 0,
     status: "available",

@@ -28,11 +28,16 @@
   <body>
     <div id="container">
       <h1>
-        ID: <span id="responder-id"></span
+        ID: <span id="reciever-id"></span
         ><button id="reciever-hangup" style="font-size: 0.5em">
           Reciever Hangup
         </button>
       </h1>
+      <div>
+        <input id="name-input" type="text" /><button id="" name-button>
+          submit
+        </button>
+      </div>
 
       <video id="leftVideo" playsinline controls muted>
         <p>This browser does not support the video element.</p>
@@ -41,8 +46,8 @@
       <video id="rightVideo" playsinline autoplay controls muted></video>
 
       <div id="callers"></div>
-      <h3>Registered Responders</h3>
-      <div id="responders"></div>
+      <h3>Registered Recievers</h3>
+      <div id="recievers"></div>
       <a href="switchboard.html">Switchboard</a>
     </div>
 

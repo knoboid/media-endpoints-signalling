@@ -1,44 +1,44 @@
 import { createCallerConnection } from "./connections/caller-connection.js";
-import { createResponderConnection } from "./connections/responder-connection.js";
+import { createRecieverConnection } from "./connections/reciever-connection.js";
 import NWCallerSignaller from "./signalling/network/caller-signaller.js";
-import NWResponderSignaller from "./signalling/network/responder-signaller.js";
-import RespondersList from "./ui/responders-list.js";
+import NWRecieverSignaller from "./signalling/network/reciever-signaller.js";
+import RecieversList from "./ui/recievers-list.js";
 
 // const wss = "wss://localhost:5501";
 const wss = "wss://192.168.43.35:5501";
 // const wss = "wss://192.168.0.72:5501";
 
-let callerID, responderID;
+let callerID, recieverID;
 
 const leftVideo = document.getElementById("leftVideo");
 const rightVideo = document.getElementById("rightVideo");
 
 const callersList = document.querySelector("#callers");
-const respondersList = document.querySelector("#responders");
+const recieversList = document.querySelector("#recievers");
 
-const responderIDElement = document.querySelector("#responder-id");
+const recieverIDElement = document.querySelector("#reciever-id");
 
-const respondersComponent = new RespondersList(respondersList);
+const recieversComponent = new RecieversList(recieversList);
 
 const nWCallerSignaller = new NWCallerSignaller(wss);
-const nWResponderSignaller = new NWResponderSignaller(wss);
+const nWRecieverSignaller = new NWRecieverSignaller(wss);
 
 nWCallerSignaller.addEventListener("onGotCallerID", (e) => {
   callerID = e.data;
 });
 
-nWResponderSignaller.addEventListener("onGotResponderID", (e) => {
-  responderID = e.data;
-  responderIDElement.innerHTML = responderID;
+nWRecieverSignaller.addEventListener("onGotRecieverID", (e) => {
+  recieverID = e.data;
+  recieverIDElement.innerHTML = recieverID;
 });
 
-respondersComponent.render([]);
+recieversComponent.render([]);
 
-nWCallerSignaller.addEventListener("onUpdateResponders", (event) => {
-  const otherResponders = event.data.filter(
-    (responder) => Number(responder.id) !== responderID
+nWCallerSignaller.addEventListener("onUpdateRecievers", (event) => {
+  const otherRecievers = event.data.filter(
+    (reciever) => Number(reciever.id) !== recieverID
   );
-  respondersComponent.render(otherResponders);
+  recieversComponent.render(otherRecievers);
 });
 
 export function peerConnect(stream) {
@@ -48,20 +48,20 @@ export function peerConnect(stream) {
   const p1 = "p1";
   const p2 = "p2";
 
-  respondersComponent.addEventListener("call", (e) => {
+  recieversComponent.addEventListener("call", (e) => {
     console.log("call pressed");
     console.log(e.data);
     nWCallerSignaller.send({
       type: "initiateCall",
-      payload: { responderID: e.data },
+      payload: { recieverID: e.data },
     });
   });
 
-  respondersComponent.addEventListener("hangup", (e) => {
+  recieversComponent.addEventListener("hangup", (e) => {
     console.log("hangup pressed");
   });
 
-  nWResponderSignaller.addEventListener("initiateResponse", () => {
+  nWRecieverSignaller.addEventListener("initiateResponse", () => {
     recieve();
   });
 
@@ -72,7 +72,7 @@ export function peerConnect(stream) {
   });
 
   let pc1, caller;
-  let pc2, responder;
+  let pc2, reciever;
   const offerOptions = {
     offerToReceiveAudio: 1,
     offerToReceiveVideo: 1,
@@ -118,8 +118,8 @@ export function peerConnect(stream) {
 
   function recieve() {
     const servers = null;
-    responder = createResponderConnection(servers, p2, nWResponderSignaller);
-    pc2 = responder;
+    reciever = createRecieverConnection(servers, p2, nWRecieverSignaller);
+    pc2 = reciever;
     peers.setConnection(p2, pc2);
     console.log("Created remote peer connection object pc2");
   }

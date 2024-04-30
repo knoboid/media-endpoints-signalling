@@ -1,6 +1,6 @@
 import PayloadEvent from "../../payload-event.js";
 
-class ResponderSignaller extends EventTarget {
+class RecieverSignaller extends EventTarget {
   constructor(signallingChannel) {
     super();
     this.signallingChannel = signallingChannel;
@@ -9,9 +9,9 @@ class ResponderSignaller extends EventTarget {
     );
   }
 
-  responder(data) {
-    this.signallingChannel.responder(data);
+  reciever(data) {
+    this.signallingChannel.reciever(data);
   }
 }
 
-export default ResponderSignaller;
+export default RecieverSignaller;

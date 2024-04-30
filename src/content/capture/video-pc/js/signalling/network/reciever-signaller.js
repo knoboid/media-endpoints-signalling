@@ -1,7 +1,7 @@
 import PayloadEvent from "../../payload-event.js";
-const clientType = "responder";
+const clientType = "reciever";
 
-class ResponderSignaller extends EventTarget {
+class RecieverSignaller extends EventTarget {
   constructor(url) {
     super();
     this.socket = new WebSocket(url);
@@ -19,7 +19,7 @@ class ResponderSignaller extends EventTarget {
           console.log(`Setting id to ${id}`);
           this.id = id;
           this.socket.send(JSON.stringify({ id, clientType }));
-          this.dispatchEvent(new PayloadEvent("onGotResponderID", id));
+          this.dispatchEvent(new PayloadEvent("onGotRecieverID", id));
           break;
 
         default:
@@ -50,7 +50,7 @@ class ResponderSignaller extends EventTarget {
 
             default:
               console.log(
-                `responder signaller got unhandled message type ${type}`
+                `reciever signaller got unhandled message type ${type}`
               );
               break;
           }
@@ -64,9 +64,9 @@ class ResponderSignaller extends EventTarget {
     this.socket.send(JSON.stringify(request));
   }
 
-  responder(message) {
-    this.send({ type: "fromResponder", payload: message });
+  reciever(message) {
+    this.send({ type: "fromReciever", payload: message });
   }
 }
 
-export default ResponderSignaller;
+export default RecieverSignaller;

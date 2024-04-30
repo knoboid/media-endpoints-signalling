@@ -1,14 +1,14 @@
 import { createCallerConnection } from "./connections/caller-connection.js";
 import NWCallerSignaller from "./signalling/network/caller-signaller.js";
-import RespondersList from "./ui/responders-list.js";
+import RecieversList from "./ui/recievers-list.js";
 
 let callerID;
 
 const leftVideo = document.getElementById("leftVideo");
-const respondersList = document.querySelector("#responders");
-const respondersComponent = new RespondersList(respondersList);
+const recieversList = document.querySelector("#recievers");
+const recieversComponent = new RecieversList(recieversList);
 
-respondersComponent.render([]);
+recieversComponent.render([]);
 
 export function setupTransmitter(servers, wss, stream) {
   leftVideo.srcObject = stream;
@@ -21,24 +21,24 @@ export function setupTransmitter(servers, wss, stream) {
     callerID = e.data;
   });
 
-  nWCallerSignaller.addEventListener("onUpdateResponders", (event) => {
-    const otherResponders = event.data.filter(
-      // (responder) => Number(responder.id) !== responderID
-      (responder) => Number(responder.id) !== -1
+  nWCallerSignaller.addEventListener("onUpdateRecievers", (event) => {
+    const otherRecievers = event.data.filter(
+      // (reciever) => Number(reciever.id) !== recieverID
+      (reciever) => Number(reciever.id) !== -1
     );
-    respondersComponent.render(otherResponders);
+    recieversComponent.render(otherRecievers);
   });
 
-  respondersComponent.addEventListener("call", (e) => {
+  recieversComponent.addEventListener("call", (e) => {
     console.log("call pressed");
     console.log(e.data);
     nWCallerSignaller.send({
       type: "initiateCall",
-      payload: { responderID: e.data },
+      payload: { recieverID: e.data },
     });
   });
 
-  respondersComponent.addEventListener("hangup", (e) => {
+  recieversComponent.addEventListener("hangup", (e) => {
     console.log("hangup pressed");
     pc.close();
     nWCallerSignaller.send({

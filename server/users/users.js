@@ -1,8 +1,8 @@
 class Users {
-  constructor(connections, callers, responders) {
+  constructor(connections, callers, recievers) {
     this.connections = connections;
     this.callers = callers;
-    this.responders = responders;
+    this.recievers = recievers;
   }
 
   getConnections() {
@@ -13,16 +13,16 @@ class Users {
     return this.callers;
   }
 
-  getResponders() {
-    return this.responders;
+  getRecievers() {
+    return this.recievers;
   }
 
-  broadcastResponders(recieverGroup) {
+  broadcastRecievers(recieverGroup) {
     recieverGroup.getClients().forEach((client) => {
       client.send(
         JSON.stringify({
-          type: "updateResponders",
-          payload: { responders: this.responders.getList() },
+          type: "updateRecievers",
+          payload: { recievers: this.recievers.getList() },
         })
       );
     });

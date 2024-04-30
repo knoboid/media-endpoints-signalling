@@ -2,17 +2,17 @@ const ws = require("ws");
 const Clients = require("../switchboard/clients");
 const Connections = require("../switchboard/connections");
 const wsAdmin = require("./ws-admin");
-const wsResponder = require("./ws-responder");
+const wsReciever = require("./ws-reciever");
 const wsCaller = require("./ws-caller");
 const Users = require("../users/users");
 
 let clientCounter = 0;
 
 const callers = new Clients();
-const responders = new Clients();
-const connections = new Connections(callers, responders);
+const recievers = new Clients();
+const connections = new Connections(callers, recievers);
 
-const users = new Users(connections, callers, responders);
+const users = new Users(connections, callers, recievers);
 
 const clientTypes = {};
 
@@ -40,10 +40,10 @@ wsServer.on("connection", (client, req) => {
         if (clientType === "caller") {
           console.log(`Registering caller ${clientId}`);
           callers.addClient(clientId, client, "available");
-        } else if (clientType === "responder") {
-          console.log(`Registering responder ${clientId}`);
-          responders.addClient(clientId, client, "available");
-          users.broadcastResponders(callers);
+        } else if (clientType === "reciever") {
+          console.log(`Registering reciever ${clientId}`);
+          recievers.addClient(clientId, client, "available");
+          users.broadcastRecievers(callers);
         } else if (clientType === "admin") {
           console.log("got admin");
           client.send(
@@ -61,8 +61,8 @@ wsServer.on("connection", (client, req) => {
           case "admin":
             wsAdmin({ client, type, payload });
             break;
-          case "responder":
-            wsResponder({ type, payload, clientId, users });
+          case "reciever":
+            wsReciever({ type, payload, clientId, users });
             break;
           case "caller":
             wsCaller({ type, payload, clientId, users });
@@ -82,18 +82,18 @@ wsServer.on("connection", (client, req) => {
 
     if (clientType === "caller") {
       if (parties) {
-        const responder = responders.getClient(parties.responderID);
-        responder.send(JSON.stringify({ type: "terminated" }));
+        const reciever = recievers.getClient(parties.recieverID);
+        reciever.send(JSON.stringify({ type: "terminated" }));
       }
       callers.remove(clientId);
-    } else if (clientType === "responder") {
+    } else if (clientType === "reciever") {
       if (parties) {
         const caller = callers.getClient(parties.callerID);
         caller.send(JSON.stringify({ type: "terminated" }));
       }
-      responders.remove(clientId);
+      recievers.remove(clientId);
     }
-    users.broadcastResponders(callers);
+    users.broadcastRecievers(callers);
   });
 
   clientCounter++;

@@ -1,47 +1,47 @@
 function wsCaller({ type, payload, clientId, users }) {
-  let responder;
+  let reciever;
   const callers = users.getCallers();
-  const responders = users.getResponders();
+  const recievers = users.getRecievers();
   const connections = users.getConnections();
   const client = callers.getClient(clientId);
 
   switch (type) {
-    case "getResponders":
+    case "getRecievers":
       client.send(
         JSON.stringify({
-          type: "updateResponders",
-          payload: { responders: responders.getList() },
+          type: "updateRecievers",
+          payload: { recievers: recievers.getList() },
         })
       );
       break;
     case "initiateCall":
       /* first contact from a caller wishing to make a call */
-      const { responderID } = payload;
+      const { recieverID } = payload;
       console.log(
-        `Preparing to initiate call  between ${clientId} and ${responderID}`
+        `Preparing to initiate call  between ${clientId} and ${recieverID}`
       );
-      if (connections.attempt(clientId, responderID)) {
-        console.log("Responder is available");
+      if (connections.attempt(clientId, recieverID)) {
+        console.log("Reciever is available");
         client.send(
           JSON.stringify({
             type: "initiateCallSuccess",
-            payload: { responderID },
+            payload: { recieverID },
           })
         );
-        const responder = responders.getClient(responderID);
-        responder.send(
+        const reciever = recievers.getClient(recieverID);
+        reciever.send(
           JSON.stringify({
             type: "initiateResponse",
             payload: { callerID: clientId },
           })
         );
-        users.broadcastResponders(callers);
+        users.broadcastRecievers(callers);
       } else {
-        console.log("Responder is NOT available");
+        console.log("Reciever is NOT available");
         client.send(
           JSON.stringify({
             type: "initiateCallFailure",
-            payload: { responderID },
+            payload: { recieverID },
           })
         );
       }
@@ -49,16 +49,16 @@ function wsCaller({ type, payload, clientId, users }) {
 
     case "fromCaller":
       console.log("Handling fromCaller");
-      responder = connections.getOtherPartysSocket(clientId);
-      responder.send(JSON.stringify({ type, payload }));
+      reciever = connections.getOtherPartysSocket(clientId);
+      reciever.send(JSON.stringify({ type, payload }));
       break;
 
     case "terminated":
       console.log("Handling terminated");
       const parties = connections.terminate(clientId);
-      responder = responders.getClient(parties.responderID);
-      responder.send(JSON.stringify({ type: "terminated" }));
-      users.broadcastResponders(callers);
+      reciever = recievers.getClient(parties.recieverID);
+      reciever.send(JSON.stringify({ type: "terminated" }));
+      users.broadcastRecievers(callers);
       break;
 
     default:

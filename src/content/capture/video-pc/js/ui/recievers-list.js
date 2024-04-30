@@ -2,7 +2,7 @@ import PayloadEvent from "../payload-event.js";
 
 const delimiter = " ; ";
 
-class RespondersList extends EventTarget {
+class RecieversList extends EventTarget {
   constructor(element) {
     super();
     this.element = element;
@@ -10,19 +10,19 @@ class RespondersList extends EventTarget {
     this.counter = 0;
   }
 
-  render(responders) {
+  render(recievers) {
     this.element.innerHTML = "";
-    responders.forEach((responder) => {
+    recievers.forEach((reciever) => {
       const row = document.createElement("div");
-      appendContentTo(row, "span", responder.id + delimiter);
-      appendContentTo(row, "span", responder.status + delimiter);
+      appendContentTo(row, "span", reciever.id + delimiter);
+      appendContentTo(row, "span", reciever.status + delimiter);
       const callButton = appendContentTo(row, "button", "Call");
       const hangupButton = appendContentTo(row, "button", "Hangup");
       callButton.onclick = (e) => {
-        this.dispatchEvent(new PayloadEvent("call", responder.id));
+        this.dispatchEvent(new PayloadEvent("call", reciever.id));
       };
       hangupButton.onclick = (e) => {
-        this.dispatchEvent(new PayloadEvent("hangup", responder.id));
+        this.dispatchEvent(new PayloadEvent("hangup", reciever.id));
       };
       this.element.appendChild(row);
     });
@@ -36,4 +36,4 @@ function appendContentTo(parent, type, content) {
   return element;
 }
 
-export default RespondersList;
+export default RecieversList;

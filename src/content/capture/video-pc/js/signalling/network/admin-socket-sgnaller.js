@@ -20,7 +20,7 @@ class AdminSignaller extends EventTarget {
           console.log(`Setting id to ${id}`);
           this.id = id;
           this.socket.send(JSON.stringify({ id, clientType }));
-          this.dispatchEvent(new PayloadEvent("onGotResponderID", id));
+          this.dispatchEvent(new PayloadEvent("onGotRecieverID", id));
           break;
 
         default:
@@ -33,13 +33,15 @@ class AdminSignaller extends EventTarget {
               this.dispatchEvent(new PayloadEvent("password"));
               break;
 
-              case "authenticated":
-                this.dispatchEvent(new PayloadEvent("authenticated", payload.data));
-                break;
+            case "authenticated":
+              this.dispatchEvent(
+                new PayloadEvent("authenticated", payload.data)
+              );
+              break;
 
             default:
               console.log(
-                `responder signaller got unhandled message type ${type}`
+                `reciever signaller got unhandled message type ${type}`
               );
               break;
           }

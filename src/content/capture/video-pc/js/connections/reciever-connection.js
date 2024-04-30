@@ -10,7 +10,7 @@ import {
 
 import { log } from "./util.js";
 
-export function createResponderConnection(
+export function createRecieverConnection(
   servers,
   name,
   signallingChannel,
@@ -23,12 +23,12 @@ export function createResponderConnection(
   cc.ontrack = (e) => {
     if (rightVideo.srcObject !== e.streams[0]) {
       rightVideo.srcObject = e.streams[0];
-      log("responder received caller stream", event);
+      log("reciever received caller stream", event);
     }
   };
 
   function onIceCandidate(event) {
-    signallingChannel.responder(
+    signallingChannel.reciever(
       JSON.stringify({ type: "onIceCandidate", payload: event.candidate })
     );
   }
@@ -62,19 +62,19 @@ export function createResponderConnection(
   });
 
   function onCreateAnswerSuccess(desc) {
-    log(`Answer from responder: ${desc.sdp}`);
-    log("responder setLocalDescription start");
+    log(`Answer from reciever: ${desc.sdp}`);
+    log("reciever setLocalDescription start");
     cc.setLocalDescription(
       desc,
       () => onSetLocalSuccess(name),
       onSetSessionDescriptionError
     );
-    log("signalling onRespondererDescription");
-    signal("onRespondererDescription", desc);
+    log("signalling onRecievererDescription");
+    signal("onRecievererDescription", desc);
   }
 
   function signal(type, payload) {
-    signallingChannel.responder(JSON.stringify({ type, payload }));
+    signallingChannel.reciever(JSON.stringify({ type, payload }));
   }
 
   return cc;

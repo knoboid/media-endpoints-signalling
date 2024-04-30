@@ -1,10 +1,10 @@
-function wsResponder({ type, payload, clientId, users }) {
+function wsReciever({ type, payload, clientId, users }) {
   let caller;
   const callers = users.getCallers();
   const connections = users.getConnections();
   switch (type) {
-    case "fromResponder":
-      console.log("Handling fromResponder");
+    case "fromReciever":
+      console.log("Handling fromReciever");
       caller = connections.getOtherPartysSocket(clientId);
       caller.send(JSON.stringify({ type, payload }));
       break;
@@ -15,7 +15,7 @@ function wsResponder({ type, payload, clientId, users }) {
         const parties = connections.terminate(clientId);
         caller = callers.getClient(parties.callerID);
         caller.send(JSON.stringify({ type: "terminated" }));
-        users.broadcastResponders(callers);
+        users.broadcastRecievers(callers);
       }
       break;
 
@@ -25,4 +25,4 @@ function wsResponder({ type, payload, clientId, users }) {
   }
 }
 
-module.exports = wsResponder;
+module.exports = wsReciever;

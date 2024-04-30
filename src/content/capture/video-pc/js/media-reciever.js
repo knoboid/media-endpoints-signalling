@@ -1,5 +1,5 @@
-import { createResponderConnection } from "./connections/responder-connection.js";
-import NWResponderSignaller from "./signalling/network/responder-signaller.js";
+import { createRecieverConnection } from "./connections/reciever-connection.js";
+import NWRecieverSignaller from "./signalling/network/reciever-signaller.js";
 import { setRecieverID, recieverUIEvents } from "./ui/ui.js";
 
 console.log("Importing media-reciever");
@@ -8,25 +8,25 @@ export function setupReciever(servers, wss) {
   const p2 = "p2";
   let pc;
 
-  const nWResponderSignaller = new NWResponderSignaller(wss);
+  const nWRecieverSignaller = new NWRecieverSignaller(wss);
 
-  nWResponderSignaller.addEventListener("onGotResponderID", (e) => {
+  nWRecieverSignaller.addEventListener("onGotRecieverID", (e) => {
     const recieverID = e.data;
     setRecieverID(recieverID);
   });
 
   recieverUIEvents.addEventListener("reciever-hangup", () => {
     pc.close();
-    nWResponderSignaller.send({
+    nWRecieverSignaller.send({
       type: "terminated",
     });
   });
 
-  nWResponderSignaller.addEventListener("initiateResponse", () => {
+  nWRecieverSignaller.addEventListener("initiateResponse", () => {
     recieve();
   });
 
-  nWResponderSignaller.addEventListener("terminated", () => {
+  nWRecieverSignaller.addEventListener("terminated", () => {
     console.log("Reciever terminating");
     pc.close();
   });
@@ -38,6 +38,6 @@ export function setupReciever(servers, wss) {
 
   function recieve() {
     console.log("Recieve");
-    pc = createResponderConnection(servers, p2, nWResponderSignaller);
+    pc = createRecieverConnection(servers, p2, nWRecieverSignaller);
   }
 }
