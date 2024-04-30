@@ -37,10 +37,10 @@ class RecieverSignaller extends EventTarget {
               this.dispatchEvent(new PayloadEvent("initiateResponse", payload));
               break;
 
-            case "fromCaller":
-              console.log("got fromCaller");
+            case "fromTransmitter":
+              console.log("got fromTransmitter");
               console.log(payload);
-              this.dispatchEvent(new PayloadEvent("fromCaller", payload));
+              this.dispatchEvent(new PayloadEvent("fromTransmitter", payload));
               break;
 
             case "terminated":

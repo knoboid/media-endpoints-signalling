@@ -1,7 +1,7 @@
 class Users {
-  constructor(connections, callers, recievers) {
+  constructor(connections, transmitters, recievers) {
     this.connections = connections;
-    this.callers = callers;
+    this.transmitters = transmitters;
     this.recievers = recievers;
   }
 
@@ -9,8 +9,8 @@ class Users {
     return this.connections;
   }
 
-  getCallers() {
-    return this.callers;
+  getTransmitters() {
+    return this.transmitters;
   }
 
   getRecievers() {

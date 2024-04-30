@@ -3,16 +3,16 @@ const Clients = require("../switchboard/clients");
 const Connections = require("../switchboard/connections");
 const wsAdmin = require("./ws-admin");
 const wsReciever = require("./ws-reciever");
-const wsCaller = require("./ws-caller");
+const wsTransmitter = require("./ws-transmitter");
 const Users = require("../users/users");
 
 let clientCounter = 0;
 
-const callers = new Clients();
+const transmitters = new Clients();
 const recievers = new Clients();
-const connections = new Connections(callers, recievers);
+const connections = new Connections(transmitters, recievers);
 
-const users = new Users(connections, callers, recievers);
+const users = new Users(connections, transmitters, recievers);
 
 const clientTypes = {};
 
@@ -37,13 +37,13 @@ wsServer.on("connection", (client, req) => {
         if (id !== clientId)
           throw new Error(`Expect id of ${clientId}, instead got ${id}`);
         clientTypes[clientId] = clientType;
-        if (clientType === "caller") {
-          console.log(`Registering caller ${clientId}`);
-          callers.addClient(clientId, client, "available");
+        if (clientType === "transmitter") {
+          console.log(`Registering transmitter ${clientId}`);
+          transmitters.addClient(clientId, client, "available");
         } else if (clientType === "reciever") {
           console.log(`Registering reciever ${clientId}`);
           recievers.addClient(clientId, client, "available");
-          users.broadcastRecievers(callers);
+          users.broadcastRecievers(transmitters);
         } else if (clientType === "admin") {
           console.log("got admin");
           client.send(
@@ -64,8 +64,8 @@ wsServer.on("connection", (client, req) => {
           case "reciever":
             wsReciever({ type, payload, clientId, users });
             break;
-          case "caller":
-            wsCaller({ type, payload, clientId, users });
+          case "transmitter":
+            wsTransmitter({ type, payload, clientId, users });
             break;
           default:
             console.log(`UNHANDLE Client Type: ${clientType}`);
@@ -80,20 +80,20 @@ wsServer.on("connection", (client, req) => {
     console.log(`Closing connection to ${clientType} with id: ${clientId}`);
     const parties = connections.terminateIfBusy(clientId);
 
-    if (clientType === "caller") {
+    if (clientType === "transmitter") {
       if (parties) {
         const reciever = recievers.getClient(parties.recieverID);
         reciever.send(JSON.stringify({ type: "terminated" }));
       }
-      callers.remove(clientId);
+      transmitters.remove(clientId);
     } else if (clientType === "reciever") {
       if (parties) {
-        const caller = callers.getClient(parties.callerID);
-        caller.send(JSON.stringify({ type: "terminated" }));
+        const transmitter = transmitters.getClient(parties.transmitterID);
+        transmitter.send(JSON.stringify({ type: "terminated" }));
       }
       recievers.remove(clientId);
     }
-    users.broadcastRecievers(callers);
+    users.broadcastRecievers(transmitters);
   });
 
   clientCounter++;

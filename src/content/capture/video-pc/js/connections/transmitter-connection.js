@@ -10,7 +10,7 @@ import {
 
 import { log } from "./util.js";
 
-export function createCallerConnection(
+export function createTransmitterConnection(
   servers,
   name,
   stream,
@@ -24,7 +24,7 @@ export function createCallerConnection(
 
   stream.getTracks().forEach((track) => cc.addTrack(track, stream));
 
-  log("caller createOffer start");
+  log("transmitter createOffer start");
   cc.createOffer(
     onCreateOfferSuccess,
     onCreateSessionDescriptionError,
@@ -32,15 +32,15 @@ export function createCallerConnection(
   );
 
   function onCreateOfferSuccess(desc) {
-    log(`Offer from caller ${desc.sdp}`);
-    log("caller setLocalDescription start");
+    log(`Offer from transmitter ${desc.sdp}`);
+    log("transmitter setLocalDescription start");
     cc.setLocalDescription(
       desc,
       () => onSetLocalSuccess(name),
       onSetSessionDescriptionError
     );
-    log("signal onCallerDescription");
-    signal("onCallerDescription", desc);
+    log("signal onTransmitterDescription");
+    signal("onTransmitterDescription", desc);
   }
 
   function onIceCandidate(event) {
@@ -48,7 +48,7 @@ export function createCallerConnection(
   }
 
   function signal(type, payload) {
-    signallingChannel.caller(JSON.stringify({ type, payload }));
+    signallingChannel.transmitter(JSON.stringify({ type, payload }));
   }
 
   signallingChannel.addEventListener("fromReciever", (event) => {

@@ -6,7 +6,7 @@
  *  tree.
  */
 
-'use strict';
+"use strict";
 
 /**
  * Sends a MediaStream to one end of an RTCPeerConnection and provides the
@@ -17,7 +17,8 @@
  * For more detailed samples using RTCPeerConnection, take a look at
  * https://webrtc.github.io/samples/.
  */
-class PeerConnectionPipe { // eslint-disable-line no-unused-vars
+class PeerConnectionPipe {
+  // eslint-disable-line no-unused-vars
   /**
    * @param {!MediaStream} inputStream stream to pipe over the peer connection
    * @param {string} debugPath the path to this object from the debug global var
@@ -27,7 +28,7 @@ class PeerConnectionPipe { // eslint-disable-line no-unused-vars
      * @private @const {!RTCPeerConnection} the calling side of the peer
      *     connection, connected to inputStream_.
      */
-    this.caller_ = new RTCPeerConnection(null);
+    this.transmitter_ = new RTCPeerConnection(null);
     /**
      * @private @const {!RTCPeerConnection} the answering side of the peer
      *     connection, providing the stream returned by getMediaStream.
@@ -55,16 +56,20 @@ class PeerConnectionPipe { // eslint-disable-line no-unused-vars
    */
   async init_(inputStream) {
     console.log(
-        '[PeerConnectionPipe] Initiating peer connection.',
-        `${this.debugPath_} =`, this);
-    this.caller_.onicecandidate = (/** !RTCPeerConnectionIceEvent*/ event) => {
+      "[PeerConnectionPipe] Initiating peer connection.",
+      `${this.debugPath_} =`,
+      this
+    );
+    this.transmitter_.onicecandidate = (
+      /** !RTCPeerConnectionIceEvent*/ event
+    ) => {
       if (event.candidate) this.callee_.addIceCandidate(event.candidate);
     };
     this.callee_.onicecandidate = (/** !RTCPeerConnectionIceEvent */ event) => {
-      if (event.candidate) this.caller_.addIceCandidate(event.candidate);
+      if (event.candidate) this.transmitter_.addIceCandidate(event.candidate);
     };
     const outputStream = new MediaStream();
-    const receiverStreamPromise = new Promise(resolve => {
+    const receiverStreamPromise = new Promise((resolve) => {
       this.callee_.ontrack = (/** !RTCTrackEvent */ event) => {
         outputStream.addTrack(event.track);
         if (outputStream.getTracks().length == inputStream.getTracks().length) {
@@ -72,20 +77,25 @@ class PeerConnectionPipe { // eslint-disable-line no-unused-vars
         }
       };
     });
-    inputStream.getTracks().forEach(track => {
-      this.caller_.addTransceiver(track, {direction: 'sendonly'});
+    inputStream.getTracks().forEach((track) => {
+      this.transmitter_.addTransceiver(track, { direction: "sendonly" });
     });
-    await this.caller_.setLocalDescription();
+    await this.transmitter_.setLocalDescription();
     await this.callee_.setRemoteDescription(
-        /** @type {!RTCSessionDescription} */ (this.caller_.localDescription));
+      /** @type {!RTCSessionDescription} */ (this.transmitter_.localDescription)
+    );
     await this.callee_.setLocalDescription();
-    await this.caller_.setRemoteDescription(
-        /** @type {!RTCSessionDescription} */ (this.callee_.localDescription));
+    await this.transmitter_.setRemoteDescription(
+      /** @type {!RTCSessionDescription} */ (this.callee_.localDescription)
+    );
     await receiverStreamPromise;
     console.log(
-        '[PeerConnectionPipe] Peer connection established.',
-        `${this.debugPath_}.caller_ =`, this.caller_,
-        `${this.debugPath_}.callee_ =`, this.callee_);
+      "[PeerConnectionPipe] Peer connection established.",
+      `${this.debugPath_}.transmitter_ =`,
+      this.transmitter_,
+      `${this.debugPath_}.callee_ =`,
+      this.callee_
+    );
     return receiverStreamPromise;
   }
 
@@ -99,8 +109,8 @@ class PeerConnectionPipe { // eslint-disable-line no-unused-vars
 
   /** Frees any resources used by this object. */
   destroy() {
-    console.log('[PeerConnectionPipe] Closing peer connection.');
-    this.caller_.close();
+    console.log("[PeerConnectionPipe] Closing peer connection.");
+    this.transmitter_.close();
     this.callee_.close();
   }
 }

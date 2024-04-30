@@ -1,9 +1,9 @@
-function wsCaller({ type, payload, clientId, users }) {
+function wsTransmitter({ type, payload, clientId, users }) {
   let reciever;
-  const callers = users.getCallers();
+  const transmitters = users.getTransmitters();
   const recievers = users.getRecievers();
   const connections = users.getConnections();
-  const client = callers.getClient(clientId);
+  const client = transmitters.getClient(clientId);
 
   switch (type) {
     case "getRecievers":
@@ -15,7 +15,7 @@ function wsCaller({ type, payload, clientId, users }) {
       );
       break;
     case "initiateCall":
-      /* first contact from a caller wishing to make a call */
+      /* first contact from a transmitter wishing to make a call */
       const { recieverID } = payload;
       console.log(
         `Preparing to initiate call  between ${clientId} and ${recieverID}`
@@ -32,10 +32,10 @@ function wsCaller({ type, payload, clientId, users }) {
         reciever.send(
           JSON.stringify({
             type: "initiateResponse",
-            payload: { callerID: clientId },
+            payload: { transmitterID: clientId },
           })
         );
-        users.broadcastRecievers(callers);
+        users.broadcastRecievers(transmitters);
       } else {
         console.log("Reciever is NOT available");
         client.send(
@@ -47,8 +47,8 @@ function wsCaller({ type, payload, clientId, users }) {
       }
       break;
 
-    case "fromCaller":
-      console.log("Handling fromCaller");
+    case "fromTransmitter":
+      console.log("Handling fromTransmitter");
       reciever = connections.getOtherPartysSocket(clientId);
       reciever.send(JSON.stringify({ type, payload }));
       break;
@@ -58,7 +58,7 @@ function wsCaller({ type, payload, clientId, users }) {
       const parties = connections.terminate(clientId);
       reciever = recievers.getClient(parties.recieverID);
       reciever.send(JSON.stringify({ type: "terminated" }));
-      users.broadcastRecievers(callers);
+      users.broadcastRecievers(transmitters);
       break;
 
     default:
@@ -67,4 +67,4 @@ function wsCaller({ type, payload, clientId, users }) {
   }
 }
 
-module.exports = wsCaller;
+module.exports = wsTransmitter;

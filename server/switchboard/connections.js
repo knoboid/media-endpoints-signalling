@@ -1,6 +1,6 @@
 class Connections {
-  constructor(callers, recievers) {
-    this.callers = callers;
+  constructor(transmitters, recievers) {
+    this.transmitters = transmitters;
     this.recievers = recievers;
     this.connections = {};
     this.counter = 0;
@@ -15,36 +15,36 @@ class Connections {
     return this.counter;
   }
 
-  setConnection(callerID, recieverID) {
-    this.connections[this.newId()] = { callerID, recieverID };
+  setConnection(transmitterID, recieverID) {
+    this.connections[this.newId()] = { transmitterID, recieverID };
   }
 
-  setCaller(callerID, recieverID) {
-    this.clients[callerID] = {
-      type: "caller",
+  setTransmitter(transmitterID, recieverID) {
+    this.clients[transmitterID] = {
+      type: "transmitter",
       connectionID: this.currentId(),
       otherPartyID: recieverID,
     };
-    this.callers.setStatus(callerID, "busy");
+    this.transmitters.setStatus(transmitterID, "busy");
   }
 
-  setReciever(recieverID, callerID) {
+  setReciever(recieverID, transmitterID) {
     this.clients[recieverID] = {
       type: "reciever",
       connectionID: this.currentId(),
-      otherPartyID: callerID,
+      otherPartyID: transmitterID,
     };
     this.recievers.setStatus(recieverID, "busy");
   }
 
-  attempt(callerID, recieverID) {
+  attempt(transmitterID, recieverID) {
     const canConnect =
-      this.callers.isAvailable(callerID) &&
+      this.transmitters.isAvailable(transmitterID) &&
       this.recievers.isAvailable(recieverID);
     if (canConnect) {
-      this.setConnection(callerID, recieverID);
-      this.setCaller(callerID, recieverID);
-      this.setReciever(recieverID, callerID);
+      this.setConnection(transmitterID, recieverID);
+      this.setTransmitter(transmitterID, recieverID);
+      this.setReciever(recieverID, transmitterID);
       return true;
     }
     return false;
@@ -56,27 +56,27 @@ class Connections {
 
   getOtherPartysSocket(clientID) {
     const clientRecord = this.clients[clientID];
-    if (clientRecord.type === "caller") {
+    if (clientRecord.type === "transmitter") {
       return this.recievers.getClient(clientRecord.otherPartyID);
     } else if (clientRecord.type === "reciever") {
-      return this.callers.getClient(clientRecord.otherPartyID);
+      return this.transmitters.getClient(clientRecord.otherPartyID);
     }
   }
 
   terminate(clientID) {
     const connectionID = this.clients[clientID].connectionID;
-    const { callerID, recieverID } = this.connections[connectionID];
+    const { transmitterID, recieverID } = this.connections[connectionID];
     delete this.connections[connectionID];
-    delete this.clients[callerID];
+    delete this.clients[transmitterID];
     delete this.clients[recieverID];
-    this.callers.setStatus(callerID, "available");
+    this.transmitters.setStatus(transmitterID, "available");
     this.recievers.setStatus(recieverID, "available");
-    return { callerID, recieverID };
+    return { transmitterID, recieverID };
   }
 
   getClientStatus(clientID) {
-    if (this.callers.contains(clientID)) {
-      return this.callers.getStatus(clientID);
+    if (this.transmitters.contains(clientID)) {
+      return this.transmitters.getStatus(clientID);
     } else if (this.recievers.contains(clientID)) {
       return this.recievers.getStatus(clientID);
     }

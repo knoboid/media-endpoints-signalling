@@ -1,4 +1,4 @@
-export const callers = [
+export const transmitters = [
   {
     id: 0,
     status: "available",

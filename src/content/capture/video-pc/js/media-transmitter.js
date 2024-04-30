@@ -1,8 +1,8 @@
-import { createCallerConnection } from "./connections/caller-connection.js";
-import NWCallerSignaller from "./signalling/network/caller-signaller.js";
+import { createTransmitterConnection } from "./connections/transmitter-connection.js";
+import NWTransmitterSignaller from "./signalling/network/transmitter-signaller.js";
 import RecieversList from "./ui/recievers-list.js";
 
-let callerID;
+let transmitterID;
 
 const leftVideo = document.getElementById("leftVideo");
 const recieversList = document.querySelector("#recievers");
@@ -15,13 +15,13 @@ export function setupTransmitter(servers, wss, stream) {
   const name = "p1";
   let pc;
 
-  const nWCallerSignaller = new NWCallerSignaller(wss);
+  const nWTransmitterSignaller = new NWTransmitterSignaller(wss);
 
-  nWCallerSignaller.addEventListener("onGotCallerID", (e) => {
-    callerID = e.data;
+  nWTransmitterSignaller.addEventListener("onGotTransmitterID", (e) => {
+    transmitterID = e.data;
   });
 
-  nWCallerSignaller.addEventListener("onUpdateRecievers", (event) => {
+  nWTransmitterSignaller.addEventListener("onUpdateRecievers", (event) => {
     const otherRecievers = event.data.filter(
       // (reciever) => Number(reciever.id) !== recieverID
       (reciever) => Number(reciever.id) !== -1
@@ -32,7 +32,7 @@ export function setupTransmitter(servers, wss, stream) {
   recieversComponent.addEventListener("call", (e) => {
     console.log("call pressed");
     console.log(e.data);
-    nWCallerSignaller.send({
+    nWTransmitterSignaller.send({
       type: "initiateCall",
       payload: { recieverID: e.data },
     });
@@ -41,18 +41,18 @@ export function setupTransmitter(servers, wss, stream) {
   recieversComponent.addEventListener("hangup", (e) => {
     console.log("hangup pressed");
     pc.close();
-    nWCallerSignaller.send({
+    nWTransmitterSignaller.send({
       type: "terminated",
     });
   });
 
-  nWCallerSignaller.addEventListener("initiateCallSuccess", (event) => {
+  nWTransmitterSignaller.addEventListener("initiateCallSuccess", (event) => {
     console.log("get initiateCallSuccess");
     console.log(event.data);
     call();
   });
 
-  nWCallerSignaller.addEventListener("terminated", (event) => {
+  nWTransmitterSignaller.addEventListener("terminated", (event) => {
     pc.close();
   });
 
@@ -65,6 +65,11 @@ export function setupTransmitter(servers, wss, stream) {
 
   function call() {
     console.log("Starting call");
-    pc = createCallerConnection(servers, name, stream, nWCallerSignaller);
+    pc = createTransmitterConnection(
+      servers,
+      name,
+      stream,
+      nWTransmitterSignaller
+    );
   }
 }

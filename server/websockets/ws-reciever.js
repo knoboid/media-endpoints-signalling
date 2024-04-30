@@ -1,21 +1,21 @@
 function wsReciever({ type, payload, clientId, users }) {
-  let caller;
-  const callers = users.getCallers();
+  let transmitter;
+  const transmitters = users.getTransmitters();
   const connections = users.getConnections();
   switch (type) {
     case "fromReciever":
       console.log("Handling fromReciever");
-      caller = connections.getOtherPartysSocket(clientId);
-      caller.send(JSON.stringify({ type, payload }));
+      transmitter = connections.getOtherPartysSocket(clientId);
+      transmitter.send(JSON.stringify({ type, payload }));
       break;
 
     case "terminated":
       console.log("Handling terminated");
       if (connections.isConnected(clientId)) {
         const parties = connections.terminate(clientId);
-        caller = callers.getClient(parties.callerID);
-        caller.send(JSON.stringify({ type: "terminated" }));
-        users.broadcastRecievers(callers);
+        transmitter = transmitters.getClient(parties.transmitterID);
+        transmitter.send(JSON.stringify({ type: "terminated" }));
+        users.broadcastRecievers(transmitters);
       }
       break;
 

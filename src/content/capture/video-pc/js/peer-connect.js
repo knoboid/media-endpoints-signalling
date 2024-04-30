@@ -1,6 +1,6 @@
-import { createCallerConnection } from "./connections/caller-connection.js";
+import { createTransmitterConnection } from "./connections/transmitter-connection.js";
 import { createRecieverConnection } from "./connections/reciever-connection.js";
-import NWCallerSignaller from "./signalling/network/caller-signaller.js";
+import NWTransmitterSignaller from "./signalling/network/transmitter-signaller.js";
 import NWRecieverSignaller from "./signalling/network/reciever-signaller.js";
 import RecieversList from "./ui/recievers-list.js";
 
@@ -8,23 +8,23 @@ import RecieversList from "./ui/recievers-list.js";
 const wss = "wss://192.168.43.35:5501";
 // const wss = "wss://192.168.0.72:5501";
 
-let callerID, recieverID;
+let transmitterID, recieverID;
 
 const leftVideo = document.getElementById("leftVideo");
 const rightVideo = document.getElementById("rightVideo");
 
-const callersList = document.querySelector("#callers");
+const transmittersList = document.querySelector("#transmitters");
 const recieversList = document.querySelector("#recievers");
 
 const recieverIDElement = document.querySelector("#reciever-id");
 
 const recieversComponent = new RecieversList(recieversList);
 
-const nWCallerSignaller = new NWCallerSignaller(wss);
+const nWTransmitterSignaller = new NWTransmitterSignaller(wss);
 const nWRecieverSignaller = new NWRecieverSignaller(wss);
 
-nWCallerSignaller.addEventListener("onGotCallerID", (e) => {
-  callerID = e.data;
+nWTransmitterSignaller.addEventListener("onGotTransmitterID", (e) => {
+  transmitterID = e.data;
 });
 
 nWRecieverSignaller.addEventListener("onGotRecieverID", (e) => {
@@ -34,7 +34,7 @@ nWRecieverSignaller.addEventListener("onGotRecieverID", (e) => {
 
 recieversComponent.render([]);
 
-nWCallerSignaller.addEventListener("onUpdateRecievers", (event) => {
+nWTransmitterSignaller.addEventListener("onUpdateRecievers", (event) => {
   const otherRecievers = event.data.filter(
     (reciever) => Number(reciever.id) !== recieverID
   );
@@ -51,7 +51,7 @@ export function peerConnect(stream) {
   recieversComponent.addEventListener("call", (e) => {
     console.log("call pressed");
     console.log(e.data);
-    nWCallerSignaller.send({
+    nWTransmitterSignaller.send({
       type: "initiateCall",
       payload: { recieverID: e.data },
     });
@@ -65,13 +65,13 @@ export function peerConnect(stream) {
     recieve();
   });
 
-  nWCallerSignaller.addEventListener("initiateCallSuccess", (event) => {
+  nWTransmitterSignaller.addEventListener("initiateCallSuccess", (event) => {
     console.log("get initiateCallSuccess");
     console.log(event.data);
     call();
   });
 
-  let pc1, caller;
+  let pc1, transmitter;
   let pc2, reciever;
   const offerOptions = {
     offerToReceiveAudio: 1,
@@ -110,8 +110,13 @@ export function peerConnect(stream) {
     // }
     const servers = null;
 
-    caller = createCallerConnection(servers, p1, stream, nWCallerSignaller);
-    pc1 = caller;
+    transmitter = createTransmitterConnection(
+      servers,
+      p1,
+      stream,
+      nWTransmitterSignaller
+    );
+    pc1 = transmitter;
     peers.setConnection(p1, pc1);
     console.log("Created local peer connection object pc1");
   }

@@ -4,8 +4,8 @@ class RecieverSignaller extends EventTarget {
   constructor(signallingChannel) {
     super();
     this.signallingChannel = signallingChannel;
-    this.signallingChannel.addEventListener("fromCaller", (event) =>
-      this.dispatchEvent(new PayloadEvent("fromCaller", event.data))
+    this.signallingChannel.addEventListener("fromTransmitter", (event) =>
+      this.dispatchEvent(new PayloadEvent("fromTransmitter", event.data))
     );
   }
 

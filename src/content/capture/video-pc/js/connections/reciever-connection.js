@@ -23,7 +23,7 @@ export function createRecieverConnection(
   cc.ontrack = (e) => {
     if (rightVideo.srcObject !== e.streams[0]) {
       rightVideo.srcObject = e.streams[0];
-      log("reciever received caller stream", event);
+      log("reciever received transmitter stream", event);
     }
   };
 
@@ -33,7 +33,7 @@ export function createRecieverConnection(
     );
   }
 
-  signallingChannel.addEventListener("fromCaller", (event) => {
+  signallingChannel.addEventListener("fromTransmitter", (event) => {
     const { type, payload } = JSON.parse(event.data);
     switch (type) {
       case "onIceCandidate":
@@ -46,7 +46,7 @@ export function createRecieverConnection(
         ${candidate ? candidate.candidate : "(null)"}`);
         break;
 
-      case "onCallerDescription":
+      case "onTransmitterDescription":
         const desc = payload;
         cc.setRemoteDescription(
           desc,
