@@ -1,18 +1,15 @@
 import { createTransmitterConnection } from "./connections/transmitter-connection.js";
 import NWTransmitterSignaller from "./signalling/network/transmitter-signaller.js";
-import { RecieversList, ReciverRow } from "./ui/components/recievers-list.js";
-
-customElements.define("recievers-list", RecieversList);
-customElements.define("reciever-row", ReciverRow);
 
 let transmitterID;
 
 const leftVideo = document.getElementById("leftVideo");
-const rlist = document.querySelector("#rlist");
-
-rlist.setData([]);
 
 export function setupTransmitter(servers, wss, stream) {
+  const rlist = document.querySelector("#rlist");
+
+  rlist.setData([]);
+
   leftVideo.srcObject = stream;
   const name = "p1";
   let pc;

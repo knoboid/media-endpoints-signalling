@@ -7,6 +7,9 @@
  */
 import { setupTransmitter } from "./media-transmitter.js";
 import { setupReciever } from "./media-reciever.js";
+import registerWebComponents from "./ui/register-web-components.js";
+
+registerWebComponents();
 
 const constraints = {
   audio: true,
