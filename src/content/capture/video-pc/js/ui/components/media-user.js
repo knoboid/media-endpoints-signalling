@@ -1,5 +1,6 @@
 import PayloadEvent from "../../payload-event.js";
 import { appendContentTo } from "../util.js";
+import UsersVideoMap from "../../ui/components/users-video-map.js";
 
 const template = document.createElement("template");
 template.innerHTML = `
@@ -22,6 +23,7 @@ class MediaUserElement extends HTMLElement {
     h2.appendChild(this.idElem);
     this.transmitterContainer = appendContentTo(this, "div", "");
     this.recieversContainer = appendContentTo(this, "div", "");
+    this.videoMap = new UsersVideoMap(this.recieversContainer);
     this.usersTable = appendContentTo(this, "table", "");
     this.appendChild(this.powerButton);
     this.appendChild(h2);
@@ -53,6 +55,14 @@ class MediaUserElement extends HTMLElement {
     }
   }
 
+  addRecieverVideo(userId) {
+    if (!this.videoMap.idExists(userId)) {
+      return this.videoMap.addReciever(userId);
+    } else {
+      console.log(`Reciver already exists for user ${userId}`);
+    }
+  }
+
   setUserID(id) {
     this.idElem.innerHTML = id;
   }
@@ -64,9 +74,17 @@ class MediaUserElement extends HTMLElement {
       content += `<td>User: ${user.id}</td>`;
       content += `<td>Transmitters: ${user.transmitterCount}</td>`;
       content += `<td>Recievers: ${user.recieverCount}</td>`;
-
-      appendContentTo(this.usersTable, "tr", content);
+      const tr = appendContentTo(this.usersTable, "tr", content);
+      const button = document.createElement("button");
+      button.innerHTML = "call";
+      button.onclick = () => this.handleCall(user.id);
+      tr.appendChild(button);
     });
+  }
+
+  handleCall(userId) {
+    console.log(userId);
+    this.send("CALL", userId);
   }
 
   handleTogglePower(e) {
@@ -94,6 +112,10 @@ class MediaUserElement extends HTMLElement {
 
       case "addVideo":
         return this.addVideo();
+        break;
+
+      case "addRecieverVideo":
+        return this.addRecieverVideo(data);
         break;
 
       default:
