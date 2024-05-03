@@ -26,24 +26,34 @@
   </head>
 
   <body>
+    <media-user id="media-user"></media-user>
     <div id="container">
-      <h1>
+      <h2>
         ID: <span id="reciever-id"></span
         ><button id="reciever-hangup" style="font-size: 0.5em">
           Reciever Hangup
         </button>
-      </h1>
+      </h2>
       <div>
         <input id="name-input" type="text" /><button id="" name-button>
           submit
         </button>
       </div>
 
-      <video id="leftVideo" playsinline controls muted>
+      <video style="width: 200px" id="leftVideo" playsinline controls muted>
         <p>This browser does not support the video element.</p>
       </video>
 
-      <video id="rightVideo" playsinline autoplay controls muted></video>
+      <video
+        style="width: 200px"
+        id="rightVideo"
+        playsinline
+        autoplay
+        controls
+        muted
+      ></video>
+
+      <div id="recievers-container"></div>
 
       <div id="transmitters"></div>
       <h3>Registered Recievers</h3>

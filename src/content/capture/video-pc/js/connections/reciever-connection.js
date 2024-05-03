@@ -14,6 +14,7 @@ export function createRecieverConnection(
   servers,
   name,
   signallingChannel,
+  videoElement,
   debug = false
 ) {
   const cc = new RTCPeerConnection(servers);
@@ -23,8 +24,12 @@ export function createRecieverConnection(
   cc.ontrack = (e) => {
     if (rightVideo.srcObject !== e.streams[0]) {
       rightVideo.srcObject = e.streams[0];
-      log("reciever received transmitter stream", event);
+      log("reciever received transmitter stream", e);
     }
+    // if (videoElement.srcObject !== e.streams[0]) {
+    //   videoElement.srcObject = e.streams[0];
+    //   log("reciever received transmitter stream", e);
+    // }
   };
 
   function onIceCandidate(event) {

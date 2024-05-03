@@ -2,7 +2,7 @@ import PayloadEvent from "../../payload-event.js";
 const clientType = "transmitter";
 
 class TransmitterSignaller extends EventTarget {
-  constructor(url) {
+  constructor(url, code) {
     super();
     this.socket = new WebSocket(url);
     let messageCounter = 0;

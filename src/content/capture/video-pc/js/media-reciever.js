@@ -1,14 +1,20 @@
 import { createRecieverConnection } from "./connections/reciever-connection.js";
-import NWRecieverSignaller from "./signalling/network/reciever-signaller.js";
-import { setRecieverID, recieverUIEvents } from "./ui/ui.js";
+import { createRecieverWSSignaller } from "./signalling/network/create-ws-signallers.js";
+import {
+  setRecieverID,
+  recieverUIEvents,
+  addRecieverElement,
+} from "./ui/ui.js";
 
 console.log("Importing media-reciever");
 
-export function setupReciever(servers, wss) {
+// v.play();
+
+export function setupReciever(servers, htmlContainer) {
   const p2 = "p2";
   let pc;
 
-  const nWRecieverSignaller = new NWRecieverSignaller(wss);
+  const nWRecieverSignaller = createRecieverWSSignaller();
 
   nWRecieverSignaller.addEventListener("onGotRecieverID", (e) => {
     const recieverID = e.data;
@@ -22,12 +28,14 @@ export function setupReciever(servers, wss) {
     });
   });
 
-  nWRecieverSignaller.addEventListener("initiateResponse", () => {
-    recieve();
+  nWRecieverSignaller.addEventListener("newConnectionRequest", () => {
+    const videoElement = null; //addRecieverElement();
+    recieve(videoElement);
   });
 
-  nWRecieverSignaller.addEventListener("terminated", () => {
+  nWRecieverSignaller.addEventListener("terminated", (e) => {
     console.log("Reciever terminating");
+    console.log(e);
     pc.close();
   });
 
@@ -36,8 +44,14 @@ export function setupReciever(servers, wss) {
     offerToReceiveVideo: 1,
   };
 
-  function recieve() {
+  function recieve(videoElement) {
     console.log("Recieve");
-    pc = createRecieverConnection(servers, p2, nWRecieverSignaller);
+    pc = createRecieverConnection(
+      servers,
+      p2,
+      nWRecieverSignaller,
+      videoElement
+    );
+    return pc;
   }
 }

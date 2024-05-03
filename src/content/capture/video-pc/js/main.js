@@ -5,30 +5,32 @@
  *  that can be found in the LICENSE file in the root of the source
  *  tree.
  */
-import { setupTransmitter } from "./media-transmitter.js";
+import { setupTransmitter } from "./media-transmitter copy.js";
 import { setupReciever } from "./media-reciever.js";
+import createUser from "./roles/user/create-user.js";
 import registerWebComponents from "./ui/register-web-components.js";
 
 registerWebComponents();
+
+const recieversContainder = document.querySelector("#recievers-container");
 
 const constraints = {
   audio: true,
   video: true,
 };
 
-// const wss = "wss://localhost:5501";
-const wss = "wss://192.168.43.35:5502";
-// const wss = "wss://192.168.0.72:5502";
-// const wss = "wss://192.168.0.72:5501";
 const servers = null;
 
-function handleError(error) {
-  setupReciever(servers, wss);
+// function main() {
+//   function setup(stream) {
+//     setupTransmitter(servers, stream);
+//     setupReciever(servers, recieversContainder);
+//   }
+//   navigator.mediaDevices.getUserMedia(constraints).then(setup); //.catch(handleError);
+// }
+
+function main() {
+  createUser(servers, constraints);
 }
 
-function setup(stream) {
-  setupTransmitter(servers, wss, stream);
-  setupReciever(servers, wss);
-}
-
-navigator.mediaDevices.getUserMedia(constraints).then(setup).catch(handleError);
+main();

@@ -30,11 +30,13 @@ class RecieverSignaller extends EventTarget {
               console.log(payload);
               break;
 
-            case "initiateResponse":
+            case "newConnectionRequest":
               /* Some else has initiated a call */
-              console.log("initiateResponse");
+              console.log("newConnectionRequest");
               console.log(payload);
-              this.dispatchEvent(new PayloadEvent("initiateResponse", payload));
+              this.dispatchEvent(
+                new PayloadEvent("newConnectionRequest", payload)
+              );
               break;
 
             case "fromTransmitter":

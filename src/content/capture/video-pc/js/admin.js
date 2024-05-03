@@ -1,9 +1,9 @@
-import AdminSignaller from "./signalling/network/admin-socket-sgnaller.js";
+import { createAdminWSSignaller } from "./signalling/network/create-ws-signallers.js";
 
 const testButton = document.querySelector("#test-button");
 
-export function adminSetup(wss) {
-  const adminSignaller = new AdminSignaller(wss);
+export function adminSetup() {
+  const adminSignaller = createAdminWSSignaller();
 
   adminSignaller.addEventListener("password", () => {
     console.log("Wow, got pw request!");
