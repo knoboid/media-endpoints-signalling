@@ -5,8 +5,8 @@
  *  that can be found in the LICENSE file in the root of the source
  *  tree.
  */
-import { setupTransmitter } from "./media-transmitter copy.js";
-import { setupReciever } from "./media-reciever.js";
+// import { setupTransmitter } from "./media-transmitter copy.js";
+// import { setupReciever } from "./media-reciever.js";
 import createUser from "./roles/user/create-user.js";
 import registerWebComponents from "./ui/register-web-components.js";
 
