@@ -1,8 +1,8 @@
-function wsTransmitter({ type, payload, clientId, users }) {
+function wsTransmitter({ type, payload, clientId, userGroups: clientGroups }) {
   let reciever;
-  const transmitters = users.getTransmitters();
-  const recievers = users.getRecievers();
-  const connections = users.getConnections();
+  const transmitters = clientGroups.getTransmitters();
+  const recievers = clientGroups.getRecievers();
+  const connections = clientGroups.getConnections();
   const client = transmitters.getClient(clientId);
 
   switch (type) {
@@ -31,11 +31,11 @@ function wsTransmitter({ type, payload, clientId, users }) {
         const reciever = recievers.getClient(recieverID);
         reciever.send(
           JSON.stringify({
-            type: "initiateResponse",
+            type: "newConnectionRequest",
             payload: { transmitterID: clientId },
           })
         );
-        users.broadcastRecievers(transmitters);
+        clientGroups.broadcastRecievers(transmitters);
       } else {
         console.log("Reciever is NOT available");
         client.send(
@@ -58,7 +58,7 @@ function wsTransmitter({ type, payload, clientId, users }) {
       const parties = connections.terminate(clientId);
       reciever = recievers.getClient(parties.recieverID);
       reciever.send(JSON.stringify({ type: "terminated" }));
-      users.broadcastRecievers(transmitters);
+      clientGroups.broadcastRecievers(transmitters);
       break;
 
     default:

@@ -4,19 +4,26 @@ const Connections = require("../switchboard/connections");
 const wsAdmin = require("./ws-admin");
 const wsReciever = require("./ws-reciever");
 const wsTransmitter = require("./ws-transmitter");
+const wsUser = require("./user-ws-server");
+const ClientGroups = require("../users/client-groups");
 const Users = require("../users/users");
+const RedeemCodes = require("../RedeemCodes");
 
 let clientCounter = 0;
 
 const transmitters = new Clients();
 const recievers = new Clients();
 const connections = new Connections(transmitters, recievers);
+const redeemCodes = new RedeemCodes();
 
-const users = new Users(connections, transmitters, recievers);
+const clientGroups = new ClientGroups(connections, transmitters, recievers);
+const users = new Users();
 
 const clientTypes = {};
 
 const wsServer = new ws.Server({ noServer: true });
+// const wsServer = new ws.Server();
+console.log("wsServer");
 
 wsServer.on("connection", (client, req) => {
   const initialRequest = req;
@@ -38,12 +45,18 @@ wsServer.on("connection", (client, req) => {
           throw new Error(`Expect id of ${clientId}, instead got ${id}`);
         clientTypes[clientId] = clientType;
         if (clientType === "transmitter") {
-          console.log(`Registering transmitter ${clientId}`);
-          transmitters.addClient(clientId, client, "available");
+          const result = redeemCodes.redeem(object.code);
+          if (result) {
+            transmitters.addClient(clientId, client, "available");
+          }
         } else if (clientType === "reciever") {
           console.log(`Registering reciever ${clientId}`);
           recievers.addClient(clientId, client, "available");
-          users.broadcastRecievers(transmitters);
+          clientGroups.broadcastRecievers(transmitters);
+        } else if (clientType === "user") {
+          console.log(`Registering user ${clientId}`);
+          users.addUser(clientId, client);
+          // users.broadcast("updateUsers", users.getUsersTable());
         } else if (clientType === "admin") {
           console.log("got admin");
           client.send(
@@ -62,10 +75,13 @@ wsServer.on("connection", (client, req) => {
             wsAdmin({ client, type, payload });
             break;
           case "reciever":
-            wsReciever({ type, payload, clientId, users });
+            wsReciever({ type, payload, clientId, userGroups: clientGroups });
             break;
           case "transmitter":
-            wsTransmitter({ type, payload, clientId, users });
+            wsTransmitter({ type, payload, clientId, userGroups: clientGroups });
+            break;
+          case "user":
+            wsUser({ client, type, payload, clientId, redeemCodes });
             break;
           default:
             console.log(`UNHANDLE Client Type: ${clientType}`);
@@ -92,8 +108,10 @@ wsServer.on("connection", (client, req) => {
         transmitter.send(JSON.stringify({ type: "terminated" }));
       }
       recievers.remove(clientId);
+    } else if (clientType === "user") {
+      users.removeUser(clientId);
     }
-    users.broadcastRecievers(transmitters);
+    clientGroups.broadcastRecievers(transmitters);
   });
 
   clientCounter++;

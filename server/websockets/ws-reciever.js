@@ -1,7 +1,7 @@
-function wsReciever({ type, payload, clientId, users }) {
+function wsReciever({ type, payload, clientId, userGroups: clientGroups }) {
   let transmitter;
-  const transmitters = users.getTransmitters();
-  const connections = users.getConnections();
+  const transmitters = clientGroups.getTransmitters();
+  const connections = clientGroups.getConnections();
   switch (type) {
     case "fromReciever":
       console.log("Handling fromReciever");
@@ -15,7 +15,7 @@ function wsReciever({ type, payload, clientId, users }) {
         const parties = connections.terminate(clientId);
         transmitter = transmitters.getClient(parties.transmitterID);
         transmitter.send(JSON.stringify({ type: "terminated" }));
-        users.broadcastRecievers(transmitters);
+        clientGroups.broadcastRecievers(transmitters);
       }
       break;
 

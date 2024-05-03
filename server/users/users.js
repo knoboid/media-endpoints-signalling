@@ -1,31 +1,51 @@
+const User = require("./user");
+
 class Users {
-  constructor(connections, transmitters, recievers) {
-    this.connections = connections;
-    this.transmitters = transmitters;
-    this.recievers = recievers;
+  constructor() {
+    this.users = {};
   }
 
-  getConnections() {
-    return this.connections;
+  removeUser(clientId) {
+    delete this.users[clientId]
+    this.broadcastUpdate();
   }
 
-  getTransmitters() {
-    return this.transmitters;
+  addUser(clientId, client) {
+    const user = new User(clientId, client);
+    this.users[clientId] = user;
+    this.broadcastUpdate()
   }
 
-  getRecievers() {
-    return this.recievers;
+  getUser(clientId) {
+    return this.users[clientId];
   }
 
-  broadcastRecievers(recieverGroup) {
-    recieverGroup.getClients().forEach((client) => {
-      client.send(
+  getUsers() {
+    return Object.values(this.users);
+  }
+
+  getUsersTable() {
+    return this.getUsers().map((user) => {
+      const record = {};
+      record.id = user.clientId;
+      return record;
+    });
+  }
+
+  broadcast(type, payload) {
+    this.getUsers().forEach((user) => {
+      const clientSocket = user.getSocket();
+      clientSocket.send(
         JSON.stringify({
-          type: "updateRecievers",
-          payload: { recievers: this.recievers.getList() },
+          type,
+          payload,
         })
       );
     });
+  }
+
+  broadcastUpdate() {
+    this.broadcast("updateUsers", this.getUsersTable());
   }
 }
 
