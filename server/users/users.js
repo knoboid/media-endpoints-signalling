@@ -6,14 +6,14 @@ class Users {
   }
 
   removeUser(clientId) {
-    delete this.users[clientId]
+    delete this.users[clientId];
     this.broadcastUpdate();
   }
 
   addUser(clientId, client) {
     const user = new User(clientId, client);
     this.users[clientId] = user;
-    this.broadcastUpdate()
+    this.broadcastUpdate();
   }
 
   getUser(clientId) {
@@ -28,6 +28,8 @@ class Users {
     return this.getUsers().map((user) => {
       const record = {};
       record.id = user.clientId;
+      record.transmitterCount = user.transmitters.length;
+      record.recieverCount = user.recievers.length;
       return record;
     });
   }
@@ -46,6 +48,12 @@ class Users {
 
   broadcastUpdate() {
     this.broadcast("updateUsers", this.getUsersTable());
+  }
+
+  addTransmitter(clientId, transmitter) {
+    const user = this.getUser(clientId);
+    user.addTransmitter(transmitter);
+    this.broadcastUpdate();
   }
 }
 

@@ -17,13 +17,11 @@ class User {
         this.id = e.data;
         this.uiSignaller.resolve("onGotUserID", this.id);
       },
-      acceptTransmitter: (e) => {
+      transmitterRegistrationCode: (e) => {
         const code = e.data;
-        console.log("acceptTransmitter");
+        console.log("transmitterRegistrationCode");
         if (this.transmitterController === null) {
-          console.log("acceptTransmitter");
-
-          this.transmitterController = createTransmitter(
+          createTransmitter(
             this.servers,
             this.constraints,
             this.uiSignaller,
@@ -46,7 +44,7 @@ class User {
     return {
       START: (e) => {
         console.log("Start App!");
-        this.wsSignaller.send({ type: "registerTransmitter" });
+        this.wsSignaller.send({ type: "requestTransmitter" });
       },
       STOP: (e) => {
         console.log("Stop App!");

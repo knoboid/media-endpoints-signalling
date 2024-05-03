@@ -46,8 +46,10 @@ wsServer.on("connection", (client, req) => {
         clientTypes[clientId] = clientType;
         if (clientType === "transmitter") {
           const result = redeemCodes.redeem(object.code);
-          if (result) {
+          if (result.type === "registerTransmitter") {
             transmitters.addClient(clientId, client, "available");
+            const userId = result.clientId;
+            users.addTransmitter(userId, clientId);
           }
         } else if (clientType === "reciever") {
           console.log(`Registering reciever ${clientId}`);
@@ -56,7 +58,6 @@ wsServer.on("connection", (client, req) => {
         } else if (clientType === "user") {
           console.log(`Registering user ${clientId}`);
           users.addUser(clientId, client);
-          // users.broadcast("updateUsers", users.getUsersTable());
         } else if (clientType === "admin") {
           console.log("got admin");
           client.send(
@@ -78,7 +79,12 @@ wsServer.on("connection", (client, req) => {
             wsReciever({ type, payload, clientId, userGroups: clientGroups });
             break;
           case "transmitter":
-            wsTransmitter({ type, payload, clientId, userGroups: clientGroups });
+            wsTransmitter({
+              type,
+              payload,
+              clientId,
+              userGroups: clientGroups,
+            });
             break;
           case "user":
             wsUser({ client, type, payload, clientId, redeemCodes });

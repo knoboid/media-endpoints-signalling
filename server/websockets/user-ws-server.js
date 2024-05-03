@@ -1,10 +1,11 @@
 function wsUser({ client, type, payload, clientId, redeemCodes }) {
   switch (type) {
-    case "registerTransmitter":
-      console.log("registerTransmitter");
+    case "requestTransmitter":
       const code = redeemCodes.generate(clientId, "registerTransmitter");
       console.log(code);
-      client.send(JSON.stringify({ type: "acceptTransmitter", payload: code }));
+      client.send(
+        JSON.stringify({ type: "transmitterRegistrationCode", payload: code })
+      );
       break;
 
     default:

@@ -19,7 +19,7 @@ class TransmitterSignaller extends EventTarget {
           if (isNaN(id)) throw new TypeError("Expect a number");
           console.log(`Setting id to ${id}`);
           this.id = id;
-          this.socket.send(JSON.stringify({ id, clientType }));
+          this.socket.send(JSON.stringify({ id, clientType, code }));
           this.dispatchEvent(new PayloadEvent("onGotTransmitterID", id));
           break;
 

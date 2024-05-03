@@ -62,9 +62,8 @@ class MediaUserElement extends HTMLElement {
     usersTable.forEach((user) => {
       let content = "";
       content += `<td>User: ${user.id}</td>`;
-      content += `<td>Transmitter: ${
-        typeof user.transmitter !== "undefined"
-      }</td>`;
+      content += `<td>Transmitters: ${user.transmitterCount}</td>`;
+      content += `<td>Recievers: ${user.recieverCount}</td>`;
 
       appendContentTo(this.usersTable, "tr", content);
     });
