@@ -6,11 +6,17 @@ let transmitterID;
 // const leftVideo = document.getElementById("leftVideo");
 
 export function setupTransmitter(servers, stream, ui, code) {
-
   class TransmitterController {
     constructor(signaller, videoElement) {
-      this.signaller = signaller
-      this.videoElement = videoElement
+      this.signaller = signaller;
+      this.videoElement = videoElement;
+    }
+
+    initiateUserCall(userId) {
+      this.signaller.send({
+        type: "initiateUserCall",
+        payload: { userId },
+      });
     }
 
     hangup() {
@@ -38,10 +44,9 @@ export function setupTransmitter(servers, stream, ui, code) {
     }
   }
 
+  const videoElement = ui.resolve("addVideo");
 
-  const leftVideo = ui.resolve("addVideo");
-
-  console.log(leftVideo);
+  console.log(videoElement);
 
   return doit();
 
@@ -54,13 +59,13 @@ export function setupTransmitter(servers, stream, ui, code) {
 
     rlist.setData([]);
 
-    leftVideo.srcObject = stream;
+    videoElement.srcObject = stream;
     const name = "p1";
-    // let pc;
+    let pc;
 
     const nWTransmitterSignaller = createTransmitterWSSignaller(code);
 
-    const tc = new TransmitterController(nWTransmitterSignaller, leftVideo);
+    const tc = new TransmitterController(nWTransmitterSignaller, videoElement);
 
     nWTransmitterSignaller.addEventListener("onGotTransmitterID", (e) => {
       transmitterID = e.data;
@@ -103,8 +108,7 @@ export function setupTransmitter(servers, stream, ui, code) {
     nWTransmitterSignaller.addEventListener("initiateCallSuccess", (event) => {
       console.log("get initiateCallSuccess");
       console.log(event.data);
-      tc.call();
-      // call();
+      call();
     });
 
     nWTransmitterSignaller.addEventListener("terminated", (event) => {
@@ -116,7 +120,7 @@ export function setupTransmitter(servers, stream, ui, code) {
       offerToReceiveVideo: 1,
     };
 
-    leftVideo.play();
+    videoElement.play();
 
     function call() {
       console.log("Starting call");
@@ -132,6 +136,5 @@ export function setupTransmitter(servers, stream, ui, code) {
     console.log(tc);
 
     return tc;
-
   }
 }

@@ -22,7 +22,7 @@ class UserWSSignaller extends EventTarget {
           console.log(`Setting user id to ${id}`);
           this.id = id;
           this.socket.send(JSON.stringify({ id, clientType }));
-          this.dispatchEvent(new PayloadEvent("onGotUserID", id));
+          this.dispatchEvent(new PayloadEvent("getUserID", id));
           break;
 
         default:

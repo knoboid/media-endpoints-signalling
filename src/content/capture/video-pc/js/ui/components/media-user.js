@@ -102,7 +102,7 @@ class MediaUserElement extends HTMLElement {
     console.log("type");
     console.log(type);
     switch (type) {
-      case "onGotUserID":
+      case "getUserID":
         this.setUserID(data);
         break;
 

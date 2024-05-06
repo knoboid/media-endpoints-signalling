@@ -52,9 +52,17 @@ wsServer.on("connection", (client, req) => {
             users.addTransmitter(userId, clientId);
           }
         } else if (clientType === "reciever") {
-          console.log(`Registering reciever ${clientId}`);
-          recievers.addClient(clientId, client, "available");
-          clientGroups.broadcastRecievers(transmitters);
+          console.log(object);
+          const result = redeemCodes.redeem(object.code);
+          if (result.type === "registerReciever") {
+            recievers.addClient(clientId, client, "available");
+            const userId = result.clientId;
+            users.addReciever(userId, clientId);
+            client.send(JSON.stringify({ type: "recieverRegistered" }));
+          }
+          //console.log(`Registering reciever ${clientId}`);
+          //recievers.addClient(clientId, client, "available");
+          //clientGroups.broadcastRecievers(transmitters);
         } else if (clientType === "user") {
           console.log(`Registering user ${clientId}`);
           users.addUser(clientId, client);
@@ -87,7 +95,7 @@ wsServer.on("connection", (client, req) => {
             });
             break;
           case "user":
-            wsUser({ client, type, payload, clientId, redeemCodes });
+            wsUser({ client, type, payload, clientId, redeemCodes, users });
             break;
           default:
             console.log(`UNHANDLE Client Type: ${clientType}`);

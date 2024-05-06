@@ -1,4 +1,7 @@
+import { createRecieverConnection } from "../../connections/reciever-connection.js";
 import { createTransmitter } from "../../create-transmitter.js";
+import { setupReciever } from "../../media-reciever.js";
+import PayloadEvent from "../../payload-event.js";
 
 class User {
   constructor(servers, constraints, wsSignaller, uiSignaller) {
@@ -13,9 +16,9 @@ class User {
 
   defineWSListeners() {
     return {
-      onGotUserID: (e) => {
+      getUserID: (e) => {
         this.id = e.data;
-        this.uiSignaller.resolve("onGotUserID", this.id);
+        this.uiSignaller.resolve("getUserID", this.id);
       },
       transmitterRegistrationCode: (e) => {
         const code = e.data;
@@ -37,6 +40,47 @@ class User {
       updateUsers: (e) => {
         this.uiSignaller.resolve("updateUsers", e.data);
       },
+      requestReciever: (e) => {
+        console.log(`request reciever for call with user ${e.data}`);
+        const userId = e.data.userId;
+        const videoElement = this.uiSignaller.resolve(
+          "addRecieverVideo",
+          e.data.userId
+        );
+        if (typeof videoElement !== "undefined") {
+          const onready = (recieverId) => {
+            this.wsSignaller.send({
+              type: "recieverReady",
+              payload: { recieverId, userId },
+            });
+          };
+          const onhangup = () => {
+            console.log("hangup signal callback!");
+          };
+          setupReciever(
+            this.servers,
+            videoElement,
+            e.data.code,
+            onready,
+            onhangup
+          );
+        } else {
+          console.log("Reciever video not created!");
+        }
+      },
+      recieverRegistrationCode: (e) => {
+        console.log("recieverRegistrationCode", e.data);
+      },
+      userReady: (e) => {
+        console.log("userReady");
+        console.log(e);
+        console.log(e.data.recieverId);
+        // this.transmitterController.call(e.data.recieverId)
+        this.transmitterController.signaller.send({
+          type: "initiateCall",
+          payload: { recieverID: e.data.recieverId },
+        });
+      },
     };
   }
 
@@ -54,6 +98,16 @@ class User {
           // This is wrong. Don't need to do hangup. Just need to stopstream.
           // this.transmitterController.hangup();
           //this.transmitterSignaller.send()
+        }
+      },
+      CALL: (e) => {
+        console.log(e);
+        if (this.transmitterController) {
+          this.wsSignaller.send({
+            type: "initiateCallToUser",
+            payload: e.data,
+          });
+          // this.transmitterController.initiateUserCall(e.data);
         }
       },
     };

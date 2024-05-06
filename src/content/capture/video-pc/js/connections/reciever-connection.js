@@ -22,14 +22,12 @@ export function createRecieverConnection(
   cc.oniceconnectionstatechange = (e) => onIceStateChange(cc, name, e);
   cc.onicecandidate = (e) => onIceCandidate(e);
   cc.ontrack = (e) => {
-    if (rightVideo.srcObject !== e.streams[0]) {
-      rightVideo.srcObject = e.streams[0];
-      log("reciever received transmitter stream", e);
-    }
-    // if (videoElement.srcObject !== e.streams[0]) {
-    //   videoElement.srcObject = e.streams[0];
-    //   log("reciever received transmitter stream", e);
+    // if (rightVideo.srcObject !== e.streams[0]) {
+    //   rightVideo.srcObject = e.streams[0];
     // }
+    if (videoElement.srcObject !== e.streams[0]) {
+      videoElement.srcObject = e.streams[0];
+    }
   };
 
   function onIceCandidate(event) {

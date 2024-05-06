@@ -2,10 +2,11 @@ import PayloadEvent from "../../payload-event.js";
 const clientType = "reciever";
 
 class RecieverSignaller extends EventTarget {
-  constructor(url) {
+  constructor(url, code) {
     super();
     this.socket = new WebSocket(url);
     let messageCounter = 0;
+    // let clientId;
 
     this.socket.onopen = (e) => {
       console.log("SOCKET OPENED");
@@ -18,8 +19,7 @@ class RecieverSignaller extends EventTarget {
           if (isNaN(id)) throw new TypeError("Expect a number");
           console.log(`Setting id to ${id}`);
           this.id = id;
-          this.socket.send(JSON.stringify({ id, clientType }));
-          this.dispatchEvent(new PayloadEvent("onGotRecieverID", id));
+          this.socket.send(JSON.stringify({ id, clientType, code }));
           break;
 
         default:
@@ -28,6 +28,12 @@ class RecieverSignaller extends EventTarget {
           switch (type) {
             case "info":
               console.log(payload);
+              break;
+
+            case "recieverRegistered":
+              this.dispatchEvent(
+                new PayloadEvent("recieverRegistered", this.id)
+              );
               break;
 
             case "newConnectionRequest":
