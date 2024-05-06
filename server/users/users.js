@@ -50,9 +50,15 @@ class Users {
     this.broadcast("updateUsers", this.getUsersTable());
   }
 
-  addTransmitter(clientId, transmitter) {
+  addTransmitter(clientId, transmitterId) {
     const user = this.getUser(clientId);
-    user.addTransmitter(transmitter);
+    user.addTransmitter(transmitterId);
+    this.broadcastUpdate();
+  }
+
+  addReciever(clientId, recieverId) {
+    const user = this.getUser(clientId);
+    user.addReciever(recieverId);
     this.broadcastUpdate();
   }
 }

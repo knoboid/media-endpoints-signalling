@@ -10,8 +10,12 @@ class User {
     return this.client;
   }
 
-  addTransmitter(transmitter) {
-    this.transmitters.push(transmitter);
+  addTransmitter(transmitterId) {
+    this.transmitters.push(transmitterId);
+  }
+
+  addReciever(recieverId) {
+    this.recievers.push(recieverId);
   }
 }
 
