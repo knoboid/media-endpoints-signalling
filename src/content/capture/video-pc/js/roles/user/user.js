@@ -1,6 +1,5 @@
-import { createRecieverConnection } from "../../connections/reciever-connection.js";
 import { createTransmitter } from "../../create-transmitter.js";
-import { setupReciever } from "../../media-reciever.js";
+import Receiver from "../../media-reciever.js";
 import PayloadEvent from "../../payload-event.js";
 
 class User {
@@ -57,7 +56,7 @@ class User {
           const onhangup = () => {
             console.log("hangup signal callback!");
           };
-          setupReciever(
+          new Receiver(
             this.servers,
             videoElement,
             e.data.code,

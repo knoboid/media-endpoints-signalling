@@ -1,61 +1,49 @@
 import { createRecieverConnection } from "./connections/reciever-connection.js";
 import { createRecieverWSSignaller } from "./signalling/network/create-ws-signallers.js";
-// import {
-//   setRecieverID,
-//   recieverUIEvents,
-//   addRecieverElement,
-// } from "./ui/ui.js";
 
-console.log("Importing media-reciever");
+class Receiver {
+  constructor(servers, videoElement, code, onready, onhangup) {
+    this.servers = servers;
+    this.onhangup = onhangup;
+    const p2 = "p2";
+    let pc;
 
-// v.play();
+    this.nWRecieverSignaller = createRecieverWSSignaller(code);
 
-export function setupReciever(servers, videoElement, code, onready, onhangup) {
-  const p2 = "p2";
-  let pc;
+    this.nWRecieverSignaller.addEventListener("recieverRegistered", (e) => {
+      const recieverID = e.data;
+      console.log("before onready");
+      console.log(e);
+      console.log(recieverID);
+      // setRecieverID(recieverID);
+      onready(recieverID);
+    });
 
-  const nWRecieverSignaller = createRecieverWSSignaller(code);
+    this.nWRecieverSignaller.addEventListener("newConnectionRequest", () => {
+      this.recieve(videoElement);
+    });
 
-  nWRecieverSignaller.addEventListener("recieverRegistered", (e) => {
-    const recieverID = e.data;
-    console.log("before onready");
-    console.log(e);
-    console.log(recieverID);
-    // setRecieverID(recieverID);
-    onready(recieverID);
-  });
+    this.nWRecieverSignaller.addEventListener("terminated", (e) => {
+      console.log("Reciever terminating");
+      console.log(e);
+      pc.close();
+    });
 
-  // recieverUIEvents.addEventListener("reciever-hangup", () => {
-  //   pc.close();
-  //   nWRecieverSignaller.send({
-  //     type: "terminated",
-  //   });
-  // });
+    const offerOptions = {
+      offerToReceiveAudio: 1,
+      offerToReceiveVideo: 1,
+    };
+  }
 
-  nWRecieverSignaller.addEventListener("newConnectionRequest", () => {
-    // const videoElement = null; //addRecieverElement();
-    recieve(videoElement);
-  });
-
-  nWRecieverSignaller.addEventListener("terminated", (e) => {
-    console.log("Reciever terminating");
-    console.log(e);
-    pc.close();
-  });
-
-  const offerOptions = {
-    offerToReceiveAudio: 1,
-    offerToReceiveVideo: 1,
-  };
-
-  function recieve(videoElement) {
+  recieve(videoElement) {
     console.log("Recieve");
-    pc = createRecieverConnection(
-      servers,
-      p2,
-      nWRecieverSignaller,
+    this.pc = createRecieverConnection(
+      this.servers,
+      this.p2,
+      this.nWRecieverSignaller,
       videoElement
     );
-    return pc;
   }
 }
+
+export default Receiver;
