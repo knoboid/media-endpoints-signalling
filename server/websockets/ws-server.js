@@ -8,6 +8,7 @@ const wsUser = require("./user-ws-server");
 const ClientGroups = require("../users/client-groups");
 const Users = require("../users/users");
 const RedeemCodes = require("../RedeemCodes");
+const PendingConnections = require("../switchboard/pending-connections.js");
 
 let clientCounter = 0;
 
@@ -18,6 +19,7 @@ const redeemCodes = new RedeemCodes();
 
 const clientGroups = new ClientGroups(connections, transmitters, recievers);
 const users = new Users();
+const pendingConnections = new PendingConnections(users);
 
 const clientTypes = {};
 
@@ -95,7 +97,15 @@ wsServer.on("connection", (client, req) => {
             });
             break;
           case "user":
-            wsUser({ client, type, payload, clientId, redeemCodes, users });
+            wsUser({
+              client,
+              type,
+              payload,
+              clientId,
+              redeemCodes,
+              users,
+              pendingConnections,
+            });
             break;
           default:
             console.log(`UNHANDLE Client Type: ${clientType}`);

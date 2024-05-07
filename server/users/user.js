@@ -14,6 +14,10 @@ class User {
     this.transmitters.push(transmitterId);
   }
 
+  ownsTransmitter(transmitterId) {
+    return this.transmitters.includes(transmitterId);
+  }
+
   addReciever(recieverId) {
     this.recievers.push(recieverId);
   }

@@ -63,6 +63,10 @@ class Users {
     user.addReciever(recieverId);
     this.broadcastUpdate();
   }
+
+  userOwnsTransmitter(clientId, tranmitterId) {
+    return this.getUser(clientId).ownsTransmitter(tranmitterId);
+  }
 }
 
 module.exports = Users;
