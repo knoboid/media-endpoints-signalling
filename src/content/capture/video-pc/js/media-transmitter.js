@@ -1,140 +1,86 @@
 import { createTransmitterConnection } from "./connections/transmitter-connection.js";
 import { createTransmitterWSSignaller } from "./signalling/network/create-ws-signallers.js";
+import PayloadEvent from "./payload-event.js";
 
-let transmitterID;
+export default class Transmitter extends EventTarget {
+  constructor(servers, stream, code) {
+    super();
+    this.servers = servers;
+    this.stream = stream;
 
-// const leftVideo = document.getElementById("leftVideo");
-
-export function setupTransmitter(servers, stream, ui, code) {
-  class TransmitterController {
-    constructor(signaller, videoElement) {
-      this.signaller = signaller;
-      this.videoElement = videoElement;
-    }
-
-    initiateUserCall(userId) {
-      this.signaller.send({
-        type: "initiateUserCall",
-        payload: { userId },
-      });
-    }
-
-    hangup() {
-      console.log("TransmitterController hangup pressed");
-      console.log("doing tc hangup");
-      console.log(this.pc);
-      this.pc.close();
-      this.signaller.send({
-        type: "terminated",
-      });
-      this.videoElement.srcObject = null;
-    }
-
-    call() {
-      console.log("Starting call");
-      this.pc = createTransmitterConnection(
-        servers,
-        name,
-        stream,
-        this.signaller
-      );
-      console.log("trancontroller call");
-      console.log(this.pc);
-      // this.pc = pc
-    }
-  }
-
-  const videoElement = ui.resolve("addVideo");
-
-  console.log(videoElement);
-
-  return doit();
-
-  // leftVideo.oncanplay = () => {
-  //   console.log("I can play");
-  // };
-
-  function doit() {
     const rlist = document.querySelector("#rlist");
 
     rlist.setData([]);
 
-    videoElement.srcObject = stream;
-    const name = "p1";
-    let pc;
+    this.name = "p1";
+    this.pc = null;
 
     const nWTransmitterSignaller = createTransmitterWSSignaller(code);
+    this.nWTransmitterSignaller = nWTransmitterSignaller;
 
-    const tc = new TransmitterController(nWTransmitterSignaller, videoElement);
-
-    nWTransmitterSignaller.addEventListener("onGotTransmitterID", (e) => {
-      transmitterID = e.data;
+    this.nWTransmitterSignaller.addEventListener("onGotTransmitterID", (e) => {
+      this.transmitterID = e.data;
     });
 
-    nWTransmitterSignaller.addEventListener("onUpdateRecievers", (event) => {
-      const otherRecievers = event.data.filter(
-        // (reciever) => Number(reciever.id) !== recieverID
-        (reciever) => Number(reciever.id) !== -1
-      );
-      rlist.setData(otherRecievers);
-    });
-
-    rlist.addEventListener(
-      "call",
-      (e) => {
-        console.log("call pressed");
-        console.log(e.data);
-        nWTransmitterSignaller.send({
-          type: "initiateCall",
-          payload: { recieverID: e.data },
-        });
-      },
-      { capture: true }
+    this.nWTransmitterSignaller.addEventListener(
+      "onUpdateRecievers",
+      (event) => {
+        this.dispatchEvent(new PayloadEvent("onUpdateRecievers", event.data));
+        const otherRecievers = event.data.filter(
+          // (reciever) => Number(reciever.id) !== recieverID
+          (reciever) => Number(reciever.id) !== -1
+        );
+        rlist.setData(otherRecievers);
+      }
     );
 
     rlist.addEventListener(
       "hangup",
       (e) => {
-        tc.hangup();
+        this.hangup();
         // console.log("hangup pressed");
-        // tc.pc.close();
-        // nWTransmitterSignaller.send({
+        // this.tc.pc.close();
+        // this.nWTransmitterSignaller.send({
         //   type: "terminated",
         // });
       },
       { capture: true }
     );
 
-    nWTransmitterSignaller.addEventListener("initiateCallSuccess", (event) => {
-      console.log("get initiateCallSuccess");
-      console.log(event.data);
-      call();
-    });
+    this.nWTransmitterSignaller.addEventListener(
+      "initiateCallSuccess",
+      (event) => {
+        console.log("get initiateCallSuccess");
+        console.log(event.data);
+        this.call();
+      }
+    );
 
-    nWTransmitterSignaller.addEventListener("terminated", (event) => {
-      tc.pc.close();
+    this.nWTransmitterSignaller.addEventListener("terminated", (event) => {
+      this.pc.close();
     });
 
     const offerOptions = {
       offerToReceiveAudio: 1,
       offerToReceiveVideo: 1,
     };
+  }
 
-    videoElement.play();
+  hangup() {
+    console.log("Transmitter hangup pressed");
+    this.pc.close();
+    this.nWTransmitterSignaller.send({
+      type: "terminated",
+    });
+  }
 
-    function call() {
-      console.log("Starting call");
-      pc = createTransmitterConnection(
-        servers,
-        name,
-        stream,
-        nWTransmitterSignaller
-      );
-    }
-
-    console.log("MT returning tc");
-    console.log(tc);
-
-    return tc;
+  call() {
+    console.log("Starting call");
+    this.pc = createTransmitterConnection(
+      this.servers,
+      this.name,
+      this.stream,
+      this.nWTransmitterSignaller
+    );
   }
 }

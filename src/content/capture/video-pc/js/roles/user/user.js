@@ -5,7 +5,7 @@ import PayloadEvent from "../../payload-event.js";
 class User {
   constructor(servers, constraints, wsSignaller, uiSignaller) {
     this.servers = servers;
-    this.transmitterController = null;
+    this.transmitter = null;
     this.constraints = constraints;
     this.wsSignaller = wsSignaller;
     this.uiSignaller = uiSignaller;
@@ -22,19 +22,19 @@ class User {
       transmitterRegistrationCode: (e) => {
         const code = e.data;
         console.log("transmitterRegistrationCode");
-        if (this.transmitterController === null) {
-          createTransmitter(
-            this.servers,
-            this.constraints,
-            this.uiSignaller,
-            code
-          ).then((tc) => {
-            console.log("got transmitter controller");
-            console.log(tc);
-            this.transmitterController = tc;
-          });
+        // this.videoElement = ui.resolve("addVideo");
+
+        if (this.transmitter === null) {
+          createTransmitter(this.servers, this.constraints, code).then(
+            (transmitter) => {
+              console.log("transmitter id");
+              console.log(transmitter.transmitterID);
+              this.transmitter = transmitter;
+              const videoElement = this.uiSignaller.resolve("addVideo");
+              videoElement.srcObject = this.transmitter.stream;
+            }
+          );
         }
-        console.log(this.transmitterController);
       },
       updateUsers: (e) => {
         this.uiSignaller.resolve("updateUsers", e.data);
@@ -75,7 +75,8 @@ class User {
         console.log(e);
         console.log(e.data.recieverId);
         // this.transmitterController.call(e.data.recieverId)
-        this.transmitterController.signaller.send({
+        // this.transmitterController.signaller.send({
+        this.transmitter.nWTransmitterSignaller.send({
           type: "initiateCall",
           payload: { recieverID: e.data.recieverId },
         });
@@ -92,8 +93,8 @@ class User {
       STOP: (e) => {
         console.log("Stop App!");
         // this.wsSignaller.send({ type: "removeTransmitter" });
-        console.log(this.transmitterController);
-        if (this.transmitterController) {
+        // if (this.transmitterController) {
+        if (this.transmitter) {
           // This is wrong. Don't need to do hangup. Just need to stopstream.
           // this.transmitterController.hangup();
           //this.transmitterSignaller.send()
@@ -101,12 +102,14 @@ class User {
       },
       CALL: (e) => {
         console.log(e);
-        if (this.transmitterController) {
+        console.log(this.transmitter);
+        // if (this.transmitterController) {
+        if (this.transmitter) {
           this.wsSignaller.send({
             type: "initiateCallToUser",
             payload: e.data,
           });
-          // this.transmitterController.initiateUserCall(e.data);
+          // this.transmitter.tc.initiateUserCall(e.data);
         }
       },
     };
