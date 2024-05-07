@@ -20,6 +20,7 @@ export default class Transmitter extends EventTarget {
 
     this.nWTransmitterSignaller.addEventListener("onGotTransmitterID", (e) => {
       this.transmitterID = e.data;
+      this.dispatchEvent(new PayloadEvent("onGotTransmitterID", e.data));
     });
 
     this.nWTransmitterSignaller.addEventListener(

@@ -1,16 +1,18 @@
 import { createTransmitter } from "../../create-transmitter.js";
 import Receiver from "../../media-reciever.js";
 import PayloadEvent from "../../payload-event.js";
+import Transmitter from "../../media-transmitter.js";
 
 class User {
   constructor(servers, constraints, wsSignaller, uiSignaller) {
     this.servers = servers;
-    this.transmitter = null;
+    this.transmitters = {};
     this.constraints = constraints;
     this.wsSignaller = wsSignaller;
     this.uiSignaller = uiSignaller;
     this.registerWSListeners();
     this.registerUIListeners();
+    this.transmitterRequests = {};
   }
 
   defineWSListeners() {
@@ -20,21 +22,15 @@ class User {
         this.uiSignaller.resolve("getUserID", this.id);
       },
       transmitterRegistrationCode: (e) => {
-        const code = e.data;
-        console.log("transmitterRegistrationCode");
-        // this.videoElement = ui.resolve("addVideo");
-
-        if (this.transmitter === null) {
-          createTransmitter(this.servers, this.constraints, code).then(
-            (transmitter) => {
-              console.log("transmitter id");
-              console.log(transmitter.transmitterID);
-              this.transmitter = transmitter;
-              const videoElement = this.uiSignaller.resolve("addVideo");
-              videoElement.srcObject = this.transmitter.stream;
-            }
-          );
-        }
+        const { code, requestUUID } = e.data;
+        const stream = this.transmitterRequests[requestUUID].stream;
+        const transmitter = new Transmitter(this.servers, stream, code);
+        transmitter.addEventListener("onGotTransmitterID", (e) => {
+          const id = e.data;
+          this.transmitters[id] = transmitter;
+        });
+        const videoElement = this.uiSignaller.resolve("addVideo");
+        videoElement.srcObject = stream;
       },
       updateUsers: (e) => {
         this.uiSignaller.resolve("updateUsers", e.data);
@@ -74,9 +70,9 @@ class User {
         console.log("userReady");
         console.log(e);
         console.log(e.data.recieverId);
-        // this.transmitterController.call(e.data.recieverId)
-        // this.transmitterController.signaller.send({
-        this.transmitter.nWTransmitterSignaller.send({
+        const transmitter = Object.values(this.transmitters)[0];
+        // VERY WRONG!!
+        transmitter.nWTransmitterSignaller.send({
           type: "initiateCall",
           payload: { recieverID: e.data.recieverId },
         });
@@ -86,6 +82,18 @@ class User {
 
   defineUIListeners() {
     return {
+      addTransmitter: (e) => {
+        console.log("addTrans");
+        const stream = e.data;
+        console.log(stream);
+        const requestUUID = crypto.randomUUID();
+        console.log(requestUUID);
+        this.transmitterRequests[requestUUID] = { stream };
+        this.wsSignaller.send({
+          type: "requestTransmitter",
+          payload: { requestUUID },
+        });
+      },
       START: (e) => {
         console.log("Start App!");
         this.wsSignaller.send({ type: "requestTransmitter" });
@@ -94,20 +102,22 @@ class User {
         console.log("Stop App!");
         // this.wsSignaller.send({ type: "removeTransmitter" });
         // if (this.transmitterController) {
-        if (this.transmitter) {
-          // This is wrong. Don't need to do hangup. Just need to stopstream.
-          // this.transmitterController.hangup();
-          //this.transmitterSignaller.send()
-        }
+        // if (this.transmitter) {
+        // This is wrong. Don't need to do hangup. Just need to stopstream.
+        // this.transmitterController.hangup();
+        //this.transmitterSignaller.send()
+        // }
       },
       CALL: (e) => {
         console.log(e);
-        console.log(this.transmitter);
+        // console.log(this.transmitter);
+        const { userId, tranmitterId } = e.data;
         // if (this.transmitterController) {
-        if (this.transmitter) {
+        const transmitter = this.transmitters[tranmitterId];
+        if (transmitter) {
           this.wsSignaller.send({
             type: "initiateCallToUser",
-            payload: e.data,
+            payload: { userId, tranmitterId },
           });
           // this.transmitter.tc.initiateUserCall(e.data);
         }

@@ -37,13 +37,22 @@ class MediaUserElement extends HTMLElement {
     this.isStarted = false;
     this.powerButton.onclick = (e) => this.handleTogglePower(e);
     this.streamButton.onclick = (e) => this.handleStartStream(e);
+    this.addTransmitterButton.onclick = (e) => this.handleAddTransmitter(e);
     this.hasTransmitterVideo = false;
     this.transmitterVideoElement = null;
     this.streamStarted = false;
     this.stream = null;
+    this.userId = null;
+  }
+
+  handleAddTransmitter(e) {
+    if (this.stream !== null) {
+      this.send("addTransmitter", this.stream);
+    }
   }
 
   handleStartStream(e) {
+    console.log(this.stream);
     if (this.stream === null) {
       const constraints = {
         audio: true,
@@ -97,10 +106,13 @@ class MediaUserElement extends HTMLElement {
 
   setUserID(id) {
     this.idElem.innerHTML = id;
+    this.userId = id;
   }
 
   updateUsers(usersTable) {
     this.usersTable.innerHTML = "";
+    const userRow = usersTable.filter((user) => user.id === this.userId)[0];
+
     usersTable.forEach((user) => {
       let content = "";
       content += `<td>User: ${user.id}</td>`;
@@ -109,16 +121,18 @@ class MediaUserElement extends HTMLElement {
       content += `<td>Recs: [${user.receivers.join(",")}]</td>`;
       // content += `<td>Recievers: ${user.recieverCount}</td>`;
       const tr = appendContentTo(this.usersTable, "tr", content);
-      const button = document.createElement("button");
-      button.innerHTML = "call";
-      button.onclick = () => this.handleCall(user.id);
-      tr.appendChild(button);
+      userRow.transmitters.forEach((tranmitterId) => {
+        const button = document.createElement("button");
+        button.innerHTML = `frm ${tranmitterId}`;
+        button.onclick = () => this.handleCall(user.id, tranmitterId);
+        tr.appendChild(button);
+      });
     });
   }
 
-  handleCall(userId) {
+  handleCall(userId, tranmitterId) {
     console.log(userId);
-    this.send("CALL", userId);
+    this.send("CALL", { userId, tranmitterId });
   }
 
   handleTogglePower(e) {
@@ -146,11 +160,9 @@ class MediaUserElement extends HTMLElement {
 
       case "addVideo":
         return this.addVideo();
-        break;
 
       case "addRecieverVideo":
         return this.addRecieverVideo(data);
-        break;
 
       default:
         break;
