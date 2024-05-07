@@ -6,7 +6,7 @@ class Receiver {
     this.servers = servers;
     this.onhangup = onhangup;
     const p2 = "p2";
-    let pc;
+    this.pc;
 
     this.nWRecieverSignaller = createRecieverWSSignaller(code);
 
@@ -26,7 +26,7 @@ class Receiver {
     this.nWRecieverSignaller.addEventListener("terminated", (e) => {
       console.log("Reciever terminating");
       console.log(e);
-      pc.close();
+      this.pc.close();
     });
 
     const offerOptions = {
