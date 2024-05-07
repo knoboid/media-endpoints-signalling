@@ -14,10 +14,9 @@ template.innerHTML = `
 class MediaUserElement extends HTMLElement {
   constructor() {
     super();
-    // const shadow = this.attachShadow({ mode: "open" });
-    // shadow.append(template.content.cloneNode(true));
-    // this.powerButton = shadow.querySelector("#onoff-button");
+    this.streamButton = appendContentTo(this, "button", "Start Stream");
     this.powerButton = appendContentTo(this, "button", "START");
+    this.addTransmitterButton = appendContentTo(this, "button", "Add T");
     const h2 = appendContentTo(this, "h2", "ID: ");
     this.idElem = appendContentTo(h2, "span", "");
     h2.appendChild(this.idElem);
@@ -25,7 +24,8 @@ class MediaUserElement extends HTMLElement {
     this.recieversContainer = appendContentTo(this, "div", "");
     this.videoMap = new UsersVideoMap(this.recieversContainer);
     this.usersTable = appendContentTo(this, "table", "");
-    this.appendChild(this.powerButton);
+    // this.appendChild(this.streamButton);
+    // this.appendChild(this.powerButton);
     this.appendChild(h2);
     this.appendChild(this.transmitterContainer);
     this.appendChild(this.recieversContainer);
@@ -36,8 +36,40 @@ class MediaUserElement extends HTMLElement {
     // this.usersTable = shadow.querySelector("#users-table");
     this.isStarted = false;
     this.powerButton.onclick = (e) => this.handleTogglePower(e);
+    this.streamButton.onclick = (e) => this.handleStartStream(e);
     this.hasTransmitterVideo = false;
     this.transmitterVideoElement = null;
+    this.streamStarted = false;
+    this.stream = null;
+  }
+
+  handleStartStream(e) {
+    if (this.stream === null) {
+      const constraints = {
+        audio: true,
+        video: true,
+      };
+      const startStream = (stream) => {
+        this.stream = stream;
+        this.streamButton.innerHTML = "Stop Stream";
+        this.streamButton.disabled = false;
+      };
+      navigator.mediaDevices
+        .getUserMedia(constraints)
+        .then(startStream)
+        .catch((e) => {
+          console.log("Couldn't start stream");
+          console.log(e);
+          this.streamButton.disabled = false;
+        });
+      this.streamStarted = true;
+      this.streamButton.disabled = true;
+    } else {
+      const tracks = this.stream.getTracks();
+      tracks.forEach((track) => track.stop());
+      this.stream = null;
+      this.streamButton.innerHTML = "Start Stream";
+    }
   }
 
   addVideo() {
