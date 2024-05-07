@@ -28,6 +28,8 @@ class Users {
     return this.getUsers().map((user) => {
       const record = {};
       record.id = user.clientId;
+      record.transmitters = user.transmitters;
+      record.receivers = user.recievers;
       record.transmitterCount = user.transmitters.length;
       record.recieverCount = user.recievers.length;
       return record;

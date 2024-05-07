@@ -72,8 +72,10 @@ class MediaUserElement extends HTMLElement {
     usersTable.forEach((user) => {
       let content = "";
       content += `<td>User: ${user.id}</td>`;
-      content += `<td>Transmitters: ${user.transmitterCount}</td>`;
-      content += `<td>Recievers: ${user.recieverCount}</td>`;
+      content += `<td>Trans: [${user.transmitters.join(",")}]</td>`;
+      // content += `<td>Transmitters: ${user.transmitterCount}</td>`;
+      content += `<td>Recs: [${user.receivers.join(",")}]</td>`;
+      // content += `<td>Recievers: ${user.recieverCount}</td>`;
       const tr = appendContentTo(this.usersTable, "tr", content);
       const button = document.createElement("button");
       button.innerHTML = "call";
