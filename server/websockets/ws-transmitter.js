@@ -1,4 +1,10 @@
-function wsTransmitter({ type, payload, clientId, userGroups: clientGroups }) {
+function wsTransmitter({
+  type,
+  payload,
+  clientId,
+  userGroups: clientGroups,
+  pendingConnections,
+}) {
   let reciever;
   const transmitters = clientGroups.getTransmitters();
   const recievers = clientGroups.getRecievers();
@@ -16,7 +22,12 @@ function wsTransmitter({ type, payload, clientId, userGroups: clientGroups }) {
       break;
     case "initiateCall":
       /* first contact from a transmitter wishing to make a call */
-      const { recieverID } = payload;
+      const { recieverID, uuid } = payload;
+      const pendingConnection = pendingConnections.get(uuid);
+      console.log("pendingConnection");
+      console.log(pendingConnection);
+      console.log("recieverID");
+      console.log(recieverID);
       console.log(
         `Preparing to initiate call  between ${clientId} and ${recieverID}`
       );

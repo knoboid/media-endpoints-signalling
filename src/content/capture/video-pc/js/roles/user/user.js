@@ -1,6 +1,4 @@
-import { createTransmitter } from "../../create-transmitter.js";
 import Receiver from "../../media-reciever.js";
-import PayloadEvent from "../../payload-event.js";
 import Transmitter from "../../media-transmitter.js";
 
 class User {
@@ -38,7 +36,7 @@ class User {
       },
       requestReciever: (e) => {
         console.log(`request reciever for call with user ${e.data}`);
-        const userId = e.data.userId;
+        const { userId, uuid } = e.data;
         const videoElement = this.uiSignaller.resolve(
           "addRecieverVideo",
           e.data.userId
@@ -47,7 +45,7 @@ class User {
           const onready = (recieverId) => {
             this.wsSignaller.send({
               type: "recieverReady",
-              payload: { recieverId, userId },
+              payload: { recieverId, userId, uuid },
             });
           };
           const onhangup = () => {
@@ -68,14 +66,11 @@ class User {
         console.log("recieverRegistrationCode", e.data);
       },
       userReady: (e) => {
-        console.log("userReady");
-        console.log(e);
-        console.log(e.data.recieverId);
-        const transmitter = Object.values(this.transmitters)[0];
-        // VERY WRONG!!
+        const { recieverId, transmitterId, uuid } = e.data;
+        const transmitter = this.transmitters[transmitterId];
         transmitter.nWTransmitterSignaller.send({
           type: "initiateCall",
-          payload: { recieverID: e.data.recieverId },
+          payload: { recieverID: e.data.recieverId, uuid },
         });
       },
     };
@@ -93,17 +88,13 @@ class User {
         });
       },
       CALL: (e) => {
-        console.log(e);
-        // console.log(this.transmitter);
         const { userId, tranmitterId } = e.data;
-        // if (this.transmitterController) {
         const transmitter = this.transmitters[tranmitterId];
         if (transmitter) {
           this.wsSignaller.send({
             type: "initiateCallToUser",
             payload: { userId, tranmitterId },
           });
-          // this.transmitter.tc.initiateUserCall(e.data);
         }
       },
     };

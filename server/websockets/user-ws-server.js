@@ -8,6 +8,7 @@ function wsUser({
   pendingConnections,
 }) {
   let code;
+  let uuid;
   switch (type) {
     case "requestTransmitter":
       const { requestUUID } = payload;
@@ -23,20 +24,15 @@ function wsUser({
       break;
 
     case "initiateCallToUser":
-      console.log("initialCallToUser", payload);
       const { tranmitterId } = payload;
-      const canConnect = pendingConnections.add(
-        clientId,
-        tranmitterId,
-        payload.userId
-      );
-      if (canConnect) {
+      uuid = pendingConnections.add(clientId, tranmitterId, payload.userId);
+      if (uuid) {
         const recievingUser = users.getUser(payload.userId);
         code = redeemCodes.generate(recievingUser.clientId, "registerReciever");
         recievingUser.client.send(
           JSON.stringify({
             type: "requestReciever",
-            payload: { userId: clientId, code },
+            payload: { userId: clientId, code, uuid },
           })
         );
       }
@@ -45,9 +41,15 @@ function wsUser({
     case "recieverReady":
       console.log("recieverReady", payload);
       const { userId, recieverId } = payload;
+      uuid = payload.uuid;
+      pendingConnections.addReceiverId(uuid, recieverId);
+      const { transmitterId } = pendingConnections.get(uuid);
       const transmittingUser = users.getUser(payload.userId);
       transmittingUser.client.send(
-        JSON.stringify({ type: "userReady", payload: { userId, recieverId } })
+        JSON.stringify({
+          type: "userReady",
+          payload: { userId, recieverId, transmitterId, uuid },
+        })
       );
 
       break;

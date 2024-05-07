@@ -13,9 +13,17 @@ class PendingConnections {
         transmitterId,
         receivingUserId
       );
-      return true;
+      return uuid;
     }
     return false;
+  }
+
+  addReceiverId(uuid, receiverId) {
+    this.get(uuid).addReceiverId(receiverId);
+  }
+
+  get(uuid) {
+    return this.pendingConnections[uuid];
   }
 }
 
@@ -25,6 +33,10 @@ class PendingConnection {
     this.userId = userId;
     this.transmitterId = transmitterId;
     this.receivingUserId = receivingUserId;
+  }
+
+  addReceiverId(receiverId) {
+    this.receiverId = receiverId;
   }
 }
 

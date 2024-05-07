@@ -94,6 +94,7 @@ wsServer.on("connection", (client, req) => {
               payload,
               clientId,
               userGroups: clientGroups,
+              pendingConnections,
             });
             break;
           case "user":
