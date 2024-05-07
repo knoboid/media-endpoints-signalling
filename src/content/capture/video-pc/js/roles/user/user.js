@@ -24,6 +24,7 @@ class User {
       transmitterRegistrationCode: (e) => {
         const { code, requestUUID } = e.data;
         const stream = this.transmitterRequests[requestUUID].stream;
+        delete this.transmitterRequests[requestUUID];
         const transmitter = new Transmitter(this.servers, stream, code);
         transmitter.addEventListener("onGotTransmitterID", (e) => {
           const id = e.data;
@@ -83,30 +84,13 @@ class User {
   defineUIListeners() {
     return {
       addTransmitter: (e) => {
-        console.log("addTrans");
         const stream = e.data;
-        console.log(stream);
         const requestUUID = crypto.randomUUID();
-        console.log(requestUUID);
         this.transmitterRequests[requestUUID] = { stream };
         this.wsSignaller.send({
           type: "requestTransmitter",
           payload: { requestUUID },
         });
-      },
-      START: (e) => {
-        console.log("Start App!");
-        this.wsSignaller.send({ type: "requestTransmitter" });
-      },
-      STOP: (e) => {
-        console.log("Stop App!");
-        // this.wsSignaller.send({ type: "removeTransmitter" });
-        // if (this.transmitterController) {
-        // if (this.transmitter) {
-        // This is wrong. Don't need to do hangup. Just need to stopstream.
-        // this.transmitterController.hangup();
-        //this.transmitterSignaller.send()
-        // }
       },
       CALL: (e) => {
         console.log(e);

@@ -15,7 +15,6 @@ class MediaUserElement extends HTMLElement {
   constructor() {
     super();
     this.streamButton = appendContentTo(this, "button", "Start Stream");
-    this.powerButton = appendContentTo(this, "button", "START");
     this.addTransmitterButton = appendContentTo(this, "button", "Add T");
     const h2 = appendContentTo(this, "h2", "ID: ");
     this.idElem = appendContentTo(h2, "span", "");
@@ -35,7 +34,6 @@ class MediaUserElement extends HTMLElement {
     // this.recieversContainer = shadow.querySelector("#recievers-container");
     // this.usersTable = shadow.querySelector("#users-table");
     this.isStarted = false;
-    this.powerButton.onclick = (e) => this.handleTogglePower(e);
     this.streamButton.onclick = (e) => this.handleStartStream(e);
     this.addTransmitterButton.onclick = (e) => this.handleAddTransmitter(e);
     this.hasTransmitterVideo = false;
@@ -133,12 +131,6 @@ class MediaUserElement extends HTMLElement {
   handleCall(userId, tranmitterId) {
     console.log(userId);
     this.send("CALL", { userId, tranmitterId });
-  }
-
-  handleTogglePower(e) {
-    this.isStarted = !this.isStarted;
-    this.powerButton.innerHTML = this.isStarted ? "STOP" : "START";
-    this.send(this.isStarted ? "START" : "STOP");
   }
 
   send(name, data) {
