@@ -27,17 +27,22 @@ class SwitchboardComponent extends HTMLElement {
     heading.innerHTML = "<td>From</td><td>To</td>";
     this.usersTable.appendChild(heading);
     users.forEach((user) => {
+      const name = user.username || `User ${user.id}`;
       const row = document.createElement("tr");
       const fromTd = document.createElement("button");
       fromTd["data-type"] = "from";
       fromTd["data-user"] = user.id;
-      fromTd.innerHTML = user.id;
+      fromTd.innerHTML = name;
       const toTd = document.createElement("button");
       toTd["data-type"] = "to";
       toTd["data-user"] = user.id;
-      toTd.innerHTML = user.id;
-      row.appendChild(fromTd);
-      row.appendChild(toTd);
+      toTd.innerHTML = name;
+      const td1 = document.createElement("td");
+      td1.appendChild(fromTd);
+      row.appendChild(td1);
+      const td2 = document.createElement("td");
+      td2.appendChild(toTd);
+      row.appendChild(td2);
       this.usersTable.appendChild(row);
     });
     console.log(this.usersTable);

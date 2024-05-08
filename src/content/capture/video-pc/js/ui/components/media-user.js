@@ -20,7 +20,7 @@ class MediaUserElement extends HTMLElement {
       "button",
       "Add Transmitter"
     );
-    const h2 = appendContentTo(this, "h2", "ID: ");
+    const h2 = appendContentTo(this, "h2", "");
     this.idElem = appendContentTo(h2, "span", "");
     h2.appendChild(this.idElem);
     this.transmitterContainer = appendContentTo(this, "div", "");
@@ -112,8 +112,12 @@ class MediaUserElement extends HTMLElement {
     }
   }
 
+  setIDElement(name) {
+    this.idElem.innerHTML = name;
+  }
+
   setUserID(id) {
-    this.idElem.innerHTML = id;
+    // this.idElem.innerHTML = id;
     this.userId = id;
   }
 
@@ -123,6 +127,9 @@ class MediaUserElement extends HTMLElement {
     usersTable.forEach((user) => {
       let content = "";
       const name = user.username || `User ${user.id}`;
+      if (user.id === this.userId) {
+        this.setIDElement(name);
+      }
       content += `<td>${name}:</td>`;
       content += `<td>Trans: [${user.transmitters.join(",")}]</td>`;
       // content += `<td>Transmitters: ${user.transmitterCount}</td>`;
