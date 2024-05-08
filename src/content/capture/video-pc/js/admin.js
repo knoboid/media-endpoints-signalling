@@ -2,20 +2,41 @@ import { createAdminWSSignaller } from "./signalling/network/create-ws-signaller
 
 const testButton = document.querySelector("#test-button");
 
-export function adminSetup() {
+export function adminSetup(switchboard) {
+  let authenticated = false;
   const adminSignaller = createAdminWSSignaller();
 
   adminSignaller.addEventListener("password", () => {
-    console.log("Wow, got pw request!");
     adminSignaller.send({ type: "secret", payload: "123456" });
   });
 
-  testButton.onclick = () => {
-    console.log("Hej!");
-    adminSignaller.send({ type: "authenticated" });
-  };
-
   adminSignaller.addEventListener("authenticated", (x) => {
-    console.log(x);
+    authenticated = x.data;
+    if (authenticated) {
+      console.log("Successfully Authenticated");
+      adminSignaller.send({ type: "sendData" });
+    }
+  });
+
+  adminSignaller.addEventListener("updateUsers", (e) => {
+    switchboard.updateUsers(e.data);
+  });
+
+  switchboard.addEventListener("click", (e) => {
+    const elementType = e.target["data-type"];
+    if (elementType === "from") {
+      switchboard.renderCallFrom(e.target["data-user"]);
+    } else if (elementType === "to") {
+      switchboard.renderCallTo(e.target["data-user"]);
+    } else if (elementType === "call-button") {
+      //
+      if (switchboard.canCall()) {
+        console.log("Place call");
+        adminSignaller.send({
+          type: "newCall",
+          payload: switchboard.callData(),
+        });
+      }
+    }
   });
 }

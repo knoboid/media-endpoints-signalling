@@ -119,18 +119,18 @@ class MediaUserElement extends HTMLElement {
       content += `<td>Recs: [${user.receivers.join(",")}]</td>`;
       // content += `<td>Recievers: ${user.recieverCount}</td>`;
       const tr = appendContentTo(this.usersTable, "tr", content);
-      userRow.transmitters.forEach((tranmitterId) => {
+      userRow.transmitters.forEach((transmitterId) => {
         const button = document.createElement("button");
-        button.innerHTML = `frm ${tranmitterId}`;
-        button.onclick = () => this.handleCall(user.id, tranmitterId);
+        button.innerHTML = `frm ${transmitterId}`;
+        button.onclick = () => this.handleCall(user.id, transmitterId);
         tr.appendChild(button);
       });
     });
   }
 
-  handleCall(userId, tranmitterId) {
+  handleCall(userId, transmitterId) {
     console.log(userId);
-    this.send("CALL", { userId, tranmitterId });
+    this.send("CALL", { userId, transmitterId });
   }
 
   send(name, data) {

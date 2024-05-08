@@ -9,7 +9,7 @@ class AdminSignaller extends EventTarget {
     let messageCounter = 0;
 
     this.socket.onopen = (e) => {
-      console.log("SOCKET OPENED");
+      console.log("ADMIN SOCKET OPENED");
     };
 
     this.socket.onmessage = (message) => {
@@ -28,15 +28,15 @@ class AdminSignaller extends EventTarget {
           const { type, payload } = messageObject;
           switch (type) {
             case "password":
-              console.log("password!");
-              console.log(payload);
               this.dispatchEvent(new PayloadEvent("password"));
               break;
 
             case "authenticated":
-              this.dispatchEvent(
-                new PayloadEvent("authenticated", payload.data)
-              );
+              this.relay(type, payload);
+              break;
+
+            case "updateUsers":
+              this.relay(type, payload);
               break;
 
             default:
@@ -49,6 +49,10 @@ class AdminSignaller extends EventTarget {
       }
       messageCounter++;
     };
+  }
+
+  relay(type, payload) {
+    this.dispatchEvent(new PayloadEvent(type, payload));
   }
 
   send(request) {

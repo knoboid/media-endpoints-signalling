@@ -83,7 +83,7 @@ wsServer.on("connection", (client, req) => {
         console.log(`### type: ${clientType}`);
         switch (clientType) {
           case "admin":
-            wsAdmin({ client, type, payload });
+            wsAdmin({ client, type, payload, users, connections });
             break;
           case "reciever":
             wsReciever({ type, payload, clientId, userGroups: clientGroups });

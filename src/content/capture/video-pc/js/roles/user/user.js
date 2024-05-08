@@ -73,6 +73,17 @@ class User {
           payload: { recieverID: e.data.recieverId, uuid },
         });
       },
+      callUser: (e) => {
+        const { transmitterId, receivingUserId } = e.data;
+        console.log(
+          `Request for me to call ${receivingUserId} using transmitter ${transmitterId}`
+        );
+        console.log({ userId: receivingUserId, transmitterId });
+        this.wsSignaller.send({
+          type: "initiateCallToUser",
+          payload: { userId: receivingUserId, transmitterId },
+        });
+      },
     };
   }
 
@@ -88,12 +99,12 @@ class User {
         });
       },
       CALL: (e) => {
-        const { userId, tranmitterId } = e.data;
-        const transmitter = this.transmitters[tranmitterId];
+        const { userId, transmitterId } = e.data;
+        const transmitter = this.transmitters[transmitterId];
         if (transmitter) {
           this.wsSignaller.send({
             type: "initiateCallToUser",
-            payload: { userId, tranmitterId },
+            payload: { userId, transmitterId },
           });
         }
       },

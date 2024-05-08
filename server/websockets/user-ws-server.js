@@ -9,6 +9,7 @@ function wsUser({
 }) {
   let code;
   let uuid;
+  let transmitterId;
   switch (type) {
     case "requestTransmitter":
       const { requestUUID } = payload;
@@ -24,8 +25,8 @@ function wsUser({
       break;
 
     case "initiateCallToUser":
-      const { tranmitterId } = payload;
-      uuid = pendingConnections.add(clientId, tranmitterId, payload.userId);
+      transmitterId = payload.transmitterId;
+      uuid = pendingConnections.add(clientId, transmitterId, payload.userId);
       if (uuid) {
         const recievingUser = users.getUser(payload.userId);
         code = redeemCodes.generate(recievingUser.clientId, "registerReciever");
@@ -43,7 +44,7 @@ function wsUser({
       const { userId, recieverId } = payload;
       uuid = payload.uuid;
       pendingConnections.addReceiverId(uuid, recieverId);
-      const { transmitterId } = pendingConnections.get(uuid);
+      transmitterId = pendingConnections.get(uuid).transmitterId;
       const transmittingUser = users.getUser(payload.userId);
       transmittingUser.client.send(
         JSON.stringify({

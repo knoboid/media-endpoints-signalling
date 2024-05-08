@@ -1,7 +1,15 @@
 const User = require("./user");
 
-class Users {
+class PayloadEvent extends Event {
+  constructor(name, data) {
+    super(name);
+    this.data = data;
+  }
+}
+
+class Users extends EventTarget {
   constructor() {
+    super();
     this.users = {};
   }
 
@@ -49,6 +57,7 @@ class Users {
   }
 
   broadcastUpdate() {
+    this.dispatchEvent(new PayloadEvent("updateUsers", this.getUsersTable()));
     this.broadcast("updateUsers", this.getUsersTable());
   }
 
@@ -64,8 +73,8 @@ class Users {
     this.broadcastUpdate();
   }
 
-  userOwnsTransmitter(clientId, tranmitterId) {
-    return this.getUser(clientId).ownsTransmitter(tranmitterId);
+  userOwnsTransmitter(clientId, transmitterId) {
+    return this.getUser(clientId).ownsTransmitter(transmitterId);
   }
 }
 
