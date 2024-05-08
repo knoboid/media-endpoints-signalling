@@ -108,6 +108,13 @@ class User {
           });
         }
       },
+      usernameEntered: (e) => {
+        const username = e.data;
+        this.wsSignaller.send({
+          type: "setUsername",
+          payload: username,
+        });
+      },
     };
   }
 

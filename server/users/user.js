@@ -4,6 +4,7 @@ class User {
     this.client = client;
     this.transmitters = [];
     this.recievers = [];
+    this.username = "";
   }
 
   getSocket() {
@@ -20,6 +21,10 @@ class User {
 
   addReciever(recieverId) {
     this.recievers.push(recieverId);
+  }
+
+  setUsername(username) {
+    this.username = username;
   }
 }
 

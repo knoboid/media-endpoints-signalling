@@ -15,7 +15,11 @@ class MediaUserElement extends HTMLElement {
   constructor() {
     super();
     this.streamButton = appendContentTo(this, "button", "Start Stream");
-    this.addTransmitterButton = appendContentTo(this, "button", "Add T");
+    this.addTransmitterButton = appendContentTo(
+      this,
+      "button",
+      "Add Transmitter"
+    );
     const h2 = appendContentTo(this, "h2", "ID: ");
     this.idElem = appendContentTo(h2, "span", "");
     h2.appendChild(this.idElem);
@@ -23,12 +27,14 @@ class MediaUserElement extends HTMLElement {
     this.recieversContainer = appendContentTo(this, "div", "");
     this.videoMap = new UsersVideoMap(this.recieversContainer);
     this.usersTable = appendContentTo(this, "table", "");
+    this.nameEntry = document.createElement("name-entry");
     // this.appendChild(this.streamButton);
     // this.appendChild(this.powerButton);
     this.appendChild(h2);
     this.appendChild(this.transmitterContainer);
     this.appendChild(this.recieversContainer);
     this.appendChild(this.usersTable);
+    this.appendChild(this.nameEntry);
     // this.idElem = shadow.querySelector("#id");
     // this.transmitterContainer = shadow.querySelector("#transmitter-container");
     // this.recieversContainer = shadow.querySelector("#recievers-container");
@@ -41,6 +47,10 @@ class MediaUserElement extends HTMLElement {
     this.streamStarted = false;
     this.stream = null;
     this.userId = null;
+    this.nameEntry.addEventListener("usernameEntered", (e) => {
+      const username = e.data;
+      this.send("usernameEntered", username);
+    });
   }
 
   handleAddTransmitter(e) {
@@ -110,10 +120,10 @@ class MediaUserElement extends HTMLElement {
   updateUsers(usersTable) {
     this.usersTable.innerHTML = "";
     const userRow = usersTable.filter((user) => user.id === this.userId)[0];
-
     usersTable.forEach((user) => {
       let content = "";
-      content += `<td>User: ${user.id}</td>`;
+      const name = user.username || `User ${user.id}`;
+      content += `<td>${name}:</td>`;
       content += `<td>Trans: [${user.transmitters.join(",")}]</td>`;
       // content += `<td>Transmitters: ${user.transmitterCount}</td>`;
       content += `<td>Recs: [${user.receivers.join(",")}]</td>`;

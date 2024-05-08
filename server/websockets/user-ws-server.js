@@ -55,10 +55,17 @@ function wsUser({
 
       break;
 
+    case "setUsername":
+      const username = payload;
+      console.log(username);
+      users.setUsername(clientId, username);
+      break;
+
     default:
       console.log(`ws user - unhandled type: ${type}`);
       console.log("payload");
       console.log(payload);
+
       break;
   }
 }

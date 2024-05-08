@@ -40,6 +40,7 @@ class Users extends EventTarget {
       record.receivers = user.recievers;
       record.transmitterCount = user.transmitters.length;
       record.recieverCount = user.recievers.length;
+      record.username = user.username;
       return record;
     });
   }
@@ -75,6 +76,12 @@ class Users extends EventTarget {
 
   userOwnsTransmitter(clientId, transmitterId) {
     return this.getUser(clientId).ownsTransmitter(transmitterId);
+  }
+
+  setUsername(clientId, username) {
+    const user = this.getUser(clientId);
+    user.setUsername(username);
+    this.broadcastUpdate();
   }
 }
 
