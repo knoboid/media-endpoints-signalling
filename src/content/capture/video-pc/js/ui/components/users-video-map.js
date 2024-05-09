@@ -7,6 +7,7 @@ class UsersVideoMap {
   addReciever(userId) {
     const container = document.createElement("div");
     container.innerHTML = `<div><span>User: ${userId}<span><button>hangup</button></div>`;
+    container.innerHTML = `<div><span>User: ${userId}<span></div>`;
     const video = document.createElement("video");
     video.setAttribute("style", "width: 200px");
     video.setAttribute("playsinline", true);
@@ -15,11 +16,11 @@ class UsersVideoMap {
     video.volume = 0;
     container.appendChild(video);
     this.parentElement.appendChild(container);
-    const button = container.querySelector("button");
-    button.onclick = () => {
-      console.log(userId);
-      this.removeVideoElement(userId);
-    };
+    // const button = container.querySelector("button");
+    // button.onclick = () => {
+    //   console.log(userId);
+    //   this.removeVideoElement(userId);
+    // };
 
     this.map[userId] = container;
     return video;

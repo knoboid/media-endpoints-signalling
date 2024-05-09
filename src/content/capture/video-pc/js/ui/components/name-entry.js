@@ -5,7 +5,7 @@ class NameEntry extends HTMLElement {
   constructor() {
     super();
     this.id = id;
-    this.innerHTML = `<input id="name-input-${this.id}" type="text" placeholder="name-entry" /><button
+    this.innerHTML = `<input id="name-input-${this.id}" type="text" placeholder="name..." /><button
     id="name-input-button-${this.id}"
     name-button
   >

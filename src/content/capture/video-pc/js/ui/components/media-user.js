@@ -14,15 +14,17 @@ template.innerHTML = `
 class MediaUserElement extends HTMLElement {
   constructor() {
     super();
-    this.streamButton = appendContentTo(this, "button", "Start Stream");
-    this.addTransmitterButton = appendContentTo(
-      this,
-      "button",
-      "Add Transmitter"
-    );
+
     const h2 = appendContentTo(this, "h2", "");
     this.idElem = appendContentTo(h2, "span", "");
     h2.appendChild(this.idElem);
+    this.showHideButton = document.createElement("button");
+    this.showHideButton.innerHTML = "Show";
+    this.showHideButton.style.marginLeft = "15px";
+    this.showHideButton.disabled = true;
+    this.showHideButton.onclick = () => this.handleShowHide();
+    h2.appendChild(this.showHideButton);
+
     this.transmitterContainer = appendContentTo(this, "div", "");
     this.recieversContainer = appendContentTo(this, "div", "");
     this.videoMap = new UsersVideoMap(this.recieversContainer);
@@ -30,18 +32,25 @@ class MediaUserElement extends HTMLElement {
     this.nameEntry = document.createElement("name-entry");
     // this.appendChild(this.streamButton);
     // this.appendChild(this.powerButton);
+    this.appendChild(this.nameEntry);
+    this.streamButton = appendContentTo(this, "hr", "");
+    this.streamButton = appendContentTo(this, "button", "Start Stream");
+    // this.addTransmitterButton = appendContentTo(
+    //   this,
+    //   "button",
+    //   "Add Transmitter"
+    // );
     this.appendChild(h2);
     this.appendChild(this.transmitterContainer);
     this.appendChild(this.recieversContainer);
     this.appendChild(this.usersTable);
-    this.appendChild(this.nameEntry);
     // this.idElem = shadow.querySelector("#id");
     // this.transmitterContainer = shadow.querySelector("#transmitter-container");
     // this.recieversContainer = shadow.querySelector("#recievers-container");
     // this.usersTable = shadow.querySelector("#users-table");
     this.isStarted = false;
     this.streamButton.onclick = (e) => this.handleStartStream(e);
-    this.addTransmitterButton.onclick = (e) => this.handleAddTransmitter(e);
+    // this.addTransmitterButton.onclick = (e) => this.handleAddTransmitter(e);
     this.hasTransmitterVideo = false;
     this.transmitterVideoElement = null;
     this.streamStarted = false;
@@ -68,8 +77,9 @@ class MediaUserElement extends HTMLElement {
       };
       const startStream = (stream) => {
         this.stream = stream;
-        this.streamButton.innerHTML = "Stop Stream";
+        this.streamButton.innerHTML = "Restart";
         this.streamButton.disabled = false;
+        this.handleAddTransmitter();
       };
       navigator.mediaDevices
         .getUserMedia(constraints)
@@ -82,11 +92,19 @@ class MediaUserElement extends HTMLElement {
       this.streamStarted = true;
       this.streamButton.disabled = true;
     } else {
+      // location.reload();
+
       const tracks = this.stream.getTracks();
       tracks.forEach((track) => track.stop());
       this.stream = null;
       this.streamButton.innerHTML = "Start Stream";
     }
+  }
+
+  handleShowHide() {
+    const d = this.video.style.display;
+    this.video.style.display = d === "none" ? "inline" : "none";
+    this.showHideButton.innerHTML = d === "none" ? "Hide" : "Show";
   }
 
   addVideo() {
@@ -97,9 +115,13 @@ class MediaUserElement extends HTMLElement {
       video.setAttribute("autoplay", true);
       video.setAttribute("controls", true);
       video.volume = 0;
+      video.style.display = "none";
       this.transmitterVideoElement = video;
       this.transmitterContainer.innerHTML = "";
       this.transmitterContainer.appendChild(video);
+      this.showHideButton.disabled = false;
+      this.video = video; // Temporary
+      // this.addTransmitterButton.disabled = true; // Temporary
       return video;
     }
   }
@@ -124,21 +146,24 @@ class MediaUserElement extends HTMLElement {
   updateUsers(usersTable) {
     this.usersTable.innerHTML = "";
     const userRow = usersTable.filter((user) => user.id === this.userId)[0];
+    const heading = document.createElement("tr");
+    heading.innerHTML = "<th>User</th><th>Tranmitters</th><th>Receivers</th>";
+    this.usersTable.appendChild(heading);
     usersTable.forEach((user) => {
       let content = "";
-      const name = user.username || `User ${user.id}`;
+      const name = user.username || user.id;
       if (user.id === this.userId) {
         this.setIDElement(name);
       }
-      content += `<td>${name}:</td>`;
-      content += `<td>Trans: [${user.transmitters.join(",")}]</td>`;
+      content += `<td align="center">${name}</td>`;
+      content += `<td align="center">[${user.transmitters.join(",")}]</td>`;
       // content += `<td>Transmitters: ${user.transmitterCount}</td>`;
-      content += `<td>Recs: [${user.receivers.join(",")}]</td>`;
+      content += `<td align="center">[${user.receivers.join(",")}]</td>`;
       // content += `<td>Recievers: ${user.recieverCount}</td>`;
       const tr = appendContentTo(this.usersTable, "tr", content);
       userRow.transmitters.forEach((transmitterId) => {
         const button = document.createElement("button");
-        button.innerHTML = `frm ${transmitterId}`;
+        button.innerHTML = `Call ${name}`;
         button.onclick = () => this.handleCall(user.id, transmitterId);
         tr.appendChild(button);
       });

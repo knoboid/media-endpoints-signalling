@@ -8,9 +8,9 @@ export default class Transmitter extends EventTarget {
     this.servers = servers;
     this.stream = stream;
 
-    const rlist = document.querySelector("#rlist");
+    // const rlist = document.querySelector("#rlist");
 
-    rlist.setData([]);
+    // rlist.setData([]);
 
     this.name = "p1";
     this.pc = null;
@@ -31,22 +31,22 @@ export default class Transmitter extends EventTarget {
           // (reciever) => Number(reciever.id) !== recieverID
           (reciever) => Number(reciever.id) !== -1
         );
-        rlist.setData(otherRecievers);
+        // rlist.setData(otherRecievers);
       }
     );
 
-    rlist.addEventListener(
-      "hangup",
-      (e) => {
-        this.hangup();
-        // console.log("hangup pressed");
-        // this.tc.pc.close();
-        // this.nWTransmitterSignaller.send({
-        //   type: "terminated",
-        // });
-      },
-      { capture: true }
-    );
+    // rlist.addEventListener(
+    //   "hangup",
+    //   (e) => {
+    //     this.hangup();
+    //     // console.log("hangup pressed");
+    //     // this.tc.pc.close();
+    //     // this.nWTransmitterSignaller.send({
+    //     //   type: "terminated",
+    //     // });
+    //   },
+    //   { capture: true }
+    // );
 
     this.nWTransmitterSignaller.addEventListener(
       "initiateCallSuccess",

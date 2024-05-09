@@ -3,8 +3,8 @@ import { appendContentTo } from "../util.js";
 class SwitchboardComponent extends HTMLElement {
   constructor() {
     super();
-    this.div = document.createElement("div");
-    this.div.innerHTML = "testing";
+    this.div = document.createElement("h3");
+    this.div.innerHTML = "Connect endpoints";
     this.usersTable = document.createElement("table");
     this.appendChild(this.div);
     this.appendChild(this.usersTable);
@@ -15,7 +15,7 @@ class SwitchboardComponent extends HTMLElement {
     this.appendChild(this.callFrom);
     this.appendChild(this.callTo);
     this.callButton = document.createElement("button");
-    this.callButton.innerHTML = "CALL";
+    this.callButton.innerHTML = "Connect";
     this.callButton["data-type"] = "call-button";
     this.appendChild(this.callButton);
   }

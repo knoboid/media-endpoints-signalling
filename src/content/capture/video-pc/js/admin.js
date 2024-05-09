@@ -26,8 +26,10 @@ export function adminSetup(switchboard) {
     const elementType = e.target["data-type"];
     if (elementType === "from") {
       switchboard.renderCallFrom(e.target["data-user"]);
+      // switchboard.renderCallFrom(e.target["innerText"]);
     } else if (elementType === "to") {
       switchboard.renderCallTo(e.target["data-user"]);
+      // switchboard.renderCallTo(e.target["innerText"]);
     } else if (elementType === "call-button") {
       //
       if (switchboard.canCall()) {
