@@ -22,7 +22,7 @@
     "start": "nodemon server/index.js",
     "http-server": "export NODE_HTTP_SERVER_SSL_PASSPHRASE=passphrase&&http-server -S -C \"/home/mark/.dev-server-cert/server.crt\" -K \"/home/mark/.dev-server-cert/server.key\" . -c-1 -p 5500",
     "dev": "http-server . -c-1 -p 5500",
-    "wss": "nodemon server/index.js",
+    "wss": "nodemon src/server/index.js",
     "test": "npm run eslint && npm run stylelint",
     "eslint": "eslint 'test/**.js' 'src/content/**/*.js'",
     "jest": "jest --testTimeout 5000 --maxWorkers=1 'src/content/**/test.js'",
