@@ -3,7 +3,7 @@ import { createTransmitterWSSignaller } from "./signalling/network/create-ws-sig
 import PayloadEvent from "./payload-event.js";
 
 export default class Transmitter extends EventTarget {
-  constructor(servers, stream, code) {
+  constructor(servers, stream, code, onready) {
     super();
     this.servers = servers;
     this.stream = stream;
@@ -20,7 +20,10 @@ export default class Transmitter extends EventTarget {
 
     this.nWTransmitterSignaller.addEventListener("onGotTransmitterID", (e) => {
       this.transmitterID = e.data;
-      this.dispatchEvent(new PayloadEvent("onGotTransmitterID", e.data));
+      this.dispatchEvent(
+        new PayloadEvent("onGotTransmitterID", this.transmitterID)
+      );
+      onready(this.transmitterID);
     });
 
     this.nWTransmitterSignaller.addEventListener(

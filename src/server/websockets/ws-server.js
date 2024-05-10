@@ -47,11 +47,15 @@ wsServer.on("connection", (client, req) => {
           throw new Error(`Expect id of ${clientId}, instead got ${id}`);
         clientTypes[clientId] = clientType;
         if (clientType === "transmitter") {
-          const result = redeemCodes.redeem(object.code);
-          if (result.type === "registerTransmitter") {
+          if (object.code) {
+            const result = redeemCodes.redeem(object.code);
+            if (result.type === "registerTransmitter") {
+              transmitters.addClient(clientId, client, "available");
+              const userId = result.clientId;
+              users.addTransmitter(userId, clientId);
+            }
+          } else {
             transmitters.addClient(clientId, client, "available");
-            const userId = result.clientId;
-            users.addTransmitter(userId, clientId);
           }
         } else if (clientType === "reciever") {
           console.log(object);
