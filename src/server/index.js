@@ -6,8 +6,7 @@ const express = require("express");
 
 const app = express();
 
-// const appPath = "./src/client";
-const appPath = "./api-test";
+const appPath = "./src";
 
 app.use(express.static(appPath));
 
