@@ -55,13 +55,20 @@ wsServer.on("connection", (client, req) => {
           }
         } else if (clientType === "reciever") {
           console.log(object);
-          const result = redeemCodes.redeem(object.code);
-          if (result.type === "registerReciever") {
+          if (object.code) {
+            const result = redeemCodes.redeem(object.code);
+            if (result.type === "registerReciever") {
+              recievers.addClient(clientId, client, "available");
+              const userId = result.clientId;
+              users.addReciever(userId, clientId);
+              client.send(JSON.stringify({ type: "recieverRegistered" }));
+            }
+          } else {
+            // userless endpoint mode
             recievers.addClient(clientId, client, "available");
-            const userId = result.clientId;
-            users.addReciever(userId, clientId);
             client.send(JSON.stringify({ type: "recieverRegistered" }));
           }
+
           //console.log(`Registering reciever ${clientId}`);
           //recievers.addClient(clientId, client, "available");
           //clientGroups.broadcastRecievers(transmitters);
