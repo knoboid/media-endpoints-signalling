@@ -11,13 +11,14 @@ const transmitterEndpoint = document.querySelector("transmitter-endpoint");
 
 let receiver,
   receiverId = null,
-  video;
+  video = recieverEndpoint.videoElement;
 let transmitter,
   transmitterId = null;
 
+video = recieverEndpoint.videoElement;
+
 function onReceiverReady(e) {
   receiverId = e;
-  video = recieverEndpoint.videoElement;
   if (transmitterId !== null) onBothReady();
 }
 
