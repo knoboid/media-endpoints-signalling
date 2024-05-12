@@ -10,12 +10,14 @@ const recieverEndpoint = document.querySelector("reciever-endpoint");
 const transmitterEndpoint = document.querySelector("transmitter-endpoint");
 
 let receiver,
-  receiverId = null;
+  receiverId = null,
+  video;
 let transmitter,
   transmitterId = null;
 
 function onReceiverReady(e) {
   receiverId = e;
+  video = recieverEndpoint.videoElement;
   if (transmitterId !== null) onBothReady();
 }
 
@@ -25,10 +27,18 @@ function onTransmitterReady(e) {
 }
 
 function onBothReady() {
+  const constraints = {
+    audio: true,
+    video: true,
+  };
   console.log(`Receiver id: ${receiverId}\nTransmitter id: ${transmitterId}`);
+  navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+    transmitter.attachStream(stream);
+    transmitter.initiateCall(receiverId);
+  });
 }
 
-receiver = new Receiver(null, null, null, onReceiverReady, null);
+receiver = new Receiver(null, video, null, onReceiverReady, null);
 
 setTimeout(() => {
   transmitter = new Transmitter(null, null, null, onTransmitterReady);

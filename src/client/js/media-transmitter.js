@@ -70,6 +70,17 @@ export default class Transmitter extends EventTarget {
     };
   }
 
+  attachStream(stream) {
+    this.stream = stream;
+  }
+
+  initiateCall(recieverID) {
+    this.nWTransmitterSignaller.send({
+      type: "initiateCall",
+      payload: { recieverID },
+    });
+  }
+
   hangup() {
     console.log("Transmitter hangup pressed");
     this.pc.close();
