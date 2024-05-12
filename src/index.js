@@ -6,24 +6,26 @@ import Transmitter from "./client/js/media-transmitter.js";
 customElements.define("reciever-endpoint", ReceiverEndpoint);
 customElements.define("transmitter-endpoint", TransmitterEndpoint);
 
-const recieverEndpoint = document.querySelector("reciever-endpoint");
-const transmitterEndpoint = document.querySelector("transmitter-endpoint");
+const recieverElement = document.querySelector("reciever-endpoint");
+const transmitterElement = document.querySelector("transmitter-endpoint");
 
 let receiver,
   receiverId = null,
-  video = recieverEndpoint.videoElement;
+  video = recieverElement.videoElement;
 let transmitter,
   transmitterId = null;
 
-video = recieverEndpoint.videoElement;
+video = recieverElement.videoElement;
 
 function onReceiverReady(e) {
   receiverId = e;
+  recieverElement.setId(receiverId);
   if (transmitterId !== null) onBothReady();
 }
 
 function onTransmitterReady(e) {
   transmitterId = e;
+  transmitterElement.setId(transmitterId);
   if (receiverId !== null) onBothReady();
 }
 
@@ -43,4 +45,4 @@ receiver = new Receiver(null, video, null, onReceiverReady, null);
 
 setTimeout(() => {
   transmitter = new Transmitter(null, null, null, onTransmitterReady);
-}, 500);
+}, 10);
