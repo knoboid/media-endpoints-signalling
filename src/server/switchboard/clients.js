@@ -47,7 +47,8 @@ class Clients {
   }
 
   isAvailable(id) {
-    if (!this.isInGroup()) return false;
+    // Fix this in rewrite
+    if (!this.isInGroup(id.toString())) return false;
     return this.getStatus(id) === "available";
   }
 
