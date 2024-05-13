@@ -1,3 +1,3 @@
-import SimpleReceiverEndpoint from "./api/components/simple-receiver-endpoint.js";
+import { defineCustomElements } from "./api/index.js";
 
-customElements.define("simple-reciever-endpoint", SimpleReceiverEndpoint);
+defineCustomElements();

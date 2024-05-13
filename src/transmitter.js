@@ -1,3 +1,3 @@
-import SimpleTransmitterEndpoint from "./api/components/simple-transmitter-endpoint.js";
+import { defineCustomElements } from "./api/index.js";
 
-customElements.define("simple-transmitter-endpoint", SimpleTransmitterEndpoint);
+defineCustomElements();
