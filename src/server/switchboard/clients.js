@@ -38,8 +38,16 @@ class Clients {
     const client = (this.clients[id].status = status);
   }
 
+  ids() {
+    return Object.keys(this.clients);
+  }
+
+  isInGroup(id) {
+    return this.ids().includes(id);
+  }
+
   isAvailable(id) {
-    console.log(id, this.getStatus(id));
+    if (!this.isInGroup()) return false;
     return this.getStatus(id) === "available";
   }
 
