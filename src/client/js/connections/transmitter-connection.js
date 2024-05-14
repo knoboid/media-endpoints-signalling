@@ -25,20 +25,16 @@ export function createTransmitterConnection(
   stream.getTracks().forEach((track) => cc.addTrack(track, stream));
 
   log("transmitter createOffer start");
-  cc.createOffer(
-    onCreateOfferSuccess,
-    onCreateSessionDescriptionError,
-    offerOptions
-  );
+  cc.createOffer(offerOptions)
+    .then(onCreateOfferSuccess)
+    .catch(onCreateSessionDescriptionError);
 
   function onCreateOfferSuccess(desc) {
     log(`Offer from transmitter ${desc.sdp}`);
     log("transmitter setLocalDescription start");
-    cc.setLocalDescription(
-      desc,
-      () => onSetLocalSuccess(name),
-      onSetSessionDescriptionError
-    );
+    cc.setLocalDescription(desc)
+      .then(onSetLocalSuccess)
+      .catch(onSetSessionDescriptionError);
     log("signal onTransmitterDescription");
     signal("onTransmitterDescription", desc);
   }
@@ -65,11 +61,9 @@ export function createTransmitterConnection(
         break;
       case "onRecievererDescription":
         const desc = payload;
-        cc.setRemoteDescription(
-          desc,
-          () => onSetRemoteSuccess(name),
-          onSetSessionDescriptionError
-        );
+        cc.setRemoteDescription(desc)
+          .then(onSetRemoteSuccess)
+          .catch(onSetSessionDescriptionError);
         break;
 
       default:

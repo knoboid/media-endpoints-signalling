@@ -22,9 +22,6 @@ export function createRecieverConnection(
   cc.oniceconnectionstatechange = (e) => onIceStateChange(cc, name, e);
   cc.onicecandidate = (e) => onIceCandidate(e);
   cc.ontrack = (e) => {
-    // if (rightVideo.srcObject !== e.streams[0]) {
-    //   rightVideo.srcObject = e.streams[0];
-    // }
     if (videoElement.srcObject !== e.streams[0]) {
       videoElement.srcObject = e.streams[0];
     }
@@ -51,12 +48,12 @@ export function createRecieverConnection(
 
       case "onTransmitterDescription":
         const desc = payload;
-        cc.setRemoteDescription(
-          desc,
-          () => onSetRemoteSuccess(name),
-          onSetSessionDescriptionError
-        );
-        cc.createAnswer(onCreateAnswerSuccess, onCreateSessionDescriptionError);
+        cc.setRemoteDescription(desc)
+          .then(onSetRemoteSuccess)
+          .catch(onSetSessionDescriptionError);
+        cc.createAnswer()
+          .then(onCreateAnswerSuccess)
+          .catch(onCreateSessionDescriptionError);
         break;
 
       default:
@@ -67,11 +64,9 @@ export function createRecieverConnection(
   function onCreateAnswerSuccess(desc) {
     log(`Answer from reciever: ${desc.sdp}`);
     log("reciever setLocalDescription start");
-    cc.setLocalDescription(
-      desc,
-      () => onSetLocalSuccess(name),
-      onSetSessionDescriptionError
-    );
+    cc.setLocalDescription(desc)
+      .then(onSetLocalSuccess)
+      .catch(onSetSessionDescriptionError);
     log("signalling onRecievererDescription");
     signal("onRecievererDescription", desc);
   }
