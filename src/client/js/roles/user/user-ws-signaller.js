@@ -15,9 +15,17 @@ class UserWSSignaller extends EventTarget {
     };
     //
     this.socket.onmessage = (message) => {
+      const { type, payload } = JSON.parse(message.data);
+      if (typeof type !== "string") {
+        console.log("type should be string. Got:");
+        console.log(typeof type);
+        console.log(type);
+        throw new Error("typeof type");
+      }
       switch (messageCounter) {
         case 0:
-          const id = Number(message.data);
+          console.assert(type === "clientId");
+          const id = payload.clientId;
           if (isNaN(id)) throw new TypeError("Expect a number");
           console.log(`Setting user id to ${id}`);
           this.id = id;
@@ -26,8 +34,8 @@ class UserWSSignaller extends EventTarget {
           break;
 
         default:
-          const messageObject = JSON.parse(message.data);
-          const { type, payload } = messageObject;
+          // const messageObject = JSON.parse(message.data);
+          // const { type, payload } = messageObject;
           switch (type) {
             case "info":
               this.dispatchEvent(new PayloadEvent("info", payload));

@@ -33,7 +33,7 @@ wsServer.on("connection", (client, req) => {
   let messageCounter = 0;
   let clientType;
 
-  client.send(clientId);
+  client.send(JSON.stringify({ type: "clientId", payload: { clientId } }));
 
   client.on("message", (message) => {
     // console.log(`Got message  '${messageCounter}' for client '${clientId}'`);
