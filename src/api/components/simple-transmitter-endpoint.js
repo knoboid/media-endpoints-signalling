@@ -5,6 +5,7 @@ class SimpleTransmitterEndpoint extends TransmitterEndpoint {
   constructor() {
     super();
     this.input = document.createElement("input");
+    this.input.placeholder = "receiver id";
     this.input.type = "text";
     this.button = document.createElement("button");
     this.button.innerHTML = "Call";
