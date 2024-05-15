@@ -6,12 +6,12 @@ const handlerMap = {
   transmitter: transmitterMesssageHandlers,
 };
 
-function messageHandlers({ messageCounter, clientType, type, payload }) {
-  if (clientType in handlerMap) {
-    const handler = handlerMap[clientType];
-    handler({ messageCounter, clientType, type, payload });
+function messageHandlers(options) {
+  if (options.clientType in handlerMap) {
+    const handler = handlerMap[options.clientType];
+    handler(options);
   } else {
-    console.log(`Unhandled clientType ${clientType}`);
+    console.log(`Unhandled clientType ${options.clientType}`);
   }
 }
 
