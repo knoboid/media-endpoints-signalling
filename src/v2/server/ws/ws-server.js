@@ -1,29 +1,43 @@
 import { WebSocketServer } from "ws";
-import messageHandlers from "./message-handlers/message-handlers.js";
+import messageHandlers from "./messaging/message-handlers/message-handlers.js";
+import ClientGroup from "../endpoints/client-group.js";
+
+const transmitters = new ClientGroup();
+const receivers = new ClientGroup();
+const clientGroups = { transmitters, receivers };
 
 let clientCounter = 0;
 
 export const wsServer = new WebSocketServer({ noServer: true });
 
-wsServer.on("connection", (client, req) => {
+wsServer.on("connection", (webSocket, req) => {
   console.log("connected");
   const clientId = clientCounter;
   let messageCounter = 0;
   let clientType;
-  client.send(JSON.stringify({ type: "clientId", payload: { clientId } }));
+  webSocket.send(JSON.stringify({ type: "clientId", payload: { clientId } }));
 
-  client.on("message", (message) => {
+  webSocket.on("message", (message) => {
     const {
       clientType: clientType_,
       type,
       payload,
     } = JSON.parse(message.toString());
     clientType = clientType_;
-    messageHandlers({ messageCounter, clientType, type, payload });
+    messageHandlers({
+      webSocket,
+      clientId,
+      clientGroups,
+      messageCounter,
+      clientType,
+      type,
+      payload,
+      message,
+    });
     messageCounter++;
   });
 
-  client.on("close", () => {});
+  webSocket.on("close", () => {});
 
   clientCounter++;
 });
