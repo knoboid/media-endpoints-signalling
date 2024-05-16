@@ -4,11 +4,11 @@ const rightVideo = document.getElementById("rightVideo");
 const receiverIDElement = document.querySelector("#receiver-id");
 const receiverHangupButton = document.querySelector("#receiver-hangup");
 // right video
-export function setRecieverID(receiverID) {
+export function setReceiverID(receiverID) {
   receiverIDElement.innerHTML = receiverID;
 }
 
-export function addRecieverElement() {
+export function addReceiverElement() {
   const video = document.createElement("video");
   video.setAttribute("style", "width: 200px");
   video.setAttribute("playsinline", true);
@@ -25,7 +25,7 @@ rightVideo.onloadedmetadata = () => {
   );
 };
 
-export class RecieverUI {
+export class ReceiverUI {
   constructor() {
     this.videoElement = document.createElement("video");
     video.setAttribute("style", "width: 200px");
@@ -41,7 +41,7 @@ export class RecieverUI {
   }
 }
 
-export class RecieverUIEvents extends EventTarget {
+export class ReceiverUIEvents extends EventTarget {
   constructor() {
     super();
     this.receiverHangupButton = receiverHangupButton;
@@ -52,4 +52,4 @@ export class RecieverUIEvents extends EventTarget {
   }
 }
 
-export const receiverUIEvents = new RecieverUIEvents(receiverHangupButton);
+export const receiverUIEvents = new ReceiverUIEvents(receiverHangupButton);

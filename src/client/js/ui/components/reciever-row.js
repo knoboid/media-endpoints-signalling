@@ -3,7 +3,7 @@ import { appendContentTo } from "../util.js";
 
 const delimiter = " ; ";
 
-export class ReciverRow extends HTMLElement {
+export class ReceiverRow extends HTMLElement {
   constructor(rowData) {
     super();
     const row = document.createElement("div");
@@ -21,4 +21,4 @@ export class ReciverRow extends HTMLElement {
   }
 }
 
-export default ReciverRow;
+export default ReceiverRow;

@@ -51,10 +51,10 @@ class TransmitterSignaller extends EventTarget {
             case "info":
               this.dispatchEvent(new PayloadEvent("info", payload));
               break;
-            case "updateRecievers":
+            case "updateReceivers":
               const { receivers } = payload;
               this.dispatchEvent(
-                new PayloadEvent("onUpdateRecievers", receivers)
+                new PayloadEvent("onUpdateReceivers", receivers)
               );
               break;
             case "initiateCallSuccess":
@@ -69,8 +69,8 @@ class TransmitterSignaller extends EventTarget {
               // );
               break;
 
-            case "fromReciever":
-              // this.dispatchEvent(new PayloadEvent("fromReciever", payload));
+            case "fromReceiver":
+              // this.dispatchEvent(new PayloadEvent("fromReceiver", payload));
               break;
 
             case "terminated":

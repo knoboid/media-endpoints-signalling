@@ -17,7 +17,7 @@ const initiateCallMessages = [
       if (isNaN(receiverID) || isNaN(clientId)) return;
       console.log("initiateCallMessages");
       if (connections.attempt(clientId, receiverID)) {
-        console.log("Reciever is available");
+        console.log("Receiver is available");
         webSocket.send(
           JSON.stringify({
             type: "initiateCallSuccess",
@@ -31,9 +31,9 @@ const initiateCallMessages = [
             payload: { transmitterID: clientId },
           })
         );
-        // clientGroups.broadcastRecievers(transmitters);
+        // clientGroups.broadcastReceivers(transmitters);
       } else {
-        console.log("Reciever is NOT available");
+        console.log("Receiver is NOT available");
         webSocket.send(
           JSON.stringify({
             type: "initiateCallFailure",
@@ -88,18 +88,18 @@ const initiateCallMessages = [
   {
     server: true,
     clientType: "receiver",
-    type: "fromReciever",
+    type: "fromReceiver",
     handler: ({ clientId, connections, payload }) => {
       const transmitter = connections.getOtherPartysSocket(clientId);
-      transmitter.send(JSON.stringify({ type: "fromReciever", payload }));
+      transmitter.send(JSON.stringify({ type: "fromReceiver", payload }));
     },
   },
   {
     server: false,
     clientType: "transmitter",
-    type: "fromReciever",
+    type: "fromReceiver",
     handler: ({ self, payload }) => {
-      self.dispatch("fromReciever", payload);
+      self.dispatch("fromReceiver", payload);
     },
   },
   {
@@ -110,7 +110,7 @@ const initiateCallMessages = [
       const parties = connections.terminate(clientId);
       const receiver = receivers.getWebSocket(parties.receiverID);
       receiver.send(JSON.stringify({ type: "terminated" }));
-      // clientGroups.broadcastRecievers(transmitters);
+      // clientGroups.broadcastReceivers(transmitters);
     },
   },
   {
@@ -121,7 +121,7 @@ const initiateCallMessages = [
       const parties = connections.terminate(clientId);
       const transmitter = transmitters.getClient(parties.transmitterID);
       transmitter.send(JSON.stringify({ type: "terminated" }));
-      // clientGroups.broadcastRecievers(transmitters);
+      // clientGroups.broadcastReceivers(transmitters);
     },
   },
   {

@@ -29,10 +29,10 @@ function wsUser({
       uuid = pendingConnections.add(clientId, transmitterId, payload.userId);
       if (uuid) {
         const receivingUser = users.getUser(payload.userId);
-        code = redeemCodes.generate(receivingUser.clientId, "registerReciever");
+        code = redeemCodes.generate(receivingUser.clientId, "registerReceiver");
         receivingUser.client.send(
           JSON.stringify({
-            type: "requestReciever",
+            type: "requestReceiver",
             payload: { userId: clientId, code, uuid },
           })
         );

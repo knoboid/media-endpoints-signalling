@@ -1,4 +1,4 @@
-const registerRecieverMessages = [
+const registerReceiverMessages = [
   {
     server: false,
     clientType: "receiver",
@@ -33,4 +33,4 @@ const registerRecieverMessages = [
   },
 ];
 
-export default registerRecieverMessages;
+export default registerReceiverMessages;

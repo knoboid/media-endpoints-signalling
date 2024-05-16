@@ -28,7 +28,7 @@ class Connections {
     this.transmitters.setStatus(transmitterID, "busy");
   }
 
-  setReciever(receiverID, transmitterID) {
+  setReceiver(receiverID, transmitterID) {
     this.clients[receiverID] = {
       type: "receiver",
       connectionID: this.currentId(),
@@ -46,7 +46,7 @@ class Connections {
     if (canConnect) {
       this.setConnection(transmitterID, receiverID);
       this.setTransmitter(transmitterID, receiverID);
-      this.setReciever(receiverID, transmitterID);
+      this.setReceiver(receiverID, transmitterID);
       return true;
     }
     return false;

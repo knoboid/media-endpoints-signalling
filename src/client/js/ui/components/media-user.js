@@ -126,11 +126,11 @@ class MediaUserElement extends HTMLElement {
     }
   }
 
-  addRecieverVideo(userId) {
+  addReceiverVideo(userId) {
     if (!this.videoMap.idExists(userId)) {
-      return this.videoMap.addReciever(userId);
+      return this.videoMap.addReceiver(userId);
     } else {
-      console.log(`Reciver already exists for user ${userId}`);
+      console.log(`Receiver already exists for user ${userId}`);
     }
   }
 
@@ -159,7 +159,7 @@ class MediaUserElement extends HTMLElement {
       content += `<td align="center">[${user.transmitters.join(",")}]</td>`;
       // content += `<td>Transmitters: ${user.transmitterCount}</td>`;
       content += `<td align="center">[${user.receivers.join(",")}]</td>`;
-      // content += `<td>Recievers: ${user.receiverCount}</td>`;
+      // content += `<td>Receivers: ${user.receiverCount}</td>`;
       const tr = appendContentTo(this.usersTable, "tr", content);
       userRow.transmitters.forEach((transmitterId) => {
         const button = document.createElement("button");
@@ -195,8 +195,8 @@ class MediaUserElement extends HTMLElement {
       case "addVideo":
         return this.addVideo();
 
-      case "addRecieverVideo":
-        return this.addRecieverVideo(data);
+      case "addReceiverVideo":
+        return this.addReceiverVideo(data);
 
       default:
         break;

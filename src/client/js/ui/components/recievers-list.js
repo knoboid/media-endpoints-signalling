@@ -1,6 +1,6 @@
-import { ReciverRow } from "./receiver-row.js";
+import { ReceiverRow } from "./receiver-row.js";
 
-export class RecieversList extends HTMLElement {
+export class ReceiversList extends HTMLElement {
   constructor() {
     super();
   }
@@ -8,10 +8,10 @@ export class RecieversList extends HTMLElement {
   setData(data) {
     this.innerHTML = "";
     data.forEach((item) => {
-      const rowElement = new ReciverRow(item);
+      const rowElement = new ReceiverRow(item);
       this.appendChild(rowElement);
     });
   }
 }
 
-export default RecieversList;
+export default ReceiversList;

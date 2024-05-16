@@ -34,11 +34,11 @@ class User {
       updateUsers: (e) => {
         this.uiSignaller.resolve("updateUsers", e.data);
       },
-      requestReciever: (e) => {
+      requestReceiver: (e) => {
         console.log(`request receiver for call with user ${e.data}`);
         const { userId, uuid } = e.data;
         const videoElement = this.uiSignaller.resolve(
-          "addRecieverVideo",
+          "addReceiverVideo",
           e.data.userId
         );
         if (typeof videoElement !== "undefined") {
@@ -59,7 +59,7 @@ class User {
             onhangup
           );
         } else {
-          console.log("Reciever video not created!");
+          console.log("Receiver video not created!");
         }
       },
       receiverRegistrationCode: (e) => {

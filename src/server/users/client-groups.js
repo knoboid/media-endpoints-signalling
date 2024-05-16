@@ -13,15 +13,15 @@ class ClientGroups {
     return this.transmitters;
   }
 
-  getRecievers() {
+  getReceivers() {
     return this.receivers;
   }
 
-  broadcastRecievers(receiverGroup) {
+  broadcastReceivers(receiverGroup) {
     receiverGroup.getClients().forEach((client) => {
       client.send(
         JSON.stringify({
-          type: "updateRecievers",
+          type: "updateReceivers",
           payload: { receivers: this.receivers.getList() },
         })
       );

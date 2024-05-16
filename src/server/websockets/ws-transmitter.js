@@ -7,15 +7,15 @@ function wsTransmitter({
 }) {
   let receiver;
   const transmitters = clientGroups.getTransmitters();
-  const receivers = clientGroups.getRecievers();
+  const receivers = clientGroups.getReceivers();
   const connections = clientGroups.getConnections();
   const client = transmitters.getClient(clientId);
 
   switch (type) {
-    case "getRecievers":
+    case "getReceivers":
       client.send(
         JSON.stringify({
-          type: "updateRecievers",
+          type: "updateReceivers",
           payload: { receivers: receivers.getList() },
         })
       );
@@ -32,7 +32,7 @@ function wsTransmitter({
         `Preparing to initiate call  between ${clientId} and ${receiverID}`
       );
       if (connections.attempt(clientId, receiverID)) {
-        console.log("Reciever is available");
+        console.log("Receiver is available");
         client.send(
           JSON.stringify({
             type: "initiateCallSuccess",
@@ -46,9 +46,9 @@ function wsTransmitter({
             payload: { transmitterID: clientId },
           })
         );
-        clientGroups.broadcastRecievers(transmitters);
+        clientGroups.broadcastReceivers(transmitters);
       } else {
-        console.log("Reciever is NOT available");
+        console.log("Receiver is NOT available");
         client.send(
           JSON.stringify({
             type: "initiateCallFailure",
@@ -69,7 +69,7 @@ function wsTransmitter({
       const parties = connections.terminate(clientId);
       receiver = receivers.getClient(parties.receiverID);
       receiver.send(JSON.stringify({ type: "terminated" }));
-      clientGroups.broadcastRecievers(transmitters);
+      clientGroups.broadcastReceivers(transmitters);
       break;
 
     default:

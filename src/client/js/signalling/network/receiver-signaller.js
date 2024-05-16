@@ -2,7 +2,7 @@ import PayloadEvent from "../../payload-event.js";
 import handleMessage from "./process/handle-messages.js";
 const clientType = "receiver";
 
-class RecieverSignaller extends EventTarget {
+class ReceiverSignaller extends EventTarget {
   constructor(url, code) {
     super();
     this.socket = new WebSocket(url);
@@ -96,8 +96,8 @@ class RecieverSignaller extends EventTarget {
   }
 
   receiver(message) {
-    this.send({ type: "fromReciever", payload: message });
+    this.send({ type: "fromReceiver", payload: message });
   }
 }
 
-export default RecieverSignaller;
+export default ReceiverSignaller;

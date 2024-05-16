@@ -1,12 +1,12 @@
 import MessagingManager from "./messaging-manager.js";
-import registerRecieverMessages from "../dialogues/registerReceiver.js";
+import registerReceiverMessages from "../dialogues/registerReceiver.js";
 import registerTransmitterMessages from "../dialogues/registerTransmitter.js";
 import initiateCallMessages from "../dialogues/initiateCall.js";
 const serverMessagingManager = new MessagingManager();
 const clientMessagingManager = new MessagingManager();
 
 const messages = [
-  ...registerRecieverMessages,
+  ...registerReceiverMessages,
   ...registerTransmitterMessages,
   ...initiateCallMessages,
 ];

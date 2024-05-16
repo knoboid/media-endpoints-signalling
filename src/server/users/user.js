@@ -19,7 +19,7 @@ class User {
     return this.transmitters.includes(transmitterId);
   }
 
-  addReciever(receiverId) {
+  addReceiver(receiverId) {
     this.receivers.push(receiverId);
   }
 

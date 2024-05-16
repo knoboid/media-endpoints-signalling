@@ -68,9 +68,9 @@ class Users extends EventTarget {
     this.broadcastUpdate();
   }
 
-  addReciever(clientId, receiverId) {
+  addReceiver(clientId, receiverId) {
     const user = this.getUser(clientId);
-    user.addReciever(receiverId);
+    user.addReceiver(receiverId);
     this.broadcastUpdate();
   }
 

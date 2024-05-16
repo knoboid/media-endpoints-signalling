@@ -2,7 +2,7 @@ const ws = require("ws");
 const Clients = require("../switchboard/clients");
 const Connections = require("../switchboard/connections");
 const wsAdmin = require("./ws-admin");
-const wsReciever = require("./ws-receiver");
+const wsReceiver = require("./ws-receiver");
 const wsTransmitter = require("./ws-transmitter");
 const wsUser = require("./user-ws-server");
 const ClientGroups = require("../users/client-groups");
@@ -61,10 +61,10 @@ wsServer.on("connection", (client, req) => {
           console.log(object);
           if (object.code) {
             const result = redeemCodes.redeem(object.code);
-            if (result.type === "registerReciever") {
+            if (result.type === "registerReceiver") {
               receivers.addClient(clientId, client, "available");
               const userId = result.clientId;
-              users.addReciever(userId, clientId);
+              users.addReceiver(userId, clientId);
               client.send(JSON.stringify({ type: "receiverRegistered" }));
             }
           } else {
@@ -75,7 +75,7 @@ wsServer.on("connection", (client, req) => {
 
           //console.log(`Registering receiver ${clientId}`);
           //receivers.addClient(clientId, client, "available");
-          //clientGroups.broadcastRecievers(transmitters);
+          //clientGroups.broadcastReceivers(transmitters);
         } else if (clientType === "user") {
           console.log(`Registering user ${clientId}`);
           users.addUser(clientId, client);
@@ -97,7 +97,7 @@ wsServer.on("connection", (client, req) => {
             wsAdmin({ client, type, payload, users, connections });
             break;
           case "receiver":
-            wsReciever({ type, payload, clientId, userGroups: clientGroups });
+            wsReceiver({ type, payload, clientId, userGroups: clientGroups });
             break;
           case "transmitter":
             wsTransmitter({
@@ -147,7 +147,7 @@ wsServer.on("connection", (client, req) => {
     } else if (clientType === "user") {
       users.removeUser(clientId);
     }
-    clientGroups.broadcastRecievers(transmitters);
+    clientGroups.broadcastReceivers(transmitters);
   });
 
   clientCounter++;

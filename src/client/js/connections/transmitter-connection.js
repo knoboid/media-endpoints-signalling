@@ -47,7 +47,7 @@ export function createTransmitterConnection(
     signallingChannel.transmitter(JSON.stringify({ type, payload }));
   }
 
-  signallingChannel.addEventListener("fromReciever", (event) => {
+  signallingChannel.addEventListener("fromReceiver", (event) => {
     const { type, payload } = JSON.parse(event.data);
     switch (type) {
       case "onIceCandidate":
@@ -59,7 +59,7 @@ export function createTransmitterConnection(
         log(`${name} ICE candidate: 
         ${candidate ? candidate.candidate : "(null)"}`);
         break;
-      case "onRecievererDescription":
+      case "onReceivererDescription":
         const desc = payload;
         cc.setRemoteDescription(desc)
           .then(onSetRemoteSuccess)

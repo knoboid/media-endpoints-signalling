@@ -29,14 +29,14 @@ export default class Transmitter extends EventTarget {
     });
 
     this.nWTransmitterSignaller.addEventListener(
-      "onUpdateRecievers",
+      "onUpdateReceivers",
       (event) => {
-        this.dispatchEvent(new PayloadEvent("onUpdateRecievers", event.data));
-        const otherRecievers = event.data.filter(
+        this.dispatchEvent(new PayloadEvent("onUpdateReceivers", event.data));
+        const otherReceivers = event.data.filter(
           // (receiver) => Number(receiver.id) !== receiverID
           (receiver) => Number(receiver.id) !== -1
         );
-        // rlist.setData(otherRecievers);
+        // rlist.setData(otherReceivers);
       }
     );
 

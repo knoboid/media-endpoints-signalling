@@ -4,7 +4,7 @@ class UsersVideoMap {
     this.map = {};
   }
 
-  addReciever(userId) {
+  addReceiver(userId) {
     const container = document.createElement("div");
     container.innerHTML = `<div><span>User: ${userId}<span><button>hangup</button></div>`;
     container.innerHTML = `<div><span>User: ${userId}<span></div>`;

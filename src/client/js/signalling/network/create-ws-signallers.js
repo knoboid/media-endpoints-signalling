@@ -1,7 +1,7 @@
 import UserWSSignaller from "../../roles/user/user-ws-signaller.js";
 import AdminSignaller from "./admin-socket-sgnaller.js";
 import TransmitterSignaller from "./transmitter-signaller.js";
-import RecieverSignaller from "./receiver-signaller.js";
+import ReceiverSignaller from "./receiver-signaller.js";
 // import NameEntrySignaller from "../../ui/name-entry-signaller.js";
 
 // const wss = "wss://localhost:5501";
@@ -23,8 +23,8 @@ export function createTransmitterWSSignaller(code) {
   return new TransmitterSignaller(wss, code);
 }
 
-export function createRecieverWSSignaller(code) {
-  return new RecieverSignaller(wss, code);
+export function createReceiverWSSignaller(code) {
+  return new ReceiverSignaller(wss, code);
 }
 
 // export function createNameEntrySignaller(code) {

@@ -10,7 +10,7 @@ import {
 
 import { log } from "./util.js";
 
-export function createRecieverConnection(
+export function createReceiverConnection(
   servers,
   name,
   signallingChannel,
@@ -67,8 +67,8 @@ export function createRecieverConnection(
     cc.setLocalDescription(desc)
       .then(onSetLocalSuccess)
       .catch(onSetSessionDescriptionError);
-    log("signalling onRecievererDescription");
-    signal("onRecievererDescription", desc);
+    log("signalling onReceivererDescription");
+    signal("onReceivererDescription", desc);
   }
 
   function signal(type, payload) {
