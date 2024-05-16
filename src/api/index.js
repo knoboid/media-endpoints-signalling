@@ -4,9 +4,9 @@ import SimpleReceiverEndpoint from "./components/simple-receiver-endpoint.js";
 import SimpleTransmitterEndpoint from "./components/simple-transmitter-endpoint.js";
 
 export function defineCustomElements() {
-  customElements.define("reciever-endpoint", ReceiverEndpoint);
+  customElements.define("receiver-endpoint", ReceiverEndpoint);
   customElements.define("transmitter-endpoint", TransmitterEndpoint);
-  customElements.define("simple-reciever-endpoint", SimpleReceiverEndpoint);
+  customElements.define("simple-receiver-endpoint", SimpleReceiverEndpoint);
   customElements.define(
     "simple-transmitter-endpoint",
     SimpleTransmitterEndpoint

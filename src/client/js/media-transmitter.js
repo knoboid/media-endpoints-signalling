@@ -33,8 +33,8 @@ export default class Transmitter extends EventTarget {
       (event) => {
         this.dispatchEvent(new PayloadEvent("onUpdateRecievers", event.data));
         const otherRecievers = event.data.filter(
-          // (reciever) => Number(reciever.id) !== recieverID
-          (reciever) => Number(reciever.id) !== -1
+          // (receiver) => Number(receiver.id) !== receiverID
+          (receiver) => Number(receiver.id) !== -1
         );
         // rlist.setData(otherRecievers);
       }
@@ -76,10 +76,10 @@ export default class Transmitter extends EventTarget {
     this.stream = stream;
   }
 
-  initiateCall(recieverID) {
+  initiateCall(receiverID) {
     this.nWTransmitterSignaller.send({
       type: "initiateCall",
-      payload: { recieverID },
+      payload: { receiverID },
     });
   }
 

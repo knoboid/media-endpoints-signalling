@@ -7,7 +7,7 @@ template.innerHTML = `
 <button id="onoff-button">START</button>
 <h2>ID: <span id="id"></span></h2>
 <div id="transmitter-container"><div>
-<div id="recievers-container"><div>
+<div id="receivers-container"><div>
 <table id="users-table"><table>
 `;
 
@@ -26,8 +26,8 @@ class MediaUserElement extends HTMLElement {
     h2.appendChild(this.showHideButton);
 
     this.transmitterContainer = appendContentTo(this, "div", "");
-    this.recieversContainer = appendContentTo(this, "div", "");
-    this.videoMap = new UsersVideoMap(this.recieversContainer);
+    this.receiversContainer = appendContentTo(this, "div", "");
+    this.videoMap = new UsersVideoMap(this.receiversContainer);
     this.usersTable = appendContentTo(this, "table", "");
     this.nameEntry = document.createElement("name-entry");
     // this.appendChild(this.streamButton);
@@ -42,11 +42,11 @@ class MediaUserElement extends HTMLElement {
     // );
     this.appendChild(h2);
     this.appendChild(this.transmitterContainer);
-    this.appendChild(this.recieversContainer);
+    this.appendChild(this.receiversContainer);
     this.appendChild(this.usersTable);
     // this.idElem = shadow.querySelector("#id");
     // this.transmitterContainer = shadow.querySelector("#transmitter-container");
-    // this.recieversContainer = shadow.querySelector("#recievers-container");
+    // this.receiversContainer = shadow.querySelector("#receivers-container");
     // this.usersTable = shadow.querySelector("#users-table");
     this.isStarted = false;
     this.streamButton.onclick = (e) => this.handleStartStream(e);
@@ -159,7 +159,7 @@ class MediaUserElement extends HTMLElement {
       content += `<td align="center">[${user.transmitters.join(",")}]</td>`;
       // content += `<td>Transmitters: ${user.transmitterCount}</td>`;
       content += `<td align="center">[${user.receivers.join(",")}]</td>`;
-      // content += `<td>Recievers: ${user.recieverCount}</td>`;
+      // content += `<td>Recievers: ${user.receiverCount}</td>`;
       const tr = appendContentTo(this.usersTable, "tr", content);
       userRow.transmitters.forEach((transmitterId) => {
         const button = document.createElement("button");

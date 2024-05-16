@@ -9,7 +9,7 @@ export const transmitters = [
   },
 ];
 
-export const recievers = [
+export const receivers = [
   {
     id: 0,
     status: "available",

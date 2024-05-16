@@ -1,4 +1,4 @@
-import Receiver from "../../media-reciever.js";
+import Receiver from "../../media-receiver.js";
 import Transmitter from "../../media-transmitter.js";
 
 class User {
@@ -35,17 +35,17 @@ class User {
         this.uiSignaller.resolve("updateUsers", e.data);
       },
       requestReciever: (e) => {
-        console.log(`request reciever for call with user ${e.data}`);
+        console.log(`request receiver for call with user ${e.data}`);
         const { userId, uuid } = e.data;
         const videoElement = this.uiSignaller.resolve(
           "addRecieverVideo",
           e.data.userId
         );
         if (typeof videoElement !== "undefined") {
-          const onready = (recieverId) => {
+          const onready = (receiverId) => {
             this.wsSignaller.send({
-              type: "recieverReady",
-              payload: { recieverId, userId, uuid },
+              type: "receiverReady",
+              payload: { receiverId, userId, uuid },
             });
           };
           const onhangup = () => {
@@ -62,15 +62,15 @@ class User {
           console.log("Reciever video not created!");
         }
       },
-      recieverRegistrationCode: (e) => {
-        console.log("recieverRegistrationCode", e.data);
+      receiverRegistrationCode: (e) => {
+        console.log("receiverRegistrationCode", e.data);
       },
       userReady: (e) => {
-        const { recieverId, transmitterId, uuid } = e.data;
+        const { receiverId, transmitterId, uuid } = e.data;
         const transmitter = this.transmitters[transmitterId];
         transmitter.nWTransmitterSignaller.send({
           type: "initiateCall",
-          payload: { recieverID: e.data.recieverId, uuid },
+          payload: { receiverID: e.data.receiverId, uuid },
         });
       },
       callUser: (e) => {

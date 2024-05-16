@@ -1,4 +1,4 @@
-import { ReciverRow } from "./reciever-row.js";
+import { ReciverRow } from "./receiver-row.js";
 
 export class RecieversList extends HTMLElement {
   constructor() {

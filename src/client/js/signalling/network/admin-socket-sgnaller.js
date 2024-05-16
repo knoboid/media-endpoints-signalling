@@ -49,7 +49,7 @@ class AdminSignaller extends EventTarget {
 
             default:
               console.log(
-                `reciever signaller got unhandled message type ${type}`
+                `receiver signaller got unhandled message type ${type}`
               );
               break;
           }

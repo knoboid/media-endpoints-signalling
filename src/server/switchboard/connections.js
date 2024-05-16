@@ -1,7 +1,7 @@
 class Connections {
-  constructor(transmitters, recievers) {
+  constructor(transmitters, receivers) {
     this.transmitters = transmitters;
-    this.recievers = recievers;
+    this.receivers = receivers;
     this.connections = {};
     this.counter = 0;
     this.clients = {};
@@ -15,36 +15,36 @@ class Connections {
     return this.counter;
   }
 
-  setConnection(transmitterID, recieverID) {
-    this.connections[this.newId()] = { transmitterID, recieverID };
+  setConnection(transmitterID, receiverID) {
+    this.connections[this.newId()] = { transmitterID, receiverID };
   }
 
-  setTransmitter(transmitterID, recieverID) {
+  setTransmitter(transmitterID, receiverID) {
     this.clients[transmitterID] = {
       type: "transmitter",
       connectionID: this.currentId(),
-      otherPartyID: recieverID,
+      otherPartyID: receiverID,
     };
     this.transmitters.setStatus(transmitterID, "busy");
   }
 
-  setReciever(recieverID, transmitterID) {
-    this.clients[recieverID] = {
-      type: "reciever",
+  setReciever(receiverID, transmitterID) {
+    this.clients[receiverID] = {
+      type: "receiver",
       connectionID: this.currentId(),
       otherPartyID: transmitterID,
     };
-    this.recievers.setStatus(recieverID, "busy");
+    this.receivers.setStatus(receiverID, "busy");
   }
 
-  attempt(transmitterID, recieverID) {
+  attempt(transmitterID, receiverID) {
     const canConnect =
       this.transmitters.isAvailable(transmitterID) &&
-      this.recievers.isAvailable(recieverID);
+      this.receivers.isAvailable(receiverID);
     if (canConnect) {
-      this.setConnection(transmitterID, recieverID);
-      this.setTransmitter(transmitterID, recieverID);
-      this.setReciever(recieverID, transmitterID);
+      this.setConnection(transmitterID, receiverID);
+      this.setTransmitter(transmitterID, receiverID);
+      this.setReciever(receiverID, transmitterID);
       return true;
     }
     return false;
@@ -57,28 +57,28 @@ class Connections {
   getOtherPartysSocket(clientID) {
     const clientRecord = this.clients[clientID];
     if (clientRecord.type === "transmitter") {
-      return this.recievers.getClient(clientRecord.otherPartyID);
-    } else if (clientRecord.type === "reciever") {
+      return this.receivers.getClient(clientRecord.otherPartyID);
+    } else if (clientRecord.type === "receiver") {
       return this.transmitters.getClient(clientRecord.otherPartyID);
     }
   }
 
   terminate(clientID) {
     const connectionID = this.clients[clientID].connectionID;
-    const { transmitterID, recieverID } = this.connections[connectionID];
+    const { transmitterID, receiverID } = this.connections[connectionID];
     delete this.connections[connectionID];
     delete this.clients[transmitterID];
-    delete this.clients[recieverID];
+    delete this.clients[receiverID];
     this.transmitters.setStatus(transmitterID, "available");
-    this.recievers.setStatus(recieverID, "available");
-    return { transmitterID, recieverID };
+    this.receivers.setStatus(receiverID, "available");
+    return { transmitterID, receiverID };
   }
 
   getClientStatus(clientID) {
     if (this.transmitters.contains(clientID)) {
       return this.transmitters.getStatus(clientID);
-    } else if (this.recievers.contains(clientID)) {
-      return this.recievers.getStatus(clientID);
+    } else if (this.receivers.contains(clientID)) {
+      return this.receivers.getStatus(clientID);
     }
   }
 

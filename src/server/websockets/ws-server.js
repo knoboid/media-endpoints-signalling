@@ -2,7 +2,7 @@ const ws = require("ws");
 const Clients = require("../switchboard/clients");
 const Connections = require("../switchboard/connections");
 const wsAdmin = require("./ws-admin");
-const wsReciever = require("./ws-reciever");
+const wsReciever = require("./ws-receiver");
 const wsTransmitter = require("./ws-transmitter");
 const wsUser = require("./user-ws-server");
 const ClientGroups = require("../users/client-groups");
@@ -13,11 +13,11 @@ const PendingConnections = require("../switchboard/pending-connections.js");
 let clientCounter = 0;
 
 const transmitters = new Clients();
-const recievers = new Clients();
-const connections = new Connections(transmitters, recievers);
+const receivers = new Clients();
+const connections = new Connections(transmitters, receivers);
 const redeemCodes = new RedeemCodes();
 
-const clientGroups = new ClientGroups(connections, transmitters, recievers);
+const clientGroups = new ClientGroups(connections, transmitters, receivers);
 const users = new Users();
 const pendingConnections = new PendingConnections(users);
 
@@ -57,24 +57,24 @@ wsServer.on("connection", (client, req) => {
           } else {
             transmitters.addClient(clientId, client, "available");
           }
-        } else if (clientType === "reciever") {
+        } else if (clientType === "receiver") {
           console.log(object);
           if (object.code) {
             const result = redeemCodes.redeem(object.code);
             if (result.type === "registerReciever") {
-              recievers.addClient(clientId, client, "available");
+              receivers.addClient(clientId, client, "available");
               const userId = result.clientId;
               users.addReciever(userId, clientId);
-              client.send(JSON.stringify({ type: "recieverRegistered" }));
+              client.send(JSON.stringify({ type: "receiverRegistered" }));
             }
           } else {
             // userless endpoint mode
-            recievers.addClient(clientId, client, "available");
-            client.send(JSON.stringify({ type: "recieverRegistered" }));
+            receivers.addClient(clientId, client, "available");
+            client.send(JSON.stringify({ type: "receiverRegistered" }));
           }
 
-          //console.log(`Registering reciever ${clientId}`);
-          //recievers.addClient(clientId, client, "available");
+          //console.log(`Registering receiver ${clientId}`);
+          //receivers.addClient(clientId, client, "available");
           //clientGroups.broadcastRecievers(transmitters);
         } else if (clientType === "user") {
           console.log(`Registering user ${clientId}`);
@@ -96,7 +96,7 @@ wsServer.on("connection", (client, req) => {
           case "admin":
             wsAdmin({ client, type, payload, users, connections });
             break;
-          case "reciever":
+          case "receiver":
             wsReciever({ type, payload, clientId, userGroups: clientGroups });
             break;
           case "transmitter":
@@ -134,16 +134,16 @@ wsServer.on("connection", (client, req) => {
 
     if (clientType === "transmitter") {
       if (parties) {
-        const reciever = recievers.getClient(parties.recieverID);
-        reciever.send(JSON.stringify({ type: "terminated" }));
+        const receiver = receivers.getClient(parties.receiverID);
+        receiver.send(JSON.stringify({ type: "terminated" }));
       }
       transmitters.remove(clientId);
-    } else if (clientType === "reciever") {
+    } else if (clientType === "receiver") {
       if (parties) {
         const transmitter = transmitters.getClient(parties.transmitterID);
         transmitter.send(JSON.stringify({ type: "terminated" }));
       }
-      recievers.remove(clientId);
+      receivers.remove(clientId);
     } else if (clientType === "user") {
       users.removeUser(clientId);
     }

@@ -1,5 +1,5 @@
 import PayloadEvent from "../../payload-event.js";
-const clientType = "reciever";
+const clientType = "receiver";
 
 class RecieverSignaller extends EventTarget {
   constructor(url, code) {
@@ -38,9 +38,9 @@ class RecieverSignaller extends EventTarget {
               console.log(payload);
               break;
 
-            case "recieverRegistered":
+            case "receiverRegistered":
               this.dispatchEvent(
-                new PayloadEvent("recieverRegistered", this.id)
+                new PayloadEvent("receiverRegistered", this.id)
               );
               break;
 
@@ -66,7 +66,7 @@ class RecieverSignaller extends EventTarget {
 
             default:
               console.log(
-                `reciever signaller got unhandled message type ${type}`
+                `receiver signaller got unhandled message type ${type}`
               );
               break;
           }
@@ -80,7 +80,7 @@ class RecieverSignaller extends EventTarget {
     this.socket.send(JSON.stringify(request));
   }
 
-  reciever(message) {
+  receiver(message) {
     this.send({ type: "fromReciever", payload: message });
   }
 }

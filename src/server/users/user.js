@@ -3,7 +3,7 @@ class User {
     this.clientId = clientId;
     this.client = client;
     this.transmitters = [];
-    this.recievers = [];
+    this.receivers = [];
     this.username = "";
   }
 
@@ -19,8 +19,8 @@ class User {
     return this.transmitters.includes(transmitterId);
   }
 
-  addReciever(recieverId) {
-    this.recievers.push(recieverId);
+  addReciever(receiverId) {
+    this.receivers.push(receiverId);
   }
 
   setUsername(username) {

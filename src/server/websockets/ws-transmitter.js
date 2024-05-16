@@ -5,9 +5,9 @@ function wsTransmitter({
   userGroups: clientGroups,
   pendingConnections,
 }) {
-  let reciever;
+  let receiver;
   const transmitters = clientGroups.getTransmitters();
-  const recievers = clientGroups.getRecievers();
+  const receivers = clientGroups.getRecievers();
   const connections = clientGroups.getConnections();
   const client = transmitters.getClient(clientId);
 
@@ -16,31 +16,31 @@ function wsTransmitter({
       client.send(
         JSON.stringify({
           type: "updateRecievers",
-          payload: { recievers: recievers.getList() },
+          payload: { receivers: receivers.getList() },
         })
       );
       break;
     case "initiateCall":
       /* first contact from a transmitter wishing to make a call */
-      const { recieverID, uuid } = payload;
+      const { receiverID, uuid } = payload;
       const pendingConnection = pendingConnections.get(uuid);
       console.log("pendingConnection");
       console.log(pendingConnection);
-      console.log("recieverID");
-      console.log(recieverID);
+      console.log("receiverID");
+      console.log(receiverID);
       console.log(
-        `Preparing to initiate call  between ${clientId} and ${recieverID}`
+        `Preparing to initiate call  between ${clientId} and ${receiverID}`
       );
-      if (connections.attempt(clientId, recieverID)) {
+      if (connections.attempt(clientId, receiverID)) {
         console.log("Reciever is available");
         client.send(
           JSON.stringify({
             type: "initiateCallSuccess",
-            payload: { recieverID },
+            payload: { receiverID },
           })
         );
-        const reciever = recievers.getClient(recieverID);
-        reciever.send(
+        const receiver = receivers.getClient(receiverID);
+        receiver.send(
           JSON.stringify({
             type: "newConnectionRequest",
             payload: { transmitterID: clientId },
@@ -52,7 +52,7 @@ function wsTransmitter({
         client.send(
           JSON.stringify({
             type: "initiateCallFailure",
-            payload: { recieverID },
+            payload: { receiverID },
           })
         );
       }
@@ -60,15 +60,15 @@ function wsTransmitter({
 
     case "fromTransmitter":
       console.log("Handling fromTransmitter");
-      reciever = connections.getOtherPartysSocket(clientId);
-      reciever.send(JSON.stringify({ type, payload }));
+      receiver = connections.getOtherPartysSocket(clientId);
+      receiver.send(JSON.stringify({ type, payload }));
       break;
 
     case "terminated":
       console.log("Handling terminated");
       const parties = connections.terminate(clientId);
-      reciever = recievers.getClient(parties.recieverID);
-      reciever.send(JSON.stringify({ type: "terminated" }));
+      receiver = receivers.getClient(parties.receiverID);
+      receiver.send(JSON.stringify({ type: "terminated" }));
       clientGroups.broadcastRecievers(transmitters);
       break;
 

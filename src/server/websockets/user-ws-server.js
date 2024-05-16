@@ -28,9 +28,9 @@ function wsUser({
       transmitterId = payload.transmitterId;
       uuid = pendingConnections.add(clientId, transmitterId, payload.userId);
       if (uuid) {
-        const recievingUser = users.getUser(payload.userId);
-        code = redeemCodes.generate(recievingUser.clientId, "registerReciever");
-        recievingUser.client.send(
+        const receivingUser = users.getUser(payload.userId);
+        code = redeemCodes.generate(receivingUser.clientId, "registerReciever");
+        receivingUser.client.send(
           JSON.stringify({
             type: "requestReciever",
             payload: { userId: clientId, code, uuid },
@@ -39,17 +39,17 @@ function wsUser({
       }
       break;
 
-    case "recieverReady":
-      console.log("recieverReady", payload);
-      const { userId, recieverId } = payload;
+    case "receiverReady":
+      console.log("receiverReady", payload);
+      const { userId, receiverId } = payload;
       uuid = payload.uuid;
-      pendingConnections.addReceiverId(uuid, recieverId);
+      pendingConnections.addReceiverId(uuid, receiverId);
       transmitterId = pendingConnections.get(uuid).transmitterId;
       const transmittingUser = users.getUser(payload.userId);
       transmittingUser.client.send(
         JSON.stringify({
           type: "userReady",
-          payload: { userId, recieverId, transmitterId, uuid },
+          payload: { userId, receiverId, transmitterId, uuid },
         })
       );
 

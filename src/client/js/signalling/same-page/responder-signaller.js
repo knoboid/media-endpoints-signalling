@@ -9,8 +9,8 @@ class RecieverSignaller extends EventTarget {
     );
   }
 
-  reciever(data) {
-    this.signallingChannel.reciever(data);
+  receiver(data) {
+    this.signallingChannel.receiver(data);
   }
 }
 

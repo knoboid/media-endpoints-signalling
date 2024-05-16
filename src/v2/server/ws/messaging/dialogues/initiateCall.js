@@ -12,20 +12,20 @@ const initiateCallMessages = [
         clientGroups,
         connections,
       } = options;
-      const { recieverID } = payload;
+      const { receiverID } = payload;
       const { receivers } = clientGroups;
-      if (isNaN(recieverID) || isNaN(clientId)) return;
+      if (isNaN(receiverID) || isNaN(clientId)) return;
       console.log("initiateCallMessages");
-      if (connections.attempt(clientId, recieverID)) {
+      if (connections.attempt(clientId, receiverID)) {
         console.log("Reciever is available");
         webSocket.send(
           JSON.stringify({
             type: "initiateCallSuccess",
-            payload: { recieverID },
+            payload: { receiverID },
           })
         );
-        const reciever = receivers.getWebSocket(recieverID);
-        reciever.send(
+        const receiver = receivers.getWebSocket(receiverID);
+        receiver.send(
           JSON.stringify({
             type: "newConnectionRequest",
             payload: { transmitterID: clientId },
@@ -37,7 +37,7 @@ const initiateCallMessages = [
         webSocket.send(
           JSON.stringify({
             type: "initiateCallFailure",
-            payload: { recieverID },
+            payload: { receiverID },
           })
         );
       }
@@ -48,13 +48,13 @@ const initiateCallMessages = [
     clientType: "transmitter",
     type: "fromTransmitter",
     handler: ({ clientId, connections, payload }) => {
-      const reciever = connections.getOtherPartysSocket(clientId);
-      reciever.send(JSON.stringify({ type: "fromTransmitter", payload }));
+      const receiver = connections.getOtherPartysSocket(clientId);
+      receiver.send(JSON.stringify({ type: "fromTransmitter", payload }));
     },
   },
   {
     server: true,
-    clientType: "reciever",
+    clientType: "receiver",
     type: "fromReciever",
     handler: ({ clientId, connections, payload }) => {
       const transmitter = connections.getOtherPartysSocket(clientId);
@@ -67,14 +67,14 @@ const initiateCallMessages = [
     type: "terminated",
     handler: ({ clientId, connections, clientGroups: { receivers } }) => {
       const parties = connections.terminate(clientId);
-      const receiver = receivers.getWebSocket(parties.recieverID);
+      const receiver = receivers.getWebSocket(parties.receiverID);
       receiver.send(JSON.stringify({ type: "terminated" }));
       // clientGroups.broadcastRecievers(transmitters);
     },
   },
   {
     server: true,
-    clientType: "reciever",
+    clientType: "receiver",
     type: "terminated",
     handler: ({ clientId, connections, clientGroups: { transmitters } }) => {
       const parties = connections.terminate(clientId);

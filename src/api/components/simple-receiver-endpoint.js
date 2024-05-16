@@ -1,5 +1,5 @@
 import ReceiverEndpoint from "./receiver-endpoint.js";
-import Receiver from "../../client/js/media-reciever.js";
+import Receiver from "../../client/js/media-receiver.js";
 
 class SimpleReceiverEndpoint extends ReceiverEndpoint {
   constructor() {

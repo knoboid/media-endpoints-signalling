@@ -37,9 +37,9 @@ class Users extends EventTarget {
       const record = {};
       record.id = user.clientId;
       record.transmitters = user.transmitters;
-      record.receivers = user.recievers;
+      record.receivers = user.receivers;
       record.transmitterCount = user.transmitters.length;
-      record.recieverCount = user.recievers.length;
+      record.receiverCount = user.receivers.length;
       record.username = user.username;
       return record;
     });
@@ -68,9 +68,9 @@ class Users extends EventTarget {
     this.broadcastUpdate();
   }
 
-  addReciever(clientId, recieverId) {
+  addReciever(clientId, receiverId) {
     const user = this.getUser(clientId);
-    user.addReciever(recieverId);
+    user.addReciever(receiverId);
     this.broadcastUpdate();
   }
 

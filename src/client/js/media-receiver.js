@@ -1,4 +1,4 @@
-import { createRecieverConnection } from "./connections/reciever-connection.js";
+import { createRecieverConnection } from "./connections/receiver-connection.js";
 import { createRecieverWSSignaller } from "./signalling/network/create-ws-signallers.js";
 
 class Receiver {
@@ -10,17 +10,17 @@ class Receiver {
 
     this.nWRecieverSignaller = createRecieverWSSignaller(code);
 
-    this.nWRecieverSignaller.addEventListener("recieverRegistered", (e) => {
-      const recieverID = e.data;
+    this.nWRecieverSignaller.addEventListener("receiverRegistered", (e) => {
+      const receiverID = e.data;
       console.log("before onready");
       console.log(e);
-      console.log(recieverID);
-      // setRecieverID(recieverID);
-      onready(recieverID);
+      console.log(receiverID);
+      // setRecieverID(receiverID);
+      onready(receiverID);
     });
 
     this.nWRecieverSignaller.addEventListener("newConnectionRequest", () => {
-      this.recieve(videoElement);
+      this.receive(videoElement);
     });
 
     this.nWRecieverSignaller.addEventListener("terminated", (e) => {
@@ -35,7 +35,7 @@ class Receiver {
     };
   }
 
-  recieve(videoElement) {
+  receive(videoElement) {
     console.log("Recieve");
     this.pc = createRecieverConnection(
       this.servers,

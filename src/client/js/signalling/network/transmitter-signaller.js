@@ -6,7 +6,7 @@ class TransmitterSignaller extends EventTarget {
     super();
     this.socket = new WebSocket(url);
     let messageCounter = 0;
-    let recieverID;
+    let receiverID;
 
     this.socket.onopen = (e) => {
       console.log("SOCKET OPENED");
@@ -41,20 +41,20 @@ class TransmitterSignaller extends EventTarget {
               this.dispatchEvent(new PayloadEvent("info", payload));
               break;
             case "updateRecievers":
-              const { recievers } = payload;
+              const { receivers } = payload;
               this.dispatchEvent(
-                new PayloadEvent("onUpdateRecievers", recievers)
+                new PayloadEvent("onUpdateRecievers", receivers)
               );
               break;
             case "initiateCallSuccess":
-              recieverID = payload.recieverID;
+              receiverID = payload.receiverID;
               this.dispatchEvent(
-                new PayloadEvent("initiateCallSuccess", { recieverID })
+                new PayloadEvent("initiateCallSuccess", { receiverID })
               );
               break;
             case "initiateCallFailure":
               this.dispatchEvent(
-                new PayloadEvent("initiateCallFailure", { recieverID })
+                new PayloadEvent("initiateCallFailure", { receiverID })
               );
               break;
 

@@ -28,7 +28,7 @@ export function createRecieverConnection(
   };
 
   function onIceCandidate(event) {
-    signallingChannel.reciever(
+    signallingChannel.receiver(
       JSON.stringify({ type: "onIceCandidate", payload: event.candidate })
     );
   }
@@ -62,8 +62,8 @@ export function createRecieverConnection(
   });
 
   function onCreateAnswerSuccess(desc) {
-    log(`Answer from reciever: ${desc.sdp}`);
-    log("reciever setLocalDescription start");
+    log(`Answer from receiver: ${desc.sdp}`);
+    log("receiver setLocalDescription start");
     cc.setLocalDescription(desc)
       .then(onSetLocalSuccess)
       .catch(onSetSessionDescriptionError);
@@ -72,7 +72,7 @@ export function createRecieverConnection(
   }
 
   function signal(type, payload) {
-    signallingChannel.reciever(JSON.stringify({ type, payload }));
+    signallingChannel.receiver(JSON.stringify({ type, payload }));
   }
 
   return cc;

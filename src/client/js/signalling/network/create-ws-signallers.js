@@ -1,7 +1,7 @@
 import UserWSSignaller from "../../roles/user/user-ws-signaller.js";
 import AdminSignaller from "./admin-socket-sgnaller.js";
 import TransmitterSignaller from "./transmitter-signaller.js";
-import RecieverSignaller from "./reciever-signaller.js";
+import RecieverSignaller from "./receiver-signaller.js";
 // import NameEntrySignaller from "../../ui/name-entry-signaller.js";
 
 // const wss = "wss://localhost:5501";

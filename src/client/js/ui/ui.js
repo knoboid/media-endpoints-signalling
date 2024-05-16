@@ -1,11 +1,11 @@
-const recieversContainder = document.querySelector("#recievers-container");
-// reciever
+const receiversContainder = document.querySelector("#receivers-container");
+// receiver
 const rightVideo = document.getElementById("rightVideo");
-const recieverIDElement = document.querySelector("#reciever-id");
-const recieverHangupButton = document.querySelector("#reciever-hangup");
+const receiverIDElement = document.querySelector("#receiver-id");
+const receiverHangupButton = document.querySelector("#receiver-hangup");
 // right video
-export function setRecieverID(recieverID) {
-  recieverIDElement.innerHTML = recieverID;
+export function setRecieverID(receiverID) {
+  receiverIDElement.innerHTML = receiverID;
 }
 
 export function addRecieverElement() {
@@ -15,7 +15,7 @@ export function addRecieverElement() {
   video.setAttribute("autoplay", true);
   video.setAttribute("controls", true);
   video.volume = 0;
-  recieversContainder.appendChild(video);
+  receiversContainder.appendChild(video);
   return video;
 }
 
@@ -33,7 +33,7 @@ export class RecieverUI {
     video.setAttribute("autoplay", true);
     video.setAttribute("controls", true);
     video.volume = 0;
-    recieversContainder.appendChild(video);
+    receiversContainder.appendChild(video);
   }
 
   set id(id) {
@@ -44,12 +44,12 @@ export class RecieverUI {
 export class RecieverUIEvents extends EventTarget {
   constructor() {
     super();
-    this.recieverHangupButton = recieverHangupButton;
+    this.receiverHangupButton = receiverHangupButton;
 
-    this.recieverHangupButton.onclick = () => {
-      this.dispatchEvent(new Event("reciever-hangup"));
+    this.receiverHangupButton.onclick = () => {
+      this.dispatchEvent(new Event("receiver-hangup"));
     };
   }
 }
 
-export const recieverUIEvents = new RecieverUIEvents(recieverHangupButton);
+export const receiverUIEvents = new RecieverUIEvents(receiverHangupButton);
