@@ -17,7 +17,7 @@ class SimpleTransmitterEndpoint extends TransmitterEndpoint {
       this.onTransmitterReady(id)
     );
 
-    this.onclick = () => {
+    this.button.onclick = () => {
       const receiverId = this.input.value;
       if (!isNaN(receiverId)) {
         this.call(receiverId);
