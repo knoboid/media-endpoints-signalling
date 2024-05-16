@@ -3,12 +3,12 @@ const registerReceiverMessages = [
     server: false,
     clientType: "receiver",
     zeroMessage: true,
-    handler: ({ type, payload, self, clientType }) => {
+    handler: ({ type, payload, data, webSocket, clientType }) => {
       console.assert(type === "clientId");
       const id = payload.clientId;
       if (isNaN(id)) throw new TypeError("Expected a number");
-      self.id = id;
-      self.socket.send(JSON.stringify({ id, clientType }));
+      data.id = id;
+      webSocket.send(JSON.stringify({ id, clientType }));
     },
   },
   {
@@ -27,8 +27,8 @@ const registerReceiverMessages = [
     server: false,
     clientType: "receiver",
     type: "receiverRegistered",
-    handler: ({ self, dispatch }) => {
-      self.dispatch("receiverRegistered", self.id);
+    handler: ({ dispatch, data }) => {
+      dispatch("receiverRegistered", data.id);
     },
   },
 ];

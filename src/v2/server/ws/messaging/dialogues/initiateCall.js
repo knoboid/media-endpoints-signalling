@@ -47,25 +47,25 @@ const initiateCallMessages = [
     server: false,
     clientType: "transmitter",
     type: "initiateCallSuccess",
-    handler: ({ self, payload }) => {
+    handler: ({ dispatch, payload }) => {
       const receiverID = payload.receiverID;
-      self.dispatch("initiateCallSuccess", { receiverID });
+      dispatch("initiateCallSuccess", { receiverID });
     },
   },
   {
     server: false,
     clientType: "transmitter",
     type: "initiateCallFailure",
-    handler: ({ self }) => {
-      self.dispatch("initiateCallFailure", { receiverID });
+    handler: ({ dispatch }) => {
+      dispatch("initiateCallFailure", { receiverID });
     },
   },
   {
     server: false,
     clientType: "receiver",
     type: "newConnectionRequest",
-    handler: ({ self, payload }) => {
-      self.dispatch("newConnectionRequest", payload);
+    handler: ({ dispatch, payload }) => {
+      dispatch("newConnectionRequest", payload);
     },
   },
   {
@@ -81,8 +81,8 @@ const initiateCallMessages = [
     server: false,
     clientType: "receiver",
     type: "fromTransmitter",
-    handler: ({ self, payload }) => {
-      self.dispatch("fromTransmitter", payload);
+    handler: ({ dispatch, payload }) => {
+      dispatch("fromTransmitter", payload);
     },
   },
   {
@@ -98,8 +98,8 @@ const initiateCallMessages = [
     server: false,
     clientType: "transmitter",
     type: "fromReceiver",
-    handler: ({ self, payload }) => {
-      self.dispatch("fromReceiver", payload);
+    handler: ({ dispatch, payload }) => {
+      dispatch("fromReceiver", payload);
     },
   },
   {
@@ -128,16 +128,16 @@ const initiateCallMessages = [
     server: false,
     clientType: "receiver",
     type: "terminated",
-    handler: ({ self }) => {
-      self.dispatch("terminated");
+    handler: ({ dispatch }) => {
+      dispatch("terminated");
     },
   },
   {
     server: false,
     clientType: "transmitter",
     type: "terminated",
-    handler: ({ self }) => {
-      self.dispatch("terminated");
+    handler: ({ dispatch }) => {
+      dispatch("terminated");
     },
   },
 ];
