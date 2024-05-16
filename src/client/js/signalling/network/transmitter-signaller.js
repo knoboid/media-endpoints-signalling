@@ -1,4 +1,5 @@
 import PayloadEvent from "../../payload-event.js";
+import handleMessage from "./process/handle-messages.js";
 const clientType = "transmitter";
 
 class TransmitterSignaller extends EventTarget {
@@ -21,16 +22,26 @@ class TransmitterSignaller extends EventTarget {
         throw new Error("typeof type");
       }
       console.assert(typeof type === "string");
+      handleMessage({
+        messageCounter,
+        clientId: this.id,
+        webSocket: this.socket,
+        self: this,
+        clientType,
+        message,
+        type,
+        payload,
+      });
       switch (messageCounter) {
         case 0:
-          console.assert(type === "clientId");
-          const id = payload.clientId;
-          // const id = Number(message.data);
-          if (isNaN(id)) throw new TypeError("Expect a number");
-          console.log(`Setting id to ${id}`);
-          this.id = id;
-          this.socket.send(JSON.stringify({ id, clientType, code }));
-          this.dispatchEvent(new PayloadEvent("onGotTransmitterID", id));
+          // console.assert(type === "clientId");
+          // const id = payload.clientId;
+          // // const id = Number(message.data);
+          // if (isNaN(id)) throw new TypeError("Expect a number");
+          // console.log(`Setting id to ${id}`);
+          // this.id = id;
+          // this.socket.send(JSON.stringify({ id, clientType, code }));
+          // this.dispatchEvent(new PayloadEvent("onGotTransmitterID", id));
           break;
 
         default:
@@ -76,6 +87,10 @@ class TransmitterSignaller extends EventTarget {
       }
       messageCounter++;
     };
+  }
+
+  dispatch(type, payload) {
+    this.dispatchEvent(new PayloadEvent(type, payload));
   }
 
   send(request) {
