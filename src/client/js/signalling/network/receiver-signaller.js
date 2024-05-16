@@ -57,22 +57,22 @@ class RecieverSignaller extends EventTarget {
 
             case "newConnectionRequest":
               /* Some else has initiated a call */
-              console.log("newConnectionRequest");
-              console.log(payload);
-              this.dispatchEvent(
-                new PayloadEvent("newConnectionRequest", payload)
-              );
+              // console.log("newConnectionRequest");
+              // console.log(payload);
+              // this.dispatchEvent(
+              //   new PayloadEvent("newConnectionRequest", payload)
+              // );
               break;
 
             case "fromTransmitter":
-              console.log("got fromTransmitter");
-              console.log(payload);
-              this.dispatchEvent(new PayloadEvent("fromTransmitter", payload));
+              // console.log("got fromTransmitter");
+              // console.log(payload);
+              // this.dispatchEvent(new PayloadEvent("fromTransmitter", payload));
               break;
 
             case "terminated":
-              console.log("got terminated");
-              this.dispatchEvent(new PayloadEvent("terminated"));
+              // console.log("got terminated");
+              // this.dispatchEvent(new PayloadEvent("terminated"));
               break;
 
             default:

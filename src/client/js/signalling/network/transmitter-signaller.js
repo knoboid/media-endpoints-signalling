@@ -58,23 +58,23 @@ class TransmitterSignaller extends EventTarget {
               );
               break;
             case "initiateCallSuccess":
-              receiverID = payload.receiverID;
-              this.dispatchEvent(
-                new PayloadEvent("initiateCallSuccess", { receiverID })
-              );
+              // receiverID = payload.receiverID;
+              // this.dispatchEvent(
+              //   new PayloadEvent("initiateCallSuccess", { receiverID })
+              // );
               break;
             case "initiateCallFailure":
-              this.dispatchEvent(
-                new PayloadEvent("initiateCallFailure", { receiverID })
-              );
+              // this.dispatchEvent(
+              //   new PayloadEvent("initiateCallFailure", { receiverID })
+              // );
               break;
 
             case "fromReciever":
-              this.dispatchEvent(new PayloadEvent("fromReciever", payload));
+              // this.dispatchEvent(new PayloadEvent("fromReciever", payload));
               break;
 
             case "terminated":
-              this.dispatchEvent(new PayloadEvent("terminated"));
+              // this.dispatchEvent(new PayloadEvent("terminated"));
               break;
 
             default:

@@ -44,6 +44,31 @@ const initiateCallMessages = [
     },
   },
   {
+    server: false,
+    clientType: "transmitter",
+    type: "initiateCallSuccess",
+    handler: ({ self, payload }) => {
+      const receiverID = payload.receiverID;
+      self.dispatch("initiateCallSuccess", { receiverID });
+    },
+  },
+  {
+    server: false,
+    clientType: "transmitter",
+    type: "initiateCallFailure",
+    handler: ({ self }) => {
+      self.dispatch("initiateCallFailure", { receiverID });
+    },
+  },
+  {
+    server: false,
+    clientType: "receiver",
+    type: "newConnectionRequest",
+    handler: ({ self, payload }) => {
+      self.dispatch("newConnectionRequest", payload);
+    },
+  },
+  {
     server: true,
     clientType: "transmitter",
     type: "fromTransmitter",
@@ -53,12 +78,28 @@ const initiateCallMessages = [
     },
   },
   {
+    server: false,
+    clientType: "receiver",
+    type: "fromTransmitter",
+    handler: ({ self, payload }) => {
+      self.dispatch("fromTransmitter", payload);
+    },
+  },
+  {
     server: true,
     clientType: "receiver",
     type: "fromReciever",
     handler: ({ clientId, connections, payload }) => {
       const transmitter = connections.getOtherPartysSocket(clientId);
       transmitter.send(JSON.stringify({ type: "fromReciever", payload }));
+    },
+  },
+  {
+    server: false,
+    clientType: "transmitter",
+    type: "fromReciever",
+    handler: ({ self, payload }) => {
+      self.dispatch("fromReciever", payload);
     },
   },
   {
@@ -81,6 +122,22 @@ const initiateCallMessages = [
       const transmitter = transmitters.getClient(parties.transmitterID);
       transmitter.send(JSON.stringify({ type: "terminated" }));
       // clientGroups.broadcastRecievers(transmitters);
+    },
+  },
+  {
+    server: false,
+    clientType: "receiver",
+    type: "terminated",
+    handler: ({ self }) => {
+      self.dispatch("terminated");
+    },
+  },
+  {
+    server: false,
+    clientType: "transmitter",
+    type: "terminated",
+    handler: ({ self }) => {
+      self.dispatch("terminated");
     },
   },
 ];
