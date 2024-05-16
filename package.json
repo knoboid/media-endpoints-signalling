@@ -19,7 +19,7 @@
     "url": "https://github.com/webrtc/samples.git"
   },
   "scripts": {
-    "start": "nodemon server/index.js",
+    "start": "node src/v2/server/index.js",
     "http-server": "export NODE_HTTP_SERVER_SSL_PASSPHRASE=passphrase&&http-server -S -C \"/home/mark/.dev-server-cert/server.crt\" -K \"/home/mark/.dev-server-cert/server.key\" . -c-1 -p 5500",
     "dev": "http-server . -c-1 -p 5500",
     "wss": "nodemon src/server/index.js",
