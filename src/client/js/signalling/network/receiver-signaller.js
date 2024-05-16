@@ -1,4 +1,5 @@
 import PayloadEvent from "../../payload-event.js";
+import handleMessage from "./process/handle-messages.js";
 const clientType = "receiver";
 
 class RecieverSignaller extends EventTarget {
@@ -20,15 +21,25 @@ class RecieverSignaller extends EventTarget {
         console.log(type);
         throw new Error("typeof type");
       }
+      handleMessage({
+        messageCounter,
+        clientId: this.id,
+        webSocket: this.socket,
+        self: this,
+        clientType,
+        message,
+        type,
+        payload,
+      });
       switch (messageCounter) {
         case 0:
-          console.assert(type === "clientId");
-          const id = payload.clientId;
-          // const id = Number(message.data);
-          if (isNaN(id)) throw new TypeError("Expect a number");
-          console.log(`Setting id to ${id}`);
-          this.id = id;
-          this.socket.send(JSON.stringify({ id, clientType, code }));
+          // console.assert(type === "clientId");
+          // const id = payload.clientId;
+          // // const id = Number(message.data);
+          // if (isNaN(id)) throw new TypeError("Expect a number");
+          // console.log(`Setting id to ${id}`);
+          // this.id = id;
+          // this.socket.send(JSON.stringify({ id, clientType, code }));
           break;
 
         default:
@@ -39,9 +50,9 @@ class RecieverSignaller extends EventTarget {
               break;
 
             case "receiverRegistered":
-              this.dispatchEvent(
-                new PayloadEvent("receiverRegistered", this.id)
-              );
+              // this.dispatchEvent(
+              //   new PayloadEvent("receiverRegistered", this.id)
+              // );
               break;
 
             case "newConnectionRequest":
@@ -74,6 +85,10 @@ class RecieverSignaller extends EventTarget {
       }
       messageCounter++;
     };
+  }
+
+  dispatch(type, payload) {
+    this.dispatchEvent(new PayloadEvent(type, payload));
   }
 
   send(request) {
