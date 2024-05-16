@@ -3,6 +3,10 @@ class ClientGroup {
     this.clients = {};
   }
 
+  isMember(id) {
+    return this.contains(id);
+  }
+
   contains(id) {
     return this.clients[id] ? true : false;
   }
@@ -47,8 +51,6 @@ class ClientGroup {
   }
 
   isAvailable(id) {
-    // Fix this in rewrite
-    if (!this.isInGroup(id.toString())) return false;
     return this.getStatus(id) === "available";
   }
 

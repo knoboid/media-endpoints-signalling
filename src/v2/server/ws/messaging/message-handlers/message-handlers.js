@@ -1,18 +1,9 @@
-import receiverMesssageHandlers from "./receiver-message-handlers.js";
-import transmitterMesssageHandlers from "./transmitter-message-handlers.js";
+import { processMessages } from "../message-processing/message-processing.js";
 
-const handlerMap = {
-  reciever: receiverMesssageHandlers,
-  transmitter: transmitterMesssageHandlers,
-};
+const { serverMessagingManager } = processMessages();
 
 function messageHandlers(options) {
-  if (options.clientType in handlerMap) {
-    const handler = handlerMap[options.clientType];
-    handler(options);
-  } else {
-    console.log(`Unhandled clientType ${options.clientType}`);
-  }
+  serverMessagingManager.handle(options);
 }
 
 export default messageHandlers;

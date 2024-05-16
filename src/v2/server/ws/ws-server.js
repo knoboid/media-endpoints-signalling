@@ -1,9 +1,11 @@
 import { WebSocketServer } from "ws";
 import messageHandlers from "./messaging/message-handlers/message-handlers.js";
 import ClientGroup from "../endpoints/client-group.js";
+import Connections from "../endpoints/connections.js";
 
 const transmitters = new ClientGroup();
 const receivers = new ClientGroup();
+const connections = new Connections(transmitters, receivers);
 const clientGroups = { transmitters, receivers };
 
 let clientCounter = 0;
@@ -23,11 +25,14 @@ wsServer.on("connection", (webSocket, req) => {
       type,
       payload,
     } = JSON.parse(message.toString());
-    clientType = clientType_;
+    if (clientType_) {
+      clientType = clientType_;
+    }
     messageHandlers({
       webSocket,
       clientId,
       clientGroups,
+      connections,
       messageCounter,
       clientType,
       type,
