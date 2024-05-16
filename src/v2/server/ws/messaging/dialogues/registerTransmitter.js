@@ -19,7 +19,6 @@ const registerTransmitterMessages = [
     clientType: "transmitter",
     zeroMessage: true,
     handler: ({ clientId, webSocket, clientGroups }) => {
-      // const { clientId, webSocket, clientGroups } = options;
       console.log(`New transmitter: ${clientId}`);
       const transmitters = clientGroups.transmitters;
       transmitters.addClient(clientId, webSocket, "available");
