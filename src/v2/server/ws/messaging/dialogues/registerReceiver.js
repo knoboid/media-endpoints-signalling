@@ -1,17 +1,5 @@
 const registerRecieverMessages = [
   {
-    server: true,
-    clientType: "receiver",
-    zeroMessage: true,
-    handler: (options) => {
-      const { clientId, webSocket, clientGroups } = options;
-      console.log(`New receiver: ${clientId}`);
-      const receivers = clientGroups.receivers;
-      receivers.addClient(clientId, webSocket, "available");
-      webSocket.send(JSON.stringify({ type: "receiverRegistered" }));
-    },
-  },
-  {
     server: false,
     clientType: "receiver",
     zeroMessage: true,
@@ -21,6 +9,18 @@ const registerRecieverMessages = [
       if (isNaN(id)) throw new TypeError("Expected a number");
       self.id = id;
       self.socket.send(JSON.stringify({ id, clientType }));
+    },
+  },
+  {
+    server: true,
+    clientType: "receiver",
+    zeroMessage: true,
+    handler: (options) => {
+      const { clientId, webSocket, clientGroups } = options;
+      console.log(`New receiver: ${clientId}`);
+      const receivers = clientGroups.receivers;
+      receivers.addClient(clientId, webSocket, "available");
+      webSocket.send(JSON.stringify({ type: "receiverRegistered" }));
     },
   },
   {
