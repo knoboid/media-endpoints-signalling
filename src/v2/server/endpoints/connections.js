@@ -59,9 +59,9 @@ class Connections {
   getOtherPartysSocket(clientID) {
     const clientRecord = this.clients[clientID];
     if (clientRecord.type === "transmitter") {
-      return this.receivers.getClient(clientRecord.otherPartyID);
+      return this.receivers.getWebSocket(clientRecord.otherPartyID);
     } else if (clientRecord.type === "reciever") {
-      return this.transmitters.getClient(clientRecord.otherPartyID);
+      return this.transmitters.getWebSocket(clientRecord.otherPartyID);
     }
   }
 

@@ -43,6 +43,46 @@ const initiateCallMessages = [
       }
     },
   },
+  {
+    server: true,
+    clientType: "transmitter",
+    type: "fromTransmitter",
+    handler: ({ clientId, connections, payload }) => {
+      const reciever = connections.getOtherPartysSocket(clientId);
+      reciever.send(JSON.stringify({ type: "fromTransmitter", payload }));
+    },
+  },
+  {
+    server: true,
+    clientType: "reciever",
+    type: "fromReciever",
+    handler: ({ clientId, connections, payload }) => {
+      const transmitter = connections.getOtherPartysSocket(clientId);
+      transmitter.send(JSON.stringify({ type: "fromReciever", payload }));
+    },
+  },
+  {
+    server: true,
+    clientType: "transmitter",
+    type: "terminated",
+    handler: ({ clientId, connections, clientGroups: { receivers } }) => {
+      const parties = connections.terminate(clientId);
+      const receiver = receivers.getWebSocket(parties.recieverID);
+      receiver.send(JSON.stringify({ type: "terminated" }));
+      // clientGroups.broadcastRecievers(transmitters);
+    },
+  },
+  {
+    server: true,
+    clientType: "reciever",
+    type: "terminated",
+    handler: ({ clientId, connections, clientGroups: { transmitters } }) => {
+      const parties = connections.terminate(clientId);
+      const transmitter = transmitters.getClient(parties.transmitterID);
+      transmitter.send(JSON.stringify({ type: "terminated" }));
+      // clientGroups.broadcastRecievers(transmitters);
+    },
+  },
 ];
 
 export default initiateCallMessages;
