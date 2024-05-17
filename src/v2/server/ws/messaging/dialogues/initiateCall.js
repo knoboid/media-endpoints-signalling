@@ -119,7 +119,7 @@ const initiateCallMessages = [
     type: "terminated",
     handler: ({ clientId, connections, clientGroups: { transmitters } }) => {
       const parties = connections.terminate(clientId);
-      const transmitter = transmitters.getClient(parties.transmitterID);
+      const transmitter = transmitters.getWebSocket(parties.transmitterID);
       transmitter.send(JSON.stringify({ type: "terminated" }));
       // clientGroups.broadcastReceivers(transmitters);
     },

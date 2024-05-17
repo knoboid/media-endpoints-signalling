@@ -1,8 +1,10 @@
 import { createReceiverConnection } from "./peer-connection/receiver-connection.js";
 import { createReceiverWSSignaller } from "./ws/create-ws-signallers.js";
+import PayloadEvent from "./misc/payload-event.js";
 
-class Receiver {
+class Receiver extends EventTarget {
   constructor(servers, videoElement, code, onready, onhangup) {
+    super();
     this.servers = servers;
     this.onhangup = onhangup;
     const p2 = "p2";
@@ -28,6 +30,13 @@ class Receiver {
       offerToReceiveAudio: 1,
       offerToReceiveVideo: 1,
     };
+  }
+
+  hangup() {
+    this.pc.close();
+    this.nWReceiverSignaller.send({
+      type: "terminated",
+    });
   }
 
   receive(videoElement) {
