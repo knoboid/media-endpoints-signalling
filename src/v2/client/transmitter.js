@@ -46,14 +46,29 @@ class Transmitter extends EventTarget {
   }
 
   initiateCall(receiverID) {
+    console.log(
+      `Attempting to initite call from ${this.transmitterID} to {recieverID}`
+    );
+    this.logConnectionState();
     this.nWTransmitterSignaller.send({
       type: "initiateCall",
       payload: { receiverID },
     });
   }
 
+  logConnectionState() {
+    if (this.pc) {
+      console.log(
+        `Transmitter ${this.transmitterID}: ${this.pc.connectionState}`
+      );
+    } else {
+      console.log("There is no peerConnection object defined.");
+    }
+  }
+
   hangup() {
     if (!this.pc) return;
+    this.logConnectionState();
     this.pc.close();
     this.nWTransmitterSignaller.send({
       type: "terminated",

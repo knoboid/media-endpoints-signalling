@@ -13,9 +13,9 @@ class Receiver extends EventTarget {
     this.nWReceiverSignaller = createReceiverWSSignaller(code);
 
     this.nWReceiverSignaller.addEventListener("receiverRegistered", (e) => {
-      const receiverID = e.data;
+      this.receiverID = e.data;
       // setReceiverID(receiverID);
-      onready(receiverID);
+      onready(this.receiverID);
     });
 
     this.nWReceiverSignaller.addEventListener("newConnectionRequest", () => {
@@ -34,10 +34,19 @@ class Receiver extends EventTarget {
 
   hangup() {
     if (!this.pc) return;
+    this.logConnectionState();
     this.pc.close();
     this.nWReceiverSignaller.send({
       type: "terminated",
     });
+  }
+
+  logConnectionState() {
+    if (this.pc) {
+      console.log(`Receiver ${this.receiverID}: ${this.pc.connectionState}`);
+    } else {
+      console.log("There is no peerConnection object defined.");
+    }
   }
 
   receive(videoElement) {
