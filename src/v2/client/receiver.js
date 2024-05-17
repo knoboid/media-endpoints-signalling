@@ -33,6 +33,7 @@ class Receiver extends EventTarget {
   }
 
   hangup() {
+    if (!this.pc) return;
     this.pc.close();
     this.nWReceiverSignaller.send({
       type: "terminated",

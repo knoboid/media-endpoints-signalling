@@ -53,7 +53,7 @@ class Transmitter extends EventTarget {
   }
 
   hangup() {
-    console.log("Transmitter hangup pressed");
+    if (!this.pc) return;
     this.pc.close();
     this.nWTransmitterSignaller.send({
       type: "terminated",
@@ -61,7 +61,6 @@ class Transmitter extends EventTarget {
   }
 
   call() {
-    console.log("Starting call");
     this.pc = createTransmitterConnection(
       this.servers,
       this.name,
