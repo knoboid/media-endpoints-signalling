@@ -3,6 +3,7 @@ import TransmitterEndpoint from "./components/transmitter-endpoint.js";
 import SimpleReceiverEndpoint from "./components/simple-receiver-endpoint.js";
 import SimpleTransmitterEndpoint from "./components/simple-transmitter-endpoint.js";
 import SimpleEndpoint from "./components/simple-endpoint.js";
+import InfiniteEndpoints from "./components/infinite-endpoints.js";
 
 export function defineCustomElements() {
   customElements.define("receiver-endpoint", ReceiverEndpoint);
@@ -13,4 +14,5 @@ export function defineCustomElements() {
     SimpleTransmitterEndpoint
   );
   customElements.define("simple-endpoint", SimpleEndpoint);
+  customElements.define("infinite-endpoints", InfiniteEndpoints);
 }
