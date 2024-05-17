@@ -1,5 +1,5 @@
 import TransmitterEndpoint from "./transmitter-endpoint.js";
-import Transmitter from "../../client/js/media-transmitter.js";
+import Transmitter from "../../v2/client/transmitter.js";
 
 class SimpleTransmitterEndpoint extends TransmitterEndpoint {
   constructor() {
