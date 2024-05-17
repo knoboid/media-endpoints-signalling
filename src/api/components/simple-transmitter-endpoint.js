@@ -11,7 +11,7 @@ class SimpleTransmitterEndpoint extends TransmitterEndpoint {
     this.callButton.innerHTML = "Call";
     this.hangupButton = document.createElement("button");
     this.hangupButton.innerHTML = "Hangup";
-    this.appendChild(document.createElement("hr"));
+    this.appendChild(document.createElement("br"));
     this.appendChild(this.input);
     this.appendChild(this.callButton);
     this.appendChild(this.hangupButton);
