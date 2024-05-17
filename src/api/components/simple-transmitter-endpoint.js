@@ -7,21 +7,28 @@ class SimpleTransmitterEndpoint extends TransmitterEndpoint {
     this.input = document.createElement("input");
     this.input.placeholder = "receiver id";
     this.input.type = "text";
-    this.button = document.createElement("button");
-    this.button.innerHTML = "Call";
+    this.callButton = document.createElement("button");
+    this.callButton.innerHTML = "Call";
+    this.hangupButton = document.createElement("button");
+    this.hangupButton.innerHTML = "Hangup";
     this.appendChild(document.createElement("hr"));
     this.appendChild(this.input);
-    this.appendChild(this.button);
+    this.appendChild(this.callButton);
+    this.appendChild(this.hangupButton);
 
     this.transmitter = new Transmitter(null, null, null, (id) =>
       this.onTransmitterReady(id)
     );
 
-    this.button.onclick = () => {
+    this.callButton.onclick = () => {
       const receiverId = this.input.value;
       if (!isNaN(receiverId)) {
         this.call(receiverId);
       }
+    };
+
+    this.hangupButton.onclick = () => {
+      this.transmitter.hangup();
     };
   }
 
