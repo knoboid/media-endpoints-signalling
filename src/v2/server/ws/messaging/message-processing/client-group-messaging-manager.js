@@ -13,7 +13,7 @@ class ClientGroupMessasgingManager {
       }
       this.zeroMessageHandler = handler;
     } else {
-      console.log(`Adding ${type}`);
+      console.log(`Adding ${type} to ${this.clientGroup}`);
       if (type in this.types) {
         throw new Error(
           `Type ${type} in ${this.clientGroup} cannot be defined more than once`
