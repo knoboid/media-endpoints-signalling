@@ -35,10 +35,18 @@ class Transmitter extends EventTarget {
       this.pc.close();
     });
 
+    this.nWTransmitterSignaller.addEventListener("endpointData", (event) => {
+      this.dispatch("endpointData", event.data);
+    });
+
     const offerOptions = {
       offerToReceiveAudio: 1,
       offerToReceiveVideo: 1,
     };
+  }
+
+  dispatch(type, payload) {
+    this.dispatchEvent(new PayloadEvent(type, payload));
   }
 
   attachStream(stream) {
@@ -54,6 +62,11 @@ class Transmitter extends EventTarget {
       type: "initiateCall",
       payload: { receiverID },
     });
+  }
+
+  send(type, payload) {
+    console.log("Sending: ", type);
+    this.nWTransmitterSignaller.send({ type, payload });
   }
 
   logConnectionState() {

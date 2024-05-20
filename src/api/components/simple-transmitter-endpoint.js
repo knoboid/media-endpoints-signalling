@@ -1,5 +1,6 @@
 import TransmitterEndpoint from "./transmitter-endpoint.js";
 import Transmitter from "../../v2/client/transmitter.js";
+import DataTable from "./data-table.js";
 
 class SimpleTransmitterEndpoint extends TransmitterEndpoint {
   constructor() {
@@ -11,10 +12,13 @@ class SimpleTransmitterEndpoint extends TransmitterEndpoint {
     this.callButton.innerHTML = "Call";
     this.hangupButton = document.createElement("button");
     this.hangupButton.innerHTML = "Hangup";
+    this.getDataButton = document.createElement("button");
+    this.getDataButton.innerHTML = "GET";
     this.appendChild(document.createElement("br"));
     this.appendChild(this.input);
     this.appendChild(this.callButton);
     this.appendChild(this.hangupButton);
+    this.appendChild(this.getDataButton);
 
     this.transmitter = new Transmitter(null, null, null, (id) =>
       this.onTransmitterReady(id)
@@ -30,6 +34,19 @@ class SimpleTransmitterEndpoint extends TransmitterEndpoint {
     this.hangupButton.onclick = () => {
       this.transmitter.hangup();
     };
+
+    this.getDataButton.onclick = () => {
+      this.transmitter.send("getData");
+    };
+
+    this.dataTable = document.createElement("div");
+    this.appendChild(this.dataTable);
+
+    this.transmitter.addEventListener("endpointData", (e) => {
+      const endpointData = e.data.payload;
+      this.dataTable.innerHTML = "";
+      this.dataTable.appendChild(new DataTable(endpointData));
+    });
   }
 
   onTransmitterReady(transmitterId) {

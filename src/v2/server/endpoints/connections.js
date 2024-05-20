@@ -19,6 +19,18 @@ class Connections {
     this.connections[this.newId()] = { transmitterID, receiverID };
   }
 
+  getConnections() {
+    return Object.values(this.connections);
+  }
+
+  getData() {
+    return {
+      receivers: this.receivers.getList(),
+      transmitters: this.transmitters.getList(),
+      connections: this.getConnections(),
+    };
+  }
+
   setTransmitter(transmitterID, receiverID) {
     this.clients[transmitterID] = {
       type: "transmitter",
