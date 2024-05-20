@@ -1,4 +1,4 @@
-import { processMessages } from "../message-processing/message-processing.js";
+import { processMessages } from "../../../../client-server-messaging/message-processing.js";
 
 const { serverMessagingManager } = processMessages();
 
