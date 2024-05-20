@@ -1,3 +1,5 @@
+import { broadcastToClientGroup } from "../util.js";
+
 const initiateCallMessages = [
   {
     server: true,
@@ -13,7 +15,7 @@ const initiateCallMessages = [
         connections,
       } = options;
       const { receiverID } = payload;
-      const { receivers } = clientGroups;
+      const { receivers, transmitters } = clientGroups;
       if (isNaN(receiverID) || isNaN(clientId)) return;
       console.log("initiateCallMessages");
       if (connections.attempt(clientId, receiverID)) {
@@ -31,7 +33,11 @@ const initiateCallMessages = [
             payload: { transmitterID: clientId },
           })
         );
-        // clientGroups.broadcastReceivers(transmitters);
+        broadcastToClientGroup(
+          transmitters,
+          "endpointData",
+          connections.getData()
+        );
       } else {
         console.log("Receiver is NOT available");
         webSocket.send(
@@ -106,11 +112,19 @@ const initiateCallMessages = [
     server: true,
     clientType: "transmitter",
     type: "terminated",
-    handler: ({ clientId, connections, clientGroups: { receivers } }) => {
+    handler: ({
+      clientId,
+      connections,
+      clientGroups: { receivers, transmitters },
+    }) => {
       const parties = connections.terminate(clientId);
       const receiver = receivers.getWebSocket(parties.receiverID);
       receiver.send(JSON.stringify({ type: "terminated" }));
-      // clientGroups.broadcastReceivers(transmitters);
+      broadcastToClientGroup(
+        transmitters,
+        "endpointData",
+        connections.getData()
+      );
     },
   },
   {
@@ -121,7 +135,11 @@ const initiateCallMessages = [
       const parties = connections.terminate(clientId);
       const transmitter = transmitters.getWebSocket(parties.transmitterID);
       transmitter.send(JSON.stringify({ type: "terminated" }));
-      // clientGroups.broadcastReceivers(transmitters);
+      broadcastToClientGroup(
+        transmitters,
+        "endpointData",
+        connections.getData()
+      );
     },
   },
   {
