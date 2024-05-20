@@ -2,6 +2,7 @@
   "name": "webrtc-samples",
   "version": "1.0.0",
   "description": "Project checking for WebRTC GitHub samples repo",
+  "type": "module",
   "keywords": [
     "webrtc",
     "demos",

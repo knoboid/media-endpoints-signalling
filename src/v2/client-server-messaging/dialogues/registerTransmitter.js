@@ -1,4 +1,4 @@
-import { broadcastToClientGroup } from "../util.js";
+import { broadcastToClientGroup } from "../../server/ws/messaging/util.js";
 
 const registerTransmitterMessages = [
   {

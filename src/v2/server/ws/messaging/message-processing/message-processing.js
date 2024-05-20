@@ -1,8 +1,8 @@
 import MessagingManager from "./messaging-manager.js";
-import registerReceiverMessages from "../dialogues/registerReceiver.js";
-import registerTransmitterMessages from "../dialogues/registerTransmitter.js";
-import initiateCallMessages from "../dialogues/initiateCall.js";
-import getDataMessages from "../dialogues/getData.js";
+import registerReceiverMessages from "../../../../client-server-messaging/dialogues/registerReceiver.js";
+import registerTransmitterMessages from "../../../../client-server-messaging/dialogues/registerTransmitter.js";
+import initiateCallMessages from "../../../../client-server-messaging/dialogues/initiateCall.js";
+import getDataMessages from "../../../../client-server-messaging/dialogues/getData.js";
 
 const messages = [
   ...registerReceiverMessages,
