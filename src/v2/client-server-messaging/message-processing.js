@@ -1,4 +1,4 @@
-import MessagingManager from "../server/ws/messaging/message-processing/messaging-manager.js";
+import MessagingManager from "./messaging-manager.js";
 import registerReceiverMessages from "./dialogues/registerReceiver.js";
 import registerTransmitterMessages from "./dialogues/registerTransmitter.js";
 import initiateCallMessages from "./dialogues/initiateCall.js";
