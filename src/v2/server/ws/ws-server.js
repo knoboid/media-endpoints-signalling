@@ -5,8 +5,9 @@ import Connections from "../endpoints/connections.js";
 
 const transmitters = new ClientGroup();
 const receivers = new ClientGroup();
+const dataViewers = new ClientGroup();
 const connections = new Connections(transmitters, receivers);
-const clientGroups = { transmitters, receivers };
+const clientGroups = { transmitters, receivers, dataViewers };
 
 let clientCounter = 0;
 

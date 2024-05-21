@@ -11,7 +11,7 @@ const registerTransmitterMessages = [
       if (isNaN(id)) throw new TypeError("Expect a number");
       console.log(`Setting id to ${id}`);
       data.id = id;
-      // webSocket.send(JSON.stringify({ id, clientType, code }));
+      // TODO redeem codes
       webSocket.send(JSON.stringify({ id, clientType }));
       dispatch("onGotTransmitterID", id);
     },
@@ -23,13 +23,13 @@ const registerTransmitterMessages = [
     handler: ({
       clientId,
       webSocket,
-      clientGroups: { transmitters },
+      clientGroups: { transmitters, dataViewers },
       connections,
     }) => {
       console.log(`New transmitter: ${clientId}`);
       transmitters.addClient(clientId, webSocket, "available");
       broadcastToClientGroup(
-        transmitters,
+        dataViewers,
         "endpointData",
         connections.getData()
       );

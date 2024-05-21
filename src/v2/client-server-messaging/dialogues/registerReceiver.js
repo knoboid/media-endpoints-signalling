@@ -21,14 +21,14 @@ const registerReceiverMessages = [
       const {
         clientId,
         webSocket,
-        clientGroups: { receivers, transmitters },
+        clientGroups: { receivers, dataViewers },
         connections,
       } = options;
       console.log(`New receiver: ${clientId}`);
       receivers.addClient(clientId, webSocket, "available");
       webSocket.send(JSON.stringify({ type: "receiverRegistered" }));
       broadcastToClientGroup(
-        transmitters,
+        dataViewers,
         "endpointData",
         connections.getData()
       );

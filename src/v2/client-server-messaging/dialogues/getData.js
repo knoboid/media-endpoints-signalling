@@ -20,6 +20,14 @@ const getDataMessages = [
       dispatch("endpointData", { payload });
     },
   },
+  {
+    server: false,
+    clientType: "dataViewer",
+    type: "endpointData",
+    handler: ({ dispatch, payload }) => {
+      dispatch("endpointData", { payload });
+    },
+  },
 ];
 
 export default getDataMessages;

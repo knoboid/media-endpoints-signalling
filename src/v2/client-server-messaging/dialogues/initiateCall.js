@@ -15,7 +15,7 @@ const initiateCallMessages = [
         connections,
       } = options;
       const { receiverID } = payload;
-      const { receivers, transmitters } = clientGroups;
+      const { receivers, dataViewers } = clientGroups;
       if (isNaN(receiverID) || isNaN(clientId)) return;
       console.log("initiateCallMessages");
       if (connections.attempt(clientId, receiverID)) {
@@ -34,7 +34,7 @@ const initiateCallMessages = [
           })
         );
         broadcastToClientGroup(
-          transmitters,
+          dataViewers,
           "endpointData",
           connections.getData()
         );
@@ -115,13 +115,13 @@ const initiateCallMessages = [
     handler: ({
       clientId,
       connections,
-      clientGroups: { receivers, transmitters },
+      clientGroups: { receivers, dataViewers },
     }) => {
       const parties = connections.terminate(clientId);
       const receiver = receivers.getWebSocket(parties.receiverID);
       receiver.send(JSON.stringify({ type: "terminated" }));
       broadcastToClientGroup(
-        transmitters,
+        dataViewers,
         "endpointData",
         connections.getData()
       );
@@ -131,12 +131,16 @@ const initiateCallMessages = [
     server: true,
     clientType: "receiver",
     type: "terminated",
-    handler: ({ clientId, connections, clientGroups: { transmitters } }) => {
+    handler: ({
+      clientId,
+      connections,
+      clientGroups: { transmitters, dataViewers },
+    }) => {
       const parties = connections.terminate(clientId);
       const transmitter = transmitters.getWebSocket(parties.transmitterID);
       transmitter.send(JSON.stringify({ type: "terminated" }));
       broadcastToClientGroup(
-        transmitters,
+        dataViewers,
         "endpointData",
         connections.getData()
       );

@@ -3,12 +3,14 @@ import registerReceiverMessages from "./dialogues/registerReceiver.js";
 import registerTransmitterMessages from "./dialogues/registerTransmitter.js";
 import initiateCallMessages from "./dialogues/initiateCall.js";
 import getDataMessages from "./dialogues/getData.js";
+import registerDataViewerMessages from "./dialogues/registerDataViewer.js";
 
 const messages = [
   ...registerReceiverMessages,
   ...registerTransmitterMessages,
   ...initiateCallMessages,
   ...getDataMessages,
+  ...registerDataViewerMessages,
 ];
 
 export function processMessages() {
