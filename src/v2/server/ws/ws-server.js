@@ -1,5 +1,8 @@
 import { WebSocketServer } from "ws";
-import messageHandlers from "./messaging/message-handlers/message-handlers.js";
+import {
+  messageHandlers,
+  closedHandlers,
+} from "./messaging/message-handlers/message-handlers.js";
 import ClientGroup from "../endpoints/client-group.js";
 import Connections from "../endpoints/connections.js";
 
@@ -43,7 +46,9 @@ wsServer.on("connection", (webSocket, req) => {
     messageCounter++;
   });
 
-  webSocket.on("close", () => {});
+  webSocket.on("close", () => {
+    closedHandlers({ clientType });
+  });
 
   clientCounter++;
 });

@@ -30,6 +30,18 @@ class MessagingManager {
       console.log(`Unhandled clientType ${options.clientType}`);
     }
   }
+
+  handleClosed(options) {
+    if (options.clientType in this.clientTypes) {
+      const messagingManager = this.clientTypes[options.clientType];
+      console.log(`${options.clientType} Closed!!!!!`);
+      console.log(options);
+      if (messagingManager.onCloseHandler)
+        messagingManager.onCloseHandler(options);
+    } else {
+      console.log(`Unhandled onClose clientType ${options.clientType}`);
+    }
+  }
 }
 
 export default MessagingManager;

@@ -42,6 +42,14 @@ const registerReceiverMessages = [
       dispatch("receiverRegistered", data.id);
     },
   },
+  {
+    server: true,
+    clientType: "receiver",
+    onClose: true,
+    handler: (options) => {
+      console.log("Reciver Closed");
+    },
+  },
 ];
 
 export default registerReceiverMessages;

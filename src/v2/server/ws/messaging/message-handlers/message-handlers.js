@@ -2,8 +2,10 @@ import { processMessages } from "../../../../client-server-messaging/message-pro
 
 const { serverMessagingManager } = processMessages();
 
-function messageHandlers(options) {
+export function messageHandlers(options) {
   serverMessagingManager.handle(options);
 }
 
-export default messageHandlers;
+export function closedHandlers(options) {
+  serverMessagingManager.handleClosed(options);
+}

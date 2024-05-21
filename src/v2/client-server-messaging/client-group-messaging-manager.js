@@ -4,8 +4,15 @@ class ClientGroupMessasgingManager {
     this.types = {};
   }
 
-  addMessage({ zeroMessage, type, handler }) {
-    if (zeroMessage) {
+  addMessage({ zeroMessage, type, handler, onClose }) {
+    if (onClose === true) {
+      if (this.onClose) {
+        throw new Error(
+          `onClose cannot be defined more than once: client group, ${this.clientGroup}`
+        );
+      }
+      this.onCloseHandler = handler;
+    } else if (zeroMessage) {
       if (this.zeroMessage) {
         throw new Error(
           `zeroMessage cannot be defined more than once: client group, ${this.clientGroup}`
