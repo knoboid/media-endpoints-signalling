@@ -35,10 +35,6 @@ class Transmitter extends EventTarget {
       this.pc.close();
     });
 
-    this.nWTransmitterSignaller.addEventListener("endpointData", (event) => {
-      this.dispatch("endpointData", event.data);
-    });
-
     const offerOptions = {
       offerToReceiveAudio: 1,
       offerToReceiveVideo: 1,

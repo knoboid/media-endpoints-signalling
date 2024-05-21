@@ -1,7 +1,7 @@
 const getDataMessages = [
   {
     server: true,
-    clientType: "transmitter",
+    clientType: "dataViewer",
     type: "getData",
     handler: ({ connections, webSocket }) => {
       webSocket.send(
@@ -10,14 +10,6 @@ const getDataMessages = [
           payload: connections.getData(),
         })
       );
-    },
-  },
-  {
-    server: false,
-    clientType: "transmitter",
-    type: "endpointData",
-    handler: ({ dispatch, payload }) => {
-      dispatch("endpointData", { payload });
     },
   },
   {
