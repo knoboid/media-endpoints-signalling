@@ -20,13 +20,13 @@ class ClientGroup {
   }
 
   addClient(id, webSocket, status) {
-    this.clients[id] = { webSocket, status, otherPartyID: null };
+    this.clients[id] = { webSocket, status, otherPartyID: null, name: null };
   }
 
   getList() {
     return Object.keys(this.clients).map((id) => {
-      const client = this.clients[id];
-      return { id, status: client.status };
+      const { status, name } = this.clients[id];
+      return { id, status, name };
     });
   }
 
@@ -40,6 +40,10 @@ class ClientGroup {
 
   setStatus(id, status) {
     const client = (this.clients[id].status = status);
+  }
+
+  setName(id, name) {
+    const client = (this.clients[id].name = name);
   }
 
   ids() {
