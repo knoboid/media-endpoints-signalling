@@ -9,6 +9,10 @@ class ClientGroup {
     this.clientMap = {};
   }
 
+  getClientType() {
+    return this.clientType;
+  }
+
   addClient(client) {
     const id = client.getId();
     if (this.clientIds.includes(id))
@@ -27,6 +31,10 @@ class ClientGroup {
 
   getClients() {
     return this.clients;
+  }
+
+  getClientObjects() {
+    return this.getClients().map((client) => client.getObject());
   }
 
   includes(id) {

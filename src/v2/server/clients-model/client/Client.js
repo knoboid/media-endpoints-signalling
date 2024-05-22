@@ -11,6 +11,10 @@ class Client {
   getClientType() {
     return this.clientType;
   }
+
+  getObject() {
+    return { id: this.getId(), clientType: this.getClientType() };
+  }
 }
 
 export default Client;

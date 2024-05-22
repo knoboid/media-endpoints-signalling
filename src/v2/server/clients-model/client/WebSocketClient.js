@@ -9,6 +9,10 @@ class WebSocketClient extends Client {
   getWebSocket() {
     return this.webSocket;
   }
+
+  getObject() {
+    return { ...super.getObject(), webSocket: this.getWebSocket() };
+  }
 }
 
 export default WebSocketClient;
