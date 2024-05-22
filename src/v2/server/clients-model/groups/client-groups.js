@@ -8,16 +8,20 @@ class ClientGroups {
     this.clientIdMap = {};
   }
 
+  addGroup(clientType) {
+    const newClientGroup = new ClientGroup(clientType);
+    this.clientGroups.push(newClientGroup);
+    this.clientGroupMap[clientType] = newClientGroup;
+    this.clientTypes.push(clientType);
+  }
+
   addClient(client) {
     const id = client.getId();
     if (this.includesClient(id))
       throw new Error(`Client with id ${id} in client groups already exists.`);
     const clientType = client.getClientType();
     if (!this.includes(clientType)) {
-      const newClientGroup = new ClientGroup(clientType);
-      this.clientGroups.push(newClientGroup);
-      this.clientGroupMap[clientType] = newClientGroup;
-      this.clientTypes.push(clientType);
+      this.addGroup(clientType);
     }
     const clientGroup = this.getGroup(clientType);
     clientGroup.addClient(client);
