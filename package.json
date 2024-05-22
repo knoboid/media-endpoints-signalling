@@ -27,13 +27,15 @@
     "v2": "nodemon src/v2/server/index.js",
     "test": "npm run eslint && npm run stylelint",
     "eslint": "eslint 'test/**.js' 'src/content/**/*.js'",
-    "jest": "jest --testTimeout 5000 --maxWorkers=1 'src/content/**/test.js'",
+    "jest": "jest --watchAll",
     "stylelint": "stylelint 'src/**/*.css'"
   },
   "eslintIgnore": [
     "'**/third_party/*.js'"
   ],
   "devDependencies": {
+    "@babel/preset-env": "^7.24.5",
+    "babel-jest": "^29.7.0",
     "eslint": "^8.9.0",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-jest": "^27.4.0",
