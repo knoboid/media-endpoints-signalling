@@ -3,13 +3,11 @@ import Connections from "./groups/connections.js";
 import WebSocketClient from "./client/WebSocketClient.js";
 import Endpoint from "./client/Endpoint.js";
 
-export const clientGroups = new ClientGroups();
-export const connections = new Connections(clientGroups);
-
 class ClientModel {
   constructor() {
+    console.log("Creating new client model");
     this.clientGroups = new ClientGroups();
-    this.connections = new Connections(clientGroups);
+    this.connections = new Connections(this.clientGroups);
   }
 
   createTransmitter(id, webSocket) {
@@ -36,6 +34,13 @@ class ClientModel {
   deleteClient(clientId) {
     const clientGroup = this.clientGroups.clientIdMap[clientId];
     return clientGroup.removeClient(clientId);
+  }
+
+  broadcastToClientGroup(clientType, type, payload) {
+    const clientGroup = this.clientGroups.clientGroupMap[clientType];
+    clientGroup.getWebSockets().forEach((webSocket) => {
+      webSocket.send(JSON.stringify({ type, payload }));
+    });
   }
 }
 
