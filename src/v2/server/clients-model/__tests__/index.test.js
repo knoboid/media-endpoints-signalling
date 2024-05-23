@@ -1,9 +1,10 @@
-import { createReceiver, createTransmitter } from "../create-client.js";
+import ClientModel, { createReceiver, createTransmitter } from "../index.js";
 
 describe("create-receiver.js", () => {
   test("createReceiver", () => {
-    const r1 = createReceiver("ws1");
-    const r2 = createReceiver("ws2");
+    const cleintModel = new ClientModel();
+    const r1 = cleintModel.createReceiver(1, "ws1");
+    const r2 = cleintModel.createReceiver(2, "ws2");
     expect(r1.getWebSocket()).toBe("ws1");
     expect(r2.getWebSocket()).toBe("ws2");
     expect(r1.getClientType()).toBe("receiver");
@@ -14,10 +15,13 @@ describe("create-receiver.js", () => {
     expect(r2.isTransmitter()).toBeFalsy();
     expect(r1.getId()).not.toBe(r2.getId());
   });
+});
 
+describe("create-receiver.js", () => {
   test("createTransmitter", () => {
-    const r1 = createTransmitter("ws1");
-    const r2 = createTransmitter("ws2");
+    const cleintModel = new ClientModel();
+    const r1 = cleintModel.createTransmitter(1, "ws1");
+    const r2 = cleintModel.createTransmitter(2, "ws2");
     expect(r1.getWebSocket()).toBe("ws1");
     expect(r2.getWebSocket()).toBe("ws2");
     expect(r1.getClientType()).toBe("transmitter");
