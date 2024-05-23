@@ -6,30 +6,6 @@ import Endpoint from "./client/Endpoint.js";
 export const clientGroups = new ClientGroups();
 export const connections = new Connections(clientGroups);
 
-// export function createTransmitter(id, webSocket) {
-//   return clientGroups.addClient(new Endpoint(id, "transmitter", webSocket));
-// }
-
-// export function createReceiver(id, webSocket) {
-//   return clientGroups.addClient(new Endpoint(id, "receiver", webSocket));
-// }
-
-// export function createDataViewer(id, webSocket) {
-//   return clientGroups.addClient(
-//     new WebSocketClient(id, "dataViewer", webSocket)
-//   );
-// }
-
-// export function getClient(clientId) {
-//   const clientGroup = clientGroups.clientIdMap[clientId];
-//   return clientGroup.getClient(clientId);
-// }
-
-// export function deleteClient(clientId) {
-//   const clientGroup = clientGroups.clientIdMap[clientId];
-//   return clientGroup.removeClient(clientId);
-// }
-
 class ClientModel {
   constructor() {
     this.clientGroups = new ClientGroups();
