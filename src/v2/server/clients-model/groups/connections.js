@@ -61,6 +61,23 @@ class Connections {
   connectionCount() {
     return Object.keys(this.connections).length;
   }
+
+  debugReport() {
+    console.log("Connections Report");
+    console.log("====================");
+    let cg = this.transmitterGroup;
+    console.log(
+      `"${cg.clientType}" : (${cg.clients.length}) ${JSON.stringify(
+        cg.clients.map((i) => i.id)
+      )}`
+    );
+    cg = this.receiverGroup;
+    console.log(
+      `"${cg.clientType}" : (${cg.clients.length}) ${JSON.stringify(
+        cg.clients.map((i) => i.id)
+      )}`
+    );
+  }
 }
 
 export default Connections;
