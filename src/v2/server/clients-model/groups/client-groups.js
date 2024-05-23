@@ -61,6 +61,18 @@ class ClientGroups {
   includesClient(clientId) {
     return Object.keys(this.clientIdMap).includes(clientId + "");
   }
+
+  debugReport() {
+    console.log("Client Groups Report");
+    console.log("====================");
+    this.clientGroups.forEach((cg) => {
+      console.log(
+        `"${cg.clientType}" : (${cg.clients.length}) ${JSON.stringify(
+          cg.clients.map((i) => i.id)
+        )}`
+      );
+    });
+  }
 }
 
 export default ClientGroups;
