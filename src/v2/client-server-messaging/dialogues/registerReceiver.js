@@ -17,20 +17,14 @@ const registerReceiverMessages = [
     server: true,
     clientType: "receiver",
     zeroMessage: true,
-    handler: (options) => {
-      const {
-        clientId,
-        webSocket,
-        clientGroups: { receivers, dataViewers },
-        connections,
-      } = options;
+    handler: ({ clientId, webSocket, clientModel }) => {
       console.log(`New receiver: ${clientId}`);
-      receivers.addClient(clientId, webSocket, "available");
+      clientModel.createReceiver(clientId, webSocket);
       webSocket.send(JSON.stringify({ type: "receiverRegistered" }));
-      broadcastToClientGroup(
-        dataViewers,
+      clientModel.broadcastToClientGroup(
+        "dataViewer",
         "endpointData",
-        connections.getData()
+        clientModel.connections.getData()
       );
     },
   },
@@ -46,8 +40,8 @@ const registerReceiverMessages = [
     server: true,
     clientType: "receiver",
     onClose: true,
-    handler: (options) => {
-      console.log("Reciver Closed");
+    handler: ({ clientModel, clientId }) => {
+      clientModel.deleteClient(clientId);
     },
   },
 ];

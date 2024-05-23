@@ -62,6 +62,21 @@ class Connections {
     return Object.keys(this.connections).length;
   }
 
+  getData() {
+    const connections = Object.values(this.connections).map((c) => {
+      return { transmitterID: c.transmitterId, receiverID: c.receiverId };
+    });
+    return {
+      transmitters: this.transmitterGroup.getClients().map((c) => {
+        return { id: c.id, name: c.name, status: c.status() };
+      }),
+      receivers: this.receiverGroup.getClients().map((c) => {
+        return { id: c.id, name: c.name, status: c.status() };
+      }),
+      connections,
+    };
+  }
+
   debugReport() {
     console.log("Connections Report");
     console.log("====================");

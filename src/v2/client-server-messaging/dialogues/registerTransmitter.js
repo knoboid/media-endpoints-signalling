@@ -1,5 +1,3 @@
-import { broadcastToClientGroup } from "../util.js";
-
 const registerTransmitterMessages = [
   {
     server: false,
@@ -20,19 +18,22 @@ const registerTransmitterMessages = [
     server: true,
     clientType: "transmitter",
     zeroMessage: true,
-    handler: ({
-      clientId,
-      webSocket,
-      clientGroups: { transmitters, dataViewers },
-      connections,
-    }) => {
+    handler: ({ clientId, webSocket, clientModel }) => {
       console.log(`New transmitter: ${clientId}`);
-      transmitters.addClient(clientId, webSocket, "available");
-      broadcastToClientGroup(
-        dataViewers,
+      clientModel.createTransmitter(clientId, webSocket);
+      clientModel.broadcastToClientGroup(
+        "dataViewer",
         "endpointData",
-        connections.getData()
+        clientModel.connections.getData()
       );
+    },
+  },
+  {
+    server: true,
+    clientType: "transmitter",
+    onClose: true,
+    handler: ({ clientModel, clientId }) => {
+      clientModel.deleteClient(clientId);
     },
   },
 ];

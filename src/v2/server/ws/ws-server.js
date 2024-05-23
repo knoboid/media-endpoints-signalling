@@ -5,7 +5,9 @@ import {
 } from "./messaging/message-handlers/message-handlers.js";
 import ClientGroup from "../endpoints/client-group.js";
 import Connections from "../endpoints/connections.js";
+import ClientModel from "../clients-model/index.js";
 
+const clientModel = new ClientModel();
 const transmitters = new ClientGroup();
 const receivers = new ClientGroup();
 const dataViewers = new ClientGroup();
@@ -35,6 +37,7 @@ wsServer.on("connection", (webSocket, req) => {
     messageHandlers({
       webSocket,
       clientId,
+      clientModel,
       clientGroups,
       connections,
       messageCounter,
@@ -47,7 +50,7 @@ wsServer.on("connection", (webSocket, req) => {
   });
 
   webSocket.on("close", () => {
-    closedHandlers({ clientType });
+    closedHandlers({ clientType, clientId, clientModel });
   });
 
   clientCounter++;

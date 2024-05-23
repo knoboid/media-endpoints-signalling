@@ -14,16 +14,16 @@ const registerDataViewerMessages = [
     server: true,
     clientType: "dataViewer",
     zeroMessage: true,
-    handler: ({
-      clientId,
-      webSocket,
-      clientGroups: { dataViewers },
-      connections,
-    }) => {
-      console.log("Server: registering dataViewer");
-      console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-      console.log(`New dataViewer: ${clientId}`);
-      dataViewers.addClient(clientId, webSocket, "available");
+    handler: ({ clientId, clientModel, webSocket }) => {
+      clientModel.createDataViewer(clientId, webSocket);
+    },
+  },
+  {
+    server: true,
+    clientType: "dataViewer",
+    onClose: true,
+    handler: ({ clientModel, clientId }) => {
+      clientModel.deleteClient(clientId);
     },
   },
 ];

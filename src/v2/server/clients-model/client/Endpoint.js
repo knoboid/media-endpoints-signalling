@@ -5,6 +5,7 @@ class Endpoint extends WebSocketClient {
     super(id, clientType, webSocket);
     this.otherParty = null;
     this.connectionId = null;
+    this.name = null;
   }
 
   isReceiver() {
@@ -30,6 +31,10 @@ class Endpoint extends WebSocketClient {
 
   isEngaged() {
     return this.otherParty !== null;
+  }
+
+  status() {
+    return this.isEngaged() ? "busy" : "available";
   }
 }
 

@@ -3,11 +3,11 @@ const getDataMessages = [
     server: true,
     clientType: "dataViewer",
     type: "getData",
-    handler: ({ connections, webSocket }) => {
+    handler: ({ clientModel, webSocket }) => {
       webSocket.send(
         JSON.stringify({
           type: "endpointData",
-          payload: connections.getData(),
+          payload: clientModel.connections.getData(),
         })
       );
     },

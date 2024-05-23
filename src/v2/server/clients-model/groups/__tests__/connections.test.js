@@ -39,6 +39,14 @@ describe("connections", () => {
         expect(result.reason).toBe("receiver '2' is engaged");
       });
 
+      it("rejects", () => {
+        const groups = new ClientGroups();
+        const connections = new Connections(groups);
+        const t1 = new Endpoint(1, "transmitter", "wst1");
+        let result = connections.attempt(1, 1);
+        expect(result.result).toBe(false);
+      });
+
       it("affects the endpont state on succuss", () => {
         const groups = new ClientGroups();
         const connections = new Connections(groups);
