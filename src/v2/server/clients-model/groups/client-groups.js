@@ -1,4 +1,10 @@
 import ClientGroup from "./client-group.js";
+import EndpointGroup from "./endpoint-group.js";
+
+const groupClasses = {
+  receiver: EndpointGroup,
+  transmitter: EndpointGroup,
+};
 
 class ClientGroups {
   constructor() {
@@ -9,7 +15,11 @@ class ClientGroups {
   }
 
   addGroup(clientType) {
-    const newClientGroup = new ClientGroup(clientType);
+    const groupClass =
+      typeof groupClasses[clientType] === "function"
+        ? groupClasses[clientType]
+        : ClientGroup;
+    const newClientGroup = new groupClass(clientType);
     this.clientGroups.push(newClientGroup);
     this.clientGroupMap[clientType] = newClientGroup;
     this.clientTypes.push(clientType);

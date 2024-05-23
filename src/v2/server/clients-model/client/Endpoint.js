@@ -4,6 +4,7 @@ class Endpoint extends WebSocketClient {
   constructor(id, clientType, webSocket) {
     super(id, clientType, webSocket);
     this.otherParty = null;
+    this.connectionId = null;
   }
 
   isReceiver() {
@@ -14,12 +15,21 @@ class Endpoint extends WebSocketClient {
     return this.getClientType() === "transmitter";
   }
 
-  getOtherParty() {
-    return this.otherParty;
+  getObject() {
+    return { ...super.getObject(), otherParty: this.otherParty };
   }
 
-  getObject() {
-    return { ...super.getObject(), otherParty: this.getOtherParty() };
+  setConnection(otherParty, connectionId) {
+    this.otherParty = otherParty;
+    this.connectionId = connectionId;
+  }
+
+  disconnect() {
+    this.setConnection(null, null);
+  }
+
+  isEngaged() {
+    return this.otherParty !== null;
   }
 }
 
