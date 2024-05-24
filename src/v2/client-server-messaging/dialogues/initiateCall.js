@@ -50,7 +50,8 @@ const initiateCallMessages = [
     server: false,
     clientType: "transmitter",
     type: "initiateCallFailure",
-    handler: ({ dispatch }) => {
+    handler: ({ dispatch, payload }) => {
+      const receiverID = payload.receiverID;
       dispatch("initiateCallFailure", { receiverID });
     },
   },
