@@ -107,12 +107,7 @@ const initiateCallMessages = [
     clientType: "transmitter",
     type: "terminated",
     handler: ({ clientId, clientModel }) => {
-      const client = clientModel.getClient(clientId);
-      const receiverSocket = clientModel
-        .getClient(client.otherParty)
-        .getWebSocket();
-      clientModel.connections.disconnectTransmitter(clientId);
-      receiverSocket.send(JSON.stringify({ type: "terminated" }));
+      clientModel.disconnectClient(clientId);
       clientModel.broadcastToClientGroup(
         "dataViewer",
         "endpointData",
@@ -125,12 +120,7 @@ const initiateCallMessages = [
     clientType: "receiver",
     type: "terminated",
     handler: ({ clientId, clientModel }) => {
-      const client = clientModel.getClient(clientId);
-      const transmitterSocket = clientModel
-        .getClient(client.otherParty)
-        .getWebSocket();
-      clientModel.connections.disconnectReceiver(clientId);
-      transmitterSocket.send(JSON.stringify({ type: "terminated" }));
+      clientModel.disconnectClient(clientId);
       clientModel.broadcastToClientGroup(
         "dataViewer",
         "endpointData",
