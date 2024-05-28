@@ -20,3 +20,5 @@ export function defineCustomElements() {
   customElements.define("data-table", DataTable);
   customElements.define("simple-data-table", SimpleDataTable);
 }
+
+export const setup = defineCustomElements;
