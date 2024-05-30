@@ -7,7 +7,17 @@ import InfiniteEndpoints from "./components/infinite-endpoints.js";
 import DataTable from "./components/data-table.js";
 import SimpleDataTable from "./components/simple-data-table.js";
 
+let url = null;
+
+function initializeUrl() {
+  console.log(url);
+  if (url === null) {
+    url = window.location.host;
+  }
+}
+
 export function defineCustomElements() {
+  initializeUrl();
   customElements.define("receiver-endpoint", ReceiverEndpoint);
   customElements.define("transmitter-endpoint", TransmitterEndpoint);
   customElements.define("simple-receiver-endpoint", SimpleReceiverEndpoint);
