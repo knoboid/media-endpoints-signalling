@@ -11,5 +11,3 @@ tests_output
 *.log
 *~
 \#*#
-.env
-videos
