@@ -11,7 +11,7 @@
   "author": "Mark Bingley",
   "repository": {
     "type": "git",
-    "url": "origin https://github.com/knoboid/media-endpoints-signalling.git"
+    "url": "https://github.com/knoboid/media-endpoints-signalling.git"
   },
   "scripts": {
     "jest": "jest --watchAll"
