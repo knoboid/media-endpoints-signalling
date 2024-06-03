@@ -1,3 +1,3 @@
-declare module 'media-endpoints-signalling' {
+declare module '@media-endpoints/signalling' {
   export function processMessages(): object;
 }

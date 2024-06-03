@@ -1,8 +1,9 @@
 {
-  "name": "media-endpoints-signalling",
+  "name": "@media-endpoints/signalling",
   "version": "0.0.1",
   "description": "Signalling between media-endpoints clients and server",
   "type": "module",
+  "main": "index.js",
   "keywords": [
     "webrtc",
     "javascript"
