@@ -1,1 +1,1 @@
-export { setup } from "./src/api/index.js";
+export { processMessages } from "./src/v2/client-server-messaging/message-processing.js";

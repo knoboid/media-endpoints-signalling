@@ -1,5 +1,5 @@
 {
-  "name": "media-endpoints-client",
+  "name": "media-endpoints-signalling",
   "version": "1.0.0",
   "description": "Project checking for WebRTC GitHub samples repo",
   "type": "module",
